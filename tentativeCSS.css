@@ -1,0 +1,8 @@
+*/
+@import url('https://googleapis.com');
+
+body {
+    background-color: #EEE5E5; /* Light background */
+    color: #1C2541;            /* Dark font color */
+    font-family: 'Inter', sans-serif;
+}
