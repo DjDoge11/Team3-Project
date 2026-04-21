@@ -1,11 +1,12 @@
-:root {
-  --text: #6b6375;
+@import url('https://googleapis.com');
+/* :root {
+  --text: #1C2541;
   --text-h: #08060d;
   --bg: #fff;
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
   --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
+  --accent-bg: #1C2541;
   --accent-border: rgba(170, 59, 255, 0.5);
   --social-bg: rgba(244, 243, 236, 0.5);
   --shadow:
@@ -48,11 +49,14 @@
   #social .button-icon {
     filter: invert(1) brightness(2);
   }
-}
+} */
 
 body {
-  margin: 0;
+  background-color: #EEE5E5; 
+  color: #1C2541;            
+  font-family: 'Inter', sans-serif;
 }
+
 
 #root {
   width: 1126px;
