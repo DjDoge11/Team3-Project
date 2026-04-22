@@ -33,10 +33,28 @@ body {
     
     
     padding: 0.5rem 6rem; 
-    border-radius: 8px; 
+    border-radius: .5rem; 
   }
   
   .navbar a:hover {
     color: #19647E;
     background-color: #DDCECD; 
   }
+
+.footer {
+    margin-top: 2rem;
+    background-color: #19647E;
+    padding: 1.5rem;
+    text-align: left;
+}
+
+.footer-text {
+    color: #EEE5E5;
+    font-size: 1rem;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    margin: 0 auto;    
+    
+}
