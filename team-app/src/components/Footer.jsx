@@ -1,7 +1,13 @@
-export default function Footer() {
-  return (
-    <div>
-      <footer>&copy; Aiju Corp.</footer>
-    </div>
-  );
+import "/src/App.css"
+
+
+export default function Footer() { 
+  return ( 
+    <div className="footer"> 
+      <footer className="footer-text">
+        <span>&copy; Aiju Corp.</span>
+        <span className="footer-right-text">All rights reserved by the Nauru Parliament.</span>
+      </footer> 
+    </div> 
+  ); 
 }
