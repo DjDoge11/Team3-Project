@@ -1,9 +1,8 @@
 // Import React hooks and Firebase functionality
 import { useEffect, useState } from 'react';
 import { db, auth, provider } from './firebase'; // Custom Firebase config
-import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth'; // Auth methods
-import { collection, getDocs } from 'firebase/firestore'; // Firestore methods
-import { GoogleAuthProvider } from 'firebase/auth/web-extension';
+import { signInWithPopup, signOut, onAuthStateChanged, GoogleAuthProvider } from 'firebase/auth'; // Auth methods
+import { collection, getDocs, addDoc } from 'firebase/firestore'; // Firestore methods
 
 function GoogleLogin() {
   // State to hold the logged-in user
@@ -100,6 +99,3 @@ function GoogleLogin() {
   );
 }
 export default GoogleLogin;
-export const db = getFirestore(app);
-export const auth = getAuth(app);
-export const provider = new GoogleAuthProvider();

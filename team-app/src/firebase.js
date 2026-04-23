@@ -17,5 +17,12 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const db= getFirestore(app)
-export const auth = getAuth(app)
+export const db = getFirestore(app);
+export const auth = getAuth(app);
+
+// Configure Google provider to keep popup open
+const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({
+  prompt: 'select_account'
+});
+export const provider = googleProvider;
