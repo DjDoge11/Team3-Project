@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import Home from './pages/Home';
 import GPA from './pages/About';
 import Courses from './pages/Services';
@@ -18,6 +19,7 @@ function App() {
         <Route path="/grades" element={<Grades />} />
         <Route path="/login" element={<Login />} />
       </Routes>
+      <Footer />
     </>
   );
 }

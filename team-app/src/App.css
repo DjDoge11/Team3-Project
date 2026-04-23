@@ -1,0 +1,60 @@
+@import url('https://googleapis.com');
+
+body {
+    background-color: #EEE5E5; 
+    color: #1C2541;            
+    font-family: 'Inter', sans-serif;
+}
+
+.navbar {
+    background-color: #19647E;
+    padding: 1rem;
+  }
+  
+
+  .navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem; 
+    margin: 0;
+    padding: 0;
+    justify-content: center; 
+  }
+  
+
+
+  .navbar a {
+    text-decoration: none;
+    color: #EEE5E5;
+    font-weight: bold;
+    font-family: sans-serif;
+    transition: all 0.3s ease; 
+    background-color: #28AFB0;
+    
+    
+    padding: 0.5rem 6rem; 
+    border-radius: .5rem; 
+  }
+  
+  .navbar a:hover {
+    color: #19647E;
+    background-color: #DDCECD; 
+  }
+
+.footer {
+    margin-top: 2rem;
+    background-color: #19647E;
+    padding: 1.5rem;
+    text-align: left;
+}
+
+.footer-text {
+    color: #EEE5E5;
+    font-size: 1rem;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    margin: 0 auto;    
+    
+}
