@@ -10,7 +10,7 @@ export default function Courses() {
   };
 
   const grades = ["9th", "10th", "11th", "12th"];
-  const semesters = ["Semester 1", "Semester 2"];
+  const semesters = ["Quarters 1 & 2", "Quarters 3 & 4"];
   const classSlots = [1, 2, 3, 4];
 
   return (
@@ -18,7 +18,7 @@ export default function Courses() {
       <h1>Course Selection and Credit Requirement</h1>
 
       {grades.map((grade) => (
-        <section key={grade} style={{ marginBottom: '2ren', borderBottom: '`1rem` #EEE5E5' }}>
+        <section key={grade} style={{ marginBottom: '2rem', borderBottom: '`1rem` #EEE5E5' }}>
           <h2>{grade} Grade</h2>
           <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
             {semesters.map((sem) => (
@@ -32,7 +32,9 @@ export default function Courses() {
                       placeholder="Enter course name here!"
                       value={courses[`${grade}-${sem}-${slot}`] || ""}
                       onChange={(e) => courseInput(grade, sem, slot, e.target.value)}
-                      style={{ padding: '1rem', width: '10rem' }}
+                      style={{ padding: '1rem', width: '10rem', borderRadius: '0.rem',
+                      border: '0.2rem solid #ffffff', 
+                      outline: 'none' }}
                     />
                   </div>
                 ))}

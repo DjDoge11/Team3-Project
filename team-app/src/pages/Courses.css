@@ -1,0 +1,49 @@
+
+.course-main {
+    padding: 1rem;
+    font-family: 'Inter', sans-serif;
+    background-color: #f8f9fa; 
+    min-height: 100vh;
+  }
+  
+  h1 {
+    color: #333;
+    margin-bottom: 2rem;
+  }
+  
+  .grade-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 0.5rem solid #EEE5E5;
+  }
+  
+  .semester-container {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  
+
+  .input-wrapper {
+    margin-bottom: 1rem;
+  }
+  
+  .input-label {
+    display: block;
+    font-size: 0.8rem;
+    margin-bottom: 0.3rem;
+    color: #666;
+  }
+  
+ 
+  .course-input {
+    padding: 1rem;
+    width: 12rem;
+    border-radius: 1rem; 
+    border: 0.2rem solid #ffffff;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  
+
+  
