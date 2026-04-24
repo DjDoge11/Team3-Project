@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { db, auth, provider } from './firebase'; // Custom Firebase config
 import { signInWithPopup, signOut, onAuthStateChanged, GoogleAuthProvider } from 'firebase/auth'; // Auth methods
 import { collection, getDocs, addDoc } from 'firebase/firestore'; // Firestore methods
+import './pages/Login.css';
+
 
 function GoogleLogin() {
   // State to hold the logged-in user
@@ -73,7 +75,7 @@ function GoogleLogin() {
   // UI rendering
   return (
     <div>
-      <h1>Firebase + React App with Google Log-in</h1>
+      <h1>Log in with Google to save your data!</h1>
       {/* If user is logged in, show greeting, logout button, and messages */}
       {user ? (
         <div>
@@ -92,7 +94,7 @@ function GoogleLogin() {
         // If no user is logged in, show login button
         <div>
           <p>Please log in with Google to continue.</p>
-          <button onClick={handleLogin}>Login with Google</button>
+          <button className="googleLB" onClick={handleLogin}>Login with Google</button>
         </div>
       )}
     </div>

@@ -1,9 +1,10 @@
 import GoogleLogin from "../GoogleLogin.jsx";
+import './Login.css';
+
 
 function Login() {
   return (
-    <main>
-      <h1>Login</h1>
+    <main className="loginBG">
       <GoogleLogin />
     </main>
   );

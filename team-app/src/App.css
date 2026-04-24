@@ -27,11 +27,13 @@ body {
     font-family: sans-serif;
     transition: all 0.3s ease;
     background-color: #28AFB0;
-    padding: 0.5rem 6rem;
-    border-radius: .5rem;
-}
-
-.navbar a:hover {
+    
+    
+    padding: 0.5rem 5.2rem; 
+    border-radius: .5rem; 
+  }
+  
+  .navbar a:hover {
     color: #19647E;
     background-color: #DDCECD;
 }
