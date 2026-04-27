@@ -139,8 +139,9 @@ const gradePoints = {
 const gradeOptions = ['A', 'B', 'C', 'D', 'F'];
 
 export default function GPA() {
-  const [selectedCourses, setSelectedCourses] = useState(['', '', '', '']);
-  const [grades, setGrades] = useState(['', '', '', '']);
+  const [numSections, setNumSections] = useState(4);
+  const [selectedCourses, setSelectedCourses] = useState(Array(4).fill(''));
+  const [grades, setGrades] = useState(Array(4).fill(''));
   const [showPopup, setShowPopup] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
@@ -159,12 +160,26 @@ export default function GPA() {
     setError('');
   };
 
+  const addSection = () => {
+    setNumSections(numSections + 1);
+    setSelectedCourses([...selectedCourses, '']);
+    setGrades([...grades, '']);
+  };
+
+  const removeSection = () => {
+    if (numSections > 1) {
+      setNumSections(numSections - 1);
+      setSelectedCourses(selectedCourses.slice(0, -1));
+      setGrades(grades.slice(0, -1));
+    }
+  };
+
   const calculateGPA = () => {
     const allCoursesFilled = selectedCourses.every((c) => c !== '');
     const allGradesFilled = grades.every((g) => g !== '');
 
     if (!allCoursesFilled || !allGradesFilled) {
-      const msg = 'Please select a course and grade for all 8 dropdowns before calculating.';
+      const msg = `Please select a course and grade for all ${selectedCourses.length} dropdowns before calculating.`;
       setError(msg);
       setResult(null);
       return;
@@ -174,7 +189,7 @@ export default function GPA() {
     let totalWeighted = 0;
     let count = 0;
 
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < selectedCourses.length; i++) {
       const courseValue = selectedCourses[i];
       const grade = grades[i];
       const course = courses.find((c) => (c.value || c.name) === courseValue);
@@ -203,7 +218,7 @@ export default function GPA() {
           <div className="popup-box" onClick={(e) => e.stopPropagation()}>
             <button className="popup-close-x" onClick={() => setShowPopup(false)}>×</button>
             <h2>How to Use</h2>
-            <p>Select up to 4 courses and their grades, then click <strong>Calculate</strong>.</p>
+            <p>Select courses and their grades, then click <strong>Calculate</strong>.</p>
             <h3>Grading Scale</h3>
             <ul>
               <li>A = 4.0</li>
@@ -267,6 +282,10 @@ export default function GPA() {
               ))}
             </div>
           </div>
+          <div className="section-buttons">
+            <button onClick={addSection}>Add Section</button>
+            <button onClick={removeSection} disabled={numSections <= 1}>Remove Section</button>
+          </div>          
           <button className="calculate-btn" onClick={calculateGPA}>Calculate</button>
           {error && <p className="gpa-error">{error}</p>}
         </div>
