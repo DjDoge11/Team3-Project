@@ -5,7 +5,7 @@ import Home from './pages/Home';
 import GPA from './pages/About';
 import Courses from './pages/Services';
 import Grades from './pages/Contact';
-import Login from './pages/Blog';
+import Login from './pages/Auth';
 import './App.css';
 
 function App() {
