@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { database } from '../firebase';
 import { ref, update } from 'firebase/database';
+import { availableCourses, requiredCredits } from '../data/courseCatalog';
  
 export default function Courses() {
   const [courses, setCourses] = useState({});
@@ -53,7 +54,7 @@ export default function Courses() {
 
   const saveCourses = () => {
     console.log('Saving courses:', courses);
-    const coursesRef = ref(database, 'courses');
+    const coursesRef = ref(database, 'courseData/courses');
     
     // Build the update object using nested paths like 'alanisawesome/nickname'
     const updates = {};
@@ -114,7 +115,7 @@ export default function Courses() {
                     style={{
                       padding: '0.3rem 0.6rem',
                       fontSize: '0.75rem',
-                      backgroundColor: '#2750d8',
+                      backgroundColor: '#19647E',
                       color: 'white',
                       border: 'none',
                       borderRadius: '0.25rem',
@@ -129,7 +130,7 @@ export default function Courses() {
                   const inputKey = `${grade}-${semKey}-${slot}`;
                   return (
                   <div key={slot} style={{ marginBottom: '0.75rem' }}>
-                    <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '0.25rem' }}>Class {slot}</label>
+                    <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '0.25rem' }}>Period {slot}</label>
                     <input
                       type="text"
                       placeholder="Enter course name here!"
