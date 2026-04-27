@@ -174,9 +174,11 @@ export const availableCourses = {
   "Computer Science Foundation": { credits: 10, category: "Elective" },
   "Computer Game Design": { credits: 10, category: "Elective" },
   "Human Computer Interaction": { credits: 10, category: "Elective" },
+  "Machine Learning": { credits: 10, category: "Elective" },
+
+  // AP Computer Science courses
   "AP Computer Science A": { credits: 10, category: "Elective" },
   "AP Computer Science Principles": { credits: 10, category: "Elective" },
-  "Machine Learning": { credits: 10, category: "Elective" },
 
 };
 
