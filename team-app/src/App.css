@@ -256,3 +256,13 @@ body {
 .popup-close-x:hover {
   color: #28AFB0;
 }
+
+.features {
+  padding-bottom: 1.25rem;
+}
+
+.homepagePadding {
+  padding-left: 3rem;
+  padding-right: 3rem;
+  font-size: 1.2rem;
+}
