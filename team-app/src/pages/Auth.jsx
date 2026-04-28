@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { auth, googleAuthProvider, githubAuthProvider } from '../firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut, onAuthStateChanged, sendPasswordResetEmail } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut, onAuthStateChanged, sendPasswordResetEmail, sendEmailVerification } from 'firebase/auth';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -47,8 +47,11 @@ export default function AuthPage() {
           setLoading(false);
           return;
         }
-        await createUserWithEmailAndPassword(auth, email, password);
-        navigate('/courses');
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await sendEmailVerification(userCredential.user);
+        setSuccess('登録用の認証メールを送信しました。メール内のリンクをクリックして認証を完了してください。');
+        setLoading(false);
+        return;
       }
     } catch (err) {
       switch (err.code) {
