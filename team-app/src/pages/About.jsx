@@ -136,6 +136,18 @@ export default function GPA() {
     setError('');
   };
 
+  const clearAll = () => {
+    setSelectedCourses(['', '', '', '']);
+    setGrades(['', '', '', '']);
+    setResult(null);
+    setError('');
+  };
+
+  const addCourse = () => {
+    setSelectedCourses([...selectedCourses, '']);
+    setGrades([...grades, '']);
+  };
+
   return (
     <main className="gpa-page">
       <div className="gpa-header">
@@ -217,6 +229,8 @@ export default function GPA() {
             <button onClick={removeSection} disabled={numSections <= 1}>Remove Section</button>
           </div>          
           <button className="calculate-btn" onClick={calculateGPA}>Calculate</button>
+          <button className="clear-btn" onClick={clearAll}>Clear</button>
+          <button className="add-course-btn" onClick={addCourse}>Add Course</button>
           {error && <p className="gpa-error">{error}</p>}
         </div>
 
