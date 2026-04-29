@@ -16,7 +16,20 @@ export default function Home() {
     <p>Logging in is optional—our calculators remain fully functional without an account, and you are welcome to use all core features as a guest. We do not collect personally identifiable academic information, and any data you choose to save is handled securely and kept confidential.</p>
     <p>Whether you are planning your path to a target final grade, checking how an upcoming exam could impact your average, or simply staying on top of your coursework, this tool is designed to be straightforward, reliable, and easy to use.</p>
     <p>Thanks for using our website!</p>
-    </div>    
+    </div>
+
+    <div className="aboutUs">
+      <h3>About Our Team</h3>
+      <p>This website was created by five team members, each with respective roles.</p>
+        <ul className="members">
+          <li>UX Researcher: Zoey</li>
+          <li>UI Designer: Layla</li>
+          <li>Front-End Developer: Kevin</li>
+          <li>Back-End Developer: Shogo</li>
+          <li>Project Manager: Parker</li>
+        </ul>
+  </div> 
+  
     </main>
   );
 }
