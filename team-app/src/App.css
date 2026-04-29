@@ -140,7 +140,7 @@ body {
   border-color: #19647E;
 }
 
-.calculate-btn {
+.add-course-btn {
   align-self: flex-start;
   background-color: #19647E;
   color: #EEE5E5;
@@ -153,12 +153,31 @@ body {
   transition: background-color 0.3s ease;
   margin-top: 0.5rem;
 }
-
-.calculate-btn:hover {
+.add-course-btn:hover {
   background-color: #28AFB0;
 }
 
-.calculate-btn:active {
+.button-group {
+  display: flex;       
+  gap: 1rem;          
+  margin-top: 0.5rem; 
+}
+
+.calculate-btn {
+  align-self: flex-start;
+  background-color: #28AFB0;
+  color: #EEE5E5;
+  border: none;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.calculate-btn:hover {
   background-color: #19647E;
 }
 
@@ -175,24 +194,8 @@ body {
   transition: background-color 0.3s ease;
   margin-top: 0.5rem;
 }
-.clear-btn:hover {
-  background-color: #19647E;
-}
 
-.add-course-btn {
-  align-self: flex-start;
-  background-color: #28AFB0;
-  color: #EEE5E5;
-  border: none;
-  padding: 0.75rem 2rem;
-  font-size: 1rem;
-  font-weight: bold;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 0.5rem;
-}
-.add-course-btn:hover {
+.clear-btn:hover {
   background-color: #19647E;
 }
 

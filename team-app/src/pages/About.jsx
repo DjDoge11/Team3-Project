@@ -224,13 +224,11 @@ export default function GPA() {
               ))}
             </div>
           </div>
-          <div className="section-buttons">
-            <button onClick={addSection}>Add Section</button>
-            <button onClick={removeSection} disabled={numSections <= 1}>Remove Section</button>
-          </div>          
+          <button className="add-course-btn" onClick={addCourse}>Add Course</button>
+          <div class="button-group">
           <button className="calculate-btn" onClick={calculateGPA}>Calculate</button>
           <button className="clear-btn" onClick={clearAll}>Clear</button>
-          <button className="add-course-btn" onClick={addCourse}>Add Course</button>
+          </div>
           {error && <p className="gpa-error">{error}</p>}
         </div>
 
