@@ -18,7 +18,7 @@ export default function Courses() {
 
   // ADDED: Grade Color Mapping
   const gradeColors = {
-    'A': '#0077B6', // Dark Blue
+    'A': '#00B4D8', // Dark Blue
     'B': '#2ecc71', // Green
     'C': '#f1c40f', // Yellow
     'D': '#e67e22', // Orange
