@@ -4,181 +4,181 @@
 export const availableCourses = {
 
   // Freshman English Course
-  "English 9": { credits: 10, category: "English", gpa: "Unweighted" },
-  "English 9 Honors": { credits: 10, category: "English", gpa: "Unweighted" },
+  "English 9": { credits: 10, category: "English", weighted: false },
+  "English 9 Honors": { credits: 10, category: "English", weighted: false },
 
   // Sophmore English Course
-  "English 10": { credits: 10, category: "English", gpa: "Unweighted" },
-  "English 10 Honors": { credits: 10, category: "English", gpa: "Unweighted" },
+  "English 10": { credits: 10, category: "English", weighted: false },
+  "English 10 Honors": { credits: 10, category: "English", weighted: false },
 
   // Junior English Course
-  "English 11": { credits: 10, category: "English", gpa: "Unweighted" },
-  "AP English Language": { credits: 10, category: "English", gpa: "Weighted" },
+  "English 11": { credits: 10, category: "English", weighted: false },
+  "AP English Language": { credits: 10, category: "English", weighted: true },
 
   // Senior English Course
-  "English 12": { credits: 10, category: "English", gpa: "Unweighted" },
-  "AP English Literature": { credits: 10, category: "English", gpa: "Weighted" },
+  "English 12": { credits: 10, category: "English", weighted: false },
+  "AP English Literature": { credits: 10, category: "English", weighted: true },
 
   // Integrated Math
-  "Integrated Math 1": { credits: 10, category: "Math", gpa: "Unweighted" },
-  "Integrated Math 2": { credits: 10, category: "Math", gpa: "Unweighted" },
-  "Integrated Math 3": { credits: 10, category: "Math", gpa: "Unweighted" },
+  "Integrated Math 1": { credits: 10, category: "Math", weighted: false },
+  "Integrated Math 2": { credits: 10, category: "Math", weighted: false },
+  "Integrated Math 3": { credits: 10, category: "Math", weighted: false },
 
   // Integrated Math Honors Course
-  "Integrated Math 1 Honors": { credits: 10, category: "Math", gpa: "Unweighted" },
-  "Integrated Math 2 Honors": { credits: 10, category: "Math", gpa: "Unweighted" },
-  "Integrated Math 3 Honors": { credits: 10, category: "Math", gpa: "Weighted" },
+  "Integrated Math 1 Honors": { credits: 10, category: "Math", weighted: false },
+  "Integrated Math 2 Honors": { credits: 10, category: "Math", weighted: false },
+  "Integrated Math 3 Honors": { credits: 10, category: "Math", weighted: true },
 
   // Calculus Course
-  "Introduction to Calculus": { credits: 10, category: "Math", gpa: "Unweighted" },
-  "AP Calculus AB": { credits: 10, category: "Math", gpa: "Weighted" },
-  "AP Calculus BC": { credits: 10, category: "Math", gpa: "Weighted" },
+  "Introduction to Calculus": { credits: 10, category: "Math", weighted: false },
+  "AP Calculus AB": { credits: 10, category: "Math", weighted: true },
+  "AP Calculus BC": { credits: 10, category: "Math", weighted: true },
 
   // Other Math Electives
-  "AP Statistics": { credits: 10, category: "Math", gpa: "Weighted" },
-  "Advanced Topics": { credits: 10, category: "Math", gpa: "Unweighted" },
+  "AP Statistics": { credits: 10, category: "Math", weighted: true },
+  "Advanced Topics": { credits: 10, category: "Math", weighted: false },
 
   // Required Science Course
-  "Biology": { credits: 10, category: "Life Science", gpa: "Unweighted" },
-  "Chemistry": { credits: 10, category: "Physical Science", gpa: "Unweighted" },
-  "Chemistry Honors": { credits: 10, category: "Physical Science", gpa: "Unweighted" },
+  "Biology": { credits: 10, category: "Life Science", weighted: false },
+  "Chemistry": { credits: 10, category: "Physical Science", weighted: false },
+  "Chemistry Honors": { credits: 10, category: "Physical Science", weighted: false },
 
   // Physics Course
-  "Physics": { credits: 10, category: "Electives", gpa: "Unweighted" },
-  "AP Physics 1": { credits: 10, category: "Electives", gpa: "Weighted" },
-  "AP Physics 2": { credits: 10, category: "Electives", gpa: "Weighted" },
-  "AP Physics C": { credits: 10, category: "Electives", gpa: "Weighted" },
+  "Physics": { credits: 10, category: "Electives", weighted: false },
+  "AP Physics 1": { credits: 10, category: "Electives", weighted: true },
+  "AP Physics 2": { credits: 10, category: "Electives", weighted: true },
+  "AP Physics C": { credits: 10, category: "Electives", weighted: true },
 
   // AP Science Course
-  "AP Environmental Science": { credits: 10, category: "Science", gpa: "Weighted" },
-  "AP Biology": { credits: 10, category: "Science", gpa: "Weighted" },
-  "AP Chemistry": { credits: 10, category: "Science", gpa: "Weighted" },
+  "AP Environmental Science": { credits: 10, category: "Science", weighted: true },
+  "AP Biology": { credits: 10, category: "Science", weighted: true },
+  "AP Chemistry": { credits: 10, category: "Science", weighted: true },
 
   // Other Science Course
-  "Anatomy & Physiology": { credits: 10, category: "Science", gpa: "Unweighted" },
-  "Organic Chemistry": { credits: 10, category: "Science", gpa: "Unweighted" },
+  "Anatomy & Physiology": { credits: 10, category: "Science", weighted: false },
+  "Organic Chemistry": { credits: 10, category: "Science", weighted: false },
 
   // Biotechnology courses
-  "Biotechnology 1": { credits: 10, category: "Science", gpa: "Unweighted" },
-  "Biotechnology 2": { credits: 10, category: "Science", gpa: "Unweighted" },
+  "Biotechnology 1": { credits: 10, category: "Science", weighted: false },
+  "Biotechnology 2": { credits: 10, category: "Science", weighted: false },
 
   // Sophmore History Course
-  "World History": { credits: 10, category: "Social Science", gpa: "Unweighted" },
-  "AP World History": { credits: 10, category: "Social Science", gpa: "Weighted" },
+  "World History": { credits: 10, category: "Social Science", weighted: false },
+  "AP World History": { credits: 10, category: "Social Science", weighted: true },
 
   // Junior History Course
-  "US History": { credits: 10, category: "Social Science", gpa: "Unweighted" },
-  "AP US History": { credits: 10, category: "Social Science", gpa: "Weighted" },
+  "US History": { credits: 10, category: "Social Science", weighted: false },
+  "AP US History": { credits: 10, category: "Social Science", weighted: true },
 
   // Senior History Course
-  "American Government": { credits: 10, category: "Social Science", gpa: "Unweighted" },
-  "AP American Government": { credits: 10, category: "Social Science", gpa: "Weighted" },
-  "Economics": { credits: 10, category: "Social Science", gpa: "Unweighted" },
-  "AP Macroeconomics": { credits: 10, category: "Social Science", gpa: "Weighted" },
+  "American Government": { credits: 10, category: "Social Science", weighted: false },
+  "AP American Government": { credits: 10, category: "Social Science", weighted: true },
+  "Economics": { credits: 10, category: "Social Science", weighted: false },
+  "AP Macroeconomics": { credits: 10, category: "Social Science", weighted: true },
 
   // Spanish courses
-  "Spanish 1": { credits: 10, category: "World Language", gpa: "Unweighted" },
-  "Spanish 2": { credits: 10, category: "World Language", gpa: "Unweighted" },
-  "Spanish 3": { credits: 10, category: "World Language", gpa: "Unweighted" },
-  "Spanish 4": { credits: 10, category: "World Language", gpa: "Unweighted" },
-  "Spanish 5": { credits: 10, category: "World Language", gpa: "Unweighted" },
-  "AP Spanish Language": { credits: 10, category: "World Language", gpa: "Weighted" },
+  "Spanish 1": { credits: 10, category: "World Language", weighted: false },
+  "Spanish 2": { credits: 10, category: "World Language", weighted: false },
+  "Spanish 3": { credits: 10, category: "World Language", weighted: false },
+  "Spanish 4": { credits: 10, category: "World Language", weighted: false },
+  "Spanish 5": { credits: 10, category: "World Language", weighted: false },
+  "AP Spanish Language": { credits: 10, category: "World Language", weighted: true },
 
   // French courses
-  "French 1": { credits: 10, category: "World Language", gpa: "Unweighted" },
-  "French 2": { credits: 10, category: "World Language", gpa: "Unweighted" },
-  "French 3": { credits: 10, category: "World Language", gpa: "Unweighted" },
-  "French 4": { credits: 10, category: "World Language", gpa: "Unweighted" },
-  "French 5": { credits: 10, category: "World Language", gpa: "Unweighted" },
-  "AP French Language": { credits: 10, category: "World Language", gpa: "Weighted" },
+  "French 1": { credits: 10, category: "World Language", weighted: false },
+  "French 2": { credits: 10, category: "World Language", weighted: false },
+  "French 3": { credits: 10, category: "World Language", weighted: false },
+  "French 4": { credits: 10, category: "World Language", weighted: false },
+  "French 5": { credits: 10, category: "World Language", weighted: false },
+  "AP French Language": { credits: 10, category: "World Language", weighted: true },
 
   // Chinese courses
-  "Chinese 1": { credits: 10, category: "World Language", gpa: "Unweighted" },
-  "Chinese 2": { credits: 10, category: "World Language", gpa: "Unweighted" },
-  "Chinese 3": { credits: 10, category: "World Language", gpa: "Unweighted" },
-  "Chinese 4": { credits: 10, category: "World Language", gpa: "Unweighted" },
-  "Chinese 5": { credits: 10, category: "World Language", gpa: "Unweighted" },
-  "AP Chinese": { credits: 10, category: "World Language", gpa: "Weighted" },
+  "Chinese 1": { credits: 10, category: "World Language", weighted: false },
+  "Chinese 2": { credits: 10, category: "World Language", weighted: false },
+  "Chinese 3": { credits: 10, category: "World Language", weighted: false },
+  "Chinese 4": { credits: 10, category: "World Language", weighted: false },
+  "Chinese 5": { credits: 10, category: "World Language", weighted: false },
+  "AP Chinese": { credits: 10, category: "World Language", weighted: true },
 
   // Japanese courses
-  "Japanese 1": { credits: 10, category: "World Language", gpa: "Unweighted" },
-  "Japanese 2": { credits: 10, category: "World Language", gpa: "Unweighted" },
-  "Japanese 3": { credits: 10, category: "World Language", gpa: "Unweighted" },
-  "Japanese 4": { credits: 10, category: "World Language", gpa: "Unweighted" },
-  "Japanese 5": { credits: 10, category: "World Language", gpa: "Unweighted" },
-  "AP Japanese Language/Culture": { credits: 10, category: "World Language", gpa: "Weighted" },
+  "Japanese 1": { credits: 10, category: "World Language", weighted: false },
+  "Japanese 2": { credits: 10, category: "World Language", weighted: false },
+  "Japanese 3": { credits: 10, category: "World Language", weighted: false },
+  "Japanese 4": { credits: 10, category: "World Language", weighted: false },
+  "Japanese 5": { credits: 10, category: "World Language", weighted: false },
+  "AP Japanese Language/Culture": { credits: 10, category: "World Language", weighted: true },
 
   // American Sign Language courses
-  "Am. Sign Lang. 1": { credits: 10, category: "World Language", gpa: "Unweighted" },
-  "Am. Sign Lang. 2": { credits: 10, category: "World Language", gpa: "Unweighted" },
-  "Am. Sign Lang. 3": { credits: 10, category: "World Language", gpa: "Unweighted" },
-  "Am. Sign Lang. 4 Honors": { credits: 10, category: "World Language", gpa: "Unweighted" },
+  "Am. Sign Lang. 1": { credits: 10, category: "World Language", weighted: false },
+  "Am. Sign Lang. 2": { credits: 10, category: "World Language", weighted: false },
+  "Am. Sign Lang. 3": { credits: 10, category: "World Language", weighted: false },
+  "Am. Sign Lang. 4 Honors": { credits: 10, category: "World Language", weighted: false },
 
   // Perorming Arts
-  "Acting 1": { credits: 10, category: "Visual/Performing Arts", gpa: "Unweighted" },
-  "Intermediate Acting": { credits: 10, category: "Visual/Performing Arts", gpa: "Unweighted" },
-  "Advance Acting": { credits: 10, category: "Visual/Performing Arts", gpa: "Unweighted" },
-  "Advance Drama Honors": { credits: 10, category: "Visual/Performing Arts", gpa: "Unweighted" },
-  "Music Theory Production": { credits: 10, category: "Visual/Performing Arts", gpa: "Unweighted" },
-  "Advanced Musical Theater Production": { credits: 10, category: "Visual/Performing Arts", gpa: "Unweighted" },
-  "Orchestra": { credits: 10, category: "Visual/Performing Arts", gpa: "Unweighted" },
-  "Symphonic Band": { credits: 10, category: "Visual/Performing Arts", gpa: "Unweighted" },
-  "Chorus": { credits: 10, category: "Visual/Performing Arts", gpa: "Unweighted" },
+  "Acting 1": { credits: 10, category: "Visual/Performing Arts", weighted: false },
+  "Intermediate Acting": { credits: 10, category: "Visual/Performing Arts", weighted: false },
+  "Advance Acting": { credits: 10, category: "Visual/Performing Arts", weighted: false },
+  "Advance Drama Honors": { credits: 10, category: "Visual/Performing Arts", weighted: false },
+  "Music Theory Production": { credits: 10, category: "Visual/Performing Arts", weighted: false },
+  "Advanced Musical Theater Production": { credits: 10, category: "Visual/Performing Arts", weighted: false },
+  "Orchestra": { credits: 10, category: "Visual/Performing Arts", weighted: false },
+  "Symphonic Band": { credits: 10, category: "Visual/Performing Arts", weighted: false },
+  "Chorus": { credits: 10, category: "Visual/Performing Arts", weighted: false },
 
   // Drawing & Design courses
-  "Drawing & Design": { credits: 10, category: "Visual/Performing Arts", gpa: "Unweighted" },
-  "Advanced Drawing": { credits: 10, category: "Visual/Performing Arts", gpa: "Unweighted" },
-  "Sculpture": { credits: 10, category: "Visual/Performing Arts", gpa: "Unweighted" },
-  "Advanced Sculpture": { credits: 10, category: "Visual/Performing Arts", gpa: "Unweighted" },
-  "Painting": { credits: 10, category: "Visual/Performing Arts", gpa: "Unweighted" },
-  "Seminar in Art": { credits: 10, category: "Visual/Performing Arts", gpa: "Unweighted" },
+  "Drawing & Design": { credits: 10, category: "Visual/Performing Arts", weighted: false },
+  "Advanced Drawing": { credits: 10, category: "Visual/Performing Arts", weighted: false },
+  "Sculpture": { credits: 10, category: "Visual/Performing Arts", weighted: false },
+  "Advanced Sculpture": { credits: 10, category: "Visual/Performing Arts", weighted: false },
+  "Painting": { credits: 10, category: "Visual/Performing Arts", weighted: false },
+  "Seminar in Art": { credits: 10, category: "Visual/Performing Arts", weighted: false },
 
   //Digital Arts
-  "Fine Art Digital Photography": { credits: 10, category: "Visual/Performing Arts", gpa: "Unweighted" },
-  "Digital Art & Design": { credits: 10, category: "Visual/Performing Arts", gpa: "Unweighted" },
+  "Fine Art Digital Photography": { credits: 10, category: "Visual/Performing Arts", weighted: false },
+  "Digital Art & Design": { credits: 10, category: "Visual/Performing Arts", weighted: false },
 
   //Film Making
-  "Video Film": { credits: 10, category: "Visual/Performing Arts", gpa: "Unweighted" },
-  "Advanced Video Film": { credits: 10, category: "Visual/Performing Arts", gpa: "Unweighted" },
+  "Video Film": { credits: 10, category: "Visual/Performing Arts", weighted: false },
+  "Advanced Video Film": { credits: 10, category: "Visual/Performing Arts", weighted: false },
 
   // AP Art courses
-  "AP Drawing": { credits: 10, category: "Visual/Performing Arts", gpa: "Weighted" },
-  "AP 2D Art & Design": { credits: 10, category: "Visual/Performing Arts", gpa: "Weighted" },
-  "AP 3D Art & Design": { credits: 10, category: "Visual/Performing Arts", gpa: "Weighted" },
-  "AP Art History": { credits: 10, category: "Visual/Performing Arts", gpa: "Weighted" },
+  "AP Drawing": { credits: 10, category: "Visual/Performing Arts", weighted: true },
+  "AP 2D Art & Design": { credits: 10, category: "Visual/Performing Arts", weighted: true },
+  "AP 3D Art & Design": { credits: 10, category: "Visual/Performing Arts", weighted: true },
+  "AP Art History": { credits: 10, category: "Visual/Performing Arts", weighted: true },
 
-  // Freshman Fhysical Education Course
-  "Year-one PE": { credits: 10, category: "Physical Education", gpa: "Unweighted" },
-  "Dance": { credits: 10, category: "Physical Education", gpa: "Unweighted" },
+  // Freshman Physical Education Course
+  "Year-one PE": { credits: 10, category: "Physical Education", weighted: false },
+  "Dance": { credits: 10, category: "Physical Education", weighted: false },
 
   // Physical Education Electives
-  "Physical Education": { credits: 10, category: "Physical Education", gpa: "Unweighted" },
-  "Intro to Dance II (Level 2)": { credits: 10, category: "Physical Education", gpa: "Unweighted" },
-  "Intermediate Dance (Level 3)": { credits: 10, category: "Physical Education", gpa: "Unweighted" },
-  "Fitness Walking": { credits: 10, category: "Physical Education", gpa: "Unweighted" },
-  "Sports Performance Training": { credits: 10, category: "Physical Education", gpa: "Unweighted" },
-  "Weight Training": { credits: 10, category: "Physical Education", gpa: "Unweighted" },
+  "Physical Education": { credits: 10, category: "Physical Education", weighted: false },
+  "Intro to Dance II (Level 2)": { credits: 10, category: "Physical Education", weighted: false },
+  "Intermediate Dance (Level 3)": { credits: 10, category: "Physical Education", weighted: false },
+  "Fitness Walking": { credits: 10, category: "Physical Education", weighted: false },
+  "Sports Performance Training": { credits: 10, category: "Physical Education", weighted: false },
+  "Weight Training": { credits: 10, category: "Physical Education", weighted: false },
 
   // English Electives
-  "Speech and Debate": { credits: 10, category: "Elective", gpa: "Unweighted" },
-  "Journalism": { credits: 10, category: "Elective", gpa: "Unweighted" },
-  "Yearbook": { credits: 10, category: "Elective", gpa: "Unweighted" },
-  "Creative Writing": { credits: 10, category: "Elective", gpa: "Unweighted" },
+  "Speech and Debate": { credits: 10, category: "Elective", weighted: false },
+  "Journalism": { credits: 10, category: "Elective", weighted: false },
+  "Yearbook": { credits: 10, category: "Elective", weighted: false },
+  "Creative Writing": { credits: 10, category: "Elective", weighted: false },
 
   // Engineering electives
-  "Introduction to Engineering Techniques": { credits: 10, category: "Elective", gpa: "Unweighted" },
-  "Digital Electronics": { credits: 10, category: "Elective", gpa: "Unweighted" },
-  "Advance Engineering Techniques": { credits: 10, category: "Elective", gpa: "Unweighted" },
+  "Introduction to Engineering Techniques": { credits: 10, category: "Elective", weighted: false },
+  "Digital Electronics": { credits: 10, category: "Elective", weighted: false },
+  "Advance Engineering Techniques": { credits: 10, category: "Elective", weighted: false },
 
   // Computer Science electives
-  "Computer Science Foundation": { credits: 10, category: "Elective", gpa: "Unweighted" },
-  "Computer Game Design": { credits: 10, category: "Elective", gpa: "Unweighted" },
-  "Human Computer Interaction": { credits: 10, category: "Elective", gpa: "Unweighted" },
-  "Machine Learning": { credits: 10, category: "Elective", gpa: "Unweighted" },
+  "Computer Science Foundation": { credits: 10, category: "Elective", weighted: false },
+  "Computer Game Design": { credits: 10, category: "Elective", weighted: false },
+  "Human Computer Interaction": { credits: 10, category: "Elective", weighted: false },
+  "Machine Learning": { credits: 10, category: "Elective", weighted: false },
 
   // AP Computer Science courses
-  "AP Computer Science A": { credits: 10, category: "Elective", gpa: "Weighted" },
-  "AP Computer Science Principles": { credits: 10, category: "Elective", gpa: "Weighted" },
+  "AP Computer Science A": { credits: 10, category: "Elective", weighted: true },
+  "AP Computer Science Principles": { credits: 10, category: "Elective", weighted: true },
 
 };
 

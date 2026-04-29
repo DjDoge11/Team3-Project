@@ -1,0 +1,88 @@
+.auth-container {
+  max-width: 400px;
+  margin: 4rem auto;
+  padding: 2rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.auth-container h2 {
+  margin-bottom: 1.5rem;
+}
+
+input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.btn {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #19647E;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn.logout {
+  background-color: #dc3545;
+}
+
+.social {
+  margin-top: 0.5rem;
+}
+
+.google {
+  background-color: white;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.github {
+  background-color: #24292e;
+  color: white;
+}
+
+.divider {
+  margin: 1.5rem 0;
+  color: #666;
+}
+
+.alert {
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.alert.error {
+  background-color: #f8d7da;
+  color: #dc3545;
+}
+
+.alert.success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.footer {
+  margin-top: 1.5rem;
+}
+
+.footer button {
+  background: none;
+  border: none;
+  color: #19647E;
+  cursor: pointer;
+  text-decoration: underline;
+}
