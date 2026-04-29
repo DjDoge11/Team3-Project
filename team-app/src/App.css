@@ -266,3 +266,25 @@ body {
   padding-right: 3rem;
   font-size: 1.2rem;
 }
+
+.aboutUs{
+  padding-left: 3rem;
+  padding-right: 3rem;
+  font-size: 1.2rem;
+  text-align: right;
+  list-style-type: none;
+}
+
+.aboutUs ul{
+  list-style-type: none;
+}
+
+.aboutUs p{
+  margin-bottom: 2rem;
+
+}
+
+.aboutUs li{
+  margin-bottom: 1rem;
+
+}

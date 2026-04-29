@@ -260,3 +260,100 @@
 .grade-select option {
   padding: 0.5rem;
 }
+
+.course-period-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.course-input-group {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.grade-inputs-container {
+  display: flex;
+  gap: 6px;
+}
+
+.grade-box {
+  width: 42px;
+  height: 36px;
+  text-align: center;
+  font-weight: bold;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  /* Removes default arrow for a cleaner look if desired */
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.grade-box:disabled {
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* --- Alignment Add-on --- */
+
+.course-period-row {
+  display: flex;
+  align-items: center; /* Vertically centers the Label, Input, and Grade boxes */
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.course-input-group {
+  margin-bottom: 0; /* Remove bottom margin to prevent row misalignment */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.course-input-group label {
+  margin-bottom: 0; /* Keeps label on the same line as the input */
+  min-width: 65px;  /* Ensures "Period X" takes up consistent space */
+  font-weight: 500;
+  color: #333;
+}
+
+/* Force both elements to have the exact same footprint */
+.course-input, 
+.grade-box {
+  height: 38px;            /* Uniform height */
+  box-sizing: border-box;  /* Includes padding and border in the 38px height */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.course-input {
+  width: 100%;
+  padding: 0 10px;
+}
+
+.grade-inputs-container {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.grade-box {
+  width: 42px;
+  padding: 0;             /* Reset padding to center the letter perfectly */
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+/* Centers the text inside the select dropdown for Chrome/Safari */
+select.grade-box {
+  text-align-last: center;
+}
