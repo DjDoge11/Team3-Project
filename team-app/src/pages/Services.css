@@ -357,3 +357,77 @@
 select.grade-box {
   text-align-last: center;
 }
+
+/* Quarter column labels at the top */
+.grade-column-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.grade-col-spacer {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.grade-col-spacer::after {
+  content: 'Period';
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #333;
+  min-width: 65px;
+}
+
+.grade-column-labels {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.quarter-column-label {
+  width: 42px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #19647E;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  text-align: center;
+}
+
+.credits-label {
+  width: 42px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #19647E;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  text-align: center;
+  margin-right: 10px;
+}
+
+.credits-box {
+  width: 42px;
+  height: 38px;
+  text-align: center;
+  font-weight: bold;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+/* Make credit box always visible, value appears when course is selected */
+.credits-box:empty::before {
+  content: '';
+}
+
+.credits-box:not(:empty) {
+  background-color: #f5f5f5;
+}

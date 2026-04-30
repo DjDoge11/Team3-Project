@@ -136,7 +136,7 @@ export default function Courses() {
     }
   };
 
-  const grades = ['9th', '10th', '11th', '12th'];
+const grades = ['9th', '10th', '11th', '12th'];
   const semesters = ['Fall Semester', 'Spring Semester'];
   const classSlots = [1, 2, 3, 4];
 
@@ -284,7 +284,7 @@ export default function Courses() {
           <div className="semester-container">
             {semesters.map((sem) => {
               const isLocked = isSectionLocked(grade, sem);
-              return (
+return (
                 <div
                   key={sem}
                   className={`semester-card ${isLocked ? 'locked' : ''}`}
@@ -317,6 +317,23 @@ export default function Courses() {
                         >
                           Clear
                         </button>
+                      )}
+                    </div>
+                  </div>
+
+<div className="grade-column-header">
+                    <span className="grade-col-spacer"></span>
+                    <div className="grade-column-labels">
+                      {sem === 'Fall Semester' ? (
+                        <>
+                          <span className="quarter-column-label">Q1</span>
+                          <span className="quarter-column-label">Q2</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="quarter-column-label">Q3</span>
+                          <span className="quarter-column-label">Q4</span>
+                        </>
                       )}
                     </div>
                   </div>
@@ -367,8 +384,12 @@ export default function Courses() {
                           </div>
                         </div>
 
-                        {/* ADDED: Grade Dropdowns */}
+{/* ADDED: Grade Dropdowns */}
                         <div className="grade-inputs-container">
+                          {/* Credits column - shows value only when course is explicitly selected/confirmed */}
+                          <div className="credits-box">
+                            {(courses[inputKey] && courses[inputKey] in availableCourses) ? 5 : ''}
+                          </div>
                           {[1, 2].map((gradeNum) => {
                             const val = courseGrades[`${inputKey}-g${gradeNum}`] || '';
                             return (
