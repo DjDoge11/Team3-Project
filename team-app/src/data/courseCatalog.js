@@ -176,9 +176,13 @@ export const availableCourses = {
   "Human Computer Interaction": { credits: 10, category: "Elective", weighted: false },
   "Machine Learning": { credits: 10, category: "Elective", weighted: false },
 
-  // AP Computer Science courses
+// AP Computer Science courses
   "AP Computer Science A": { credits: 10, category: "Elective", weighted: true },
   "AP Computer Science Principles": { credits: 10, category: "Elective", weighted: true },
+
+  // Other courses (can select multiple without restriction)
+  "Other (Unweighted)": { credits: 10, category: "Elective", weighted: false },
+  "Other (Weighted)": { credits: 10, category: "Elective", weighted: true },
 
 };
 

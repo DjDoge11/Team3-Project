@@ -126,7 +126,7 @@ export default function Courses() {
       setTimeout(() => setSaveStatus(''), 1500);
     }
   };
-
+  
   const clearSemester = async (grade, semester) => {
     if (window.confirm(`Clear all courses for ${grade} ${semester}?`)) {
       const newCourses = { ...courses };
@@ -239,8 +239,11 @@ export default function Courses() {
           <div className="semester-container">
             {semesters.map((sem) => {
               const isLocked = isSectionLocked(grade, sem);
-              return (
-                <div key={sem} className={`semester-card ${isLocked ? 'locked' : ''}`}>
+return (
+                <div
+                  key={sem}
+                  className={`semester-card ${isLocked ? 'locked' : ''}`}
+                >
                   <div className="semester-header">
                     <h3>{sem} {isLocked && '🔒'}</h3>
                     <div className="semester-actions">
@@ -251,6 +254,23 @@ export default function Courses() {
                         </>
                       ) : (
                         <button className="unlock-btn" onClick={() => unlockSection(grade, sem)}>Unlock</button>
+                      )}
+                    </div>
+                  </div>
+
+<div className="grade-column-header">
+                    <span className="grade-col-spacer"></span>
+                    <div className="grade-column-labels">
+                      {sem === 'Fall Semester' ? (
+                        <>
+                          <span className="quarter-column-label">Q1</span>
+                          <span className="quarter-column-label">Q2</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="quarter-column-label">Q3</span>
+                          <span className="quarter-column-label">Q4</span>
+                        </>
                       )}
                     </div>
                   </div>
@@ -291,7 +311,12 @@ export default function Courses() {
                           </div>
                         </div>
 
+{/* ADDED: Grade Dropdowns */}
                         <div className="grade-inputs-container">
+                          {/* Credits column - shows value only when course is explicitly selected/confirmed */}
+                          <div className="credits-box">
+                            {(courses[inputKey] && courses[inputKey] in availableCourses) ? 10 : ''}
+                          </div>
                           {[1, 2].map((gradeNum) => {
                             const val = courseGrades[`${inputKey}-g${gradeNum}`] || '';
                             return (
