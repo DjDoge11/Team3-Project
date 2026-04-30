@@ -138,6 +138,18 @@ const canCalculate = selectedCourses.length > 0 &&
     setError('');
   };
 
+  const clearAll = () => {
+    setSelectedCourses(['', '', '', '']);
+    setGrades(['', '', '', '']);
+    setResult(null);
+    setError('');
+  };
+
+  const addCourse = () => {
+    setSelectedCourses([...selectedCourses, '']);
+    setGrades([...grades, '']);
+  };
+
   return (
     <main className="gpa-page">
       <div className="gpa-header">
