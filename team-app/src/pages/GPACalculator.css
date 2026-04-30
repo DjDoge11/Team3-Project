@@ -1,0 +1,76 @@
+/* GPA Calculator - Section Buttons Styling */
+.section-buttons {
+  display: flex;
+  gap: 1rem;
+  margin: 1rem 0;
+  justify-content: center;
+}
+
+.section-buttons button {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+/* Add Section Button */
+.section-buttons button:first-child {
+  background-color: #19647E;
+  color: white;
+}
+
+.section-buttons button:first-child:hover {
+  background-color: #155a6e;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Remove Section Button */
+.section-buttons button:nth-child(2) {
+  background-color: #dc3545;
+  color: white;
+}
+
+.section-buttons button:nth-child(2):hover {
+  background-color: #c82333;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Disabled state for Remove Section (when numSections <= 1) */
+.section-buttons button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Calculate Button Styling - matching original theme colors */
+.calculate-btn {
+  align-self: flex-start;
+  background-color: #19647E;
+  color: #EEE5E5;
+  border: none;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.calculate-btn:hover:not(:disabled) {
+  background-color: #28AFB0;
+}
+
+.calculate-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
