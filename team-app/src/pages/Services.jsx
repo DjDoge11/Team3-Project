@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { db, auth } from '../firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
-import { availableCourses, requiredCredits } from '../data/courseCatalog';
+import { availableCourses } from '../data/courseCatalog';
 import './Services.css';
 
 export default function Courses() {
   const [courses, setCourses] = useState({});
-  const [courseGrades, setCourseGrades] = useState({}); // ADDED: State for grades
+  const [courseGrades, setCourseGrades] = useState({});
   const [saveStatus, setSaveStatus] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState({});
   const [searchText, setSearchText] = useState({});
@@ -16,21 +16,34 @@ export default function Courses() {
   const [loading, setLoading] = useState(true);
   const [lockedSections, setLockedSections] = useState({});
 
-  // ADDED: Grade Color Mapping
   const gradeColors = {
-    'A': '#2ecc71', // Green
-    'B': '#87ceeb', // Light Blue
-    'C': '#f1c40f', // Yellow
-    'D': '#e67e22', // Orange
-    'F': '#e74c3c', // Red
+    'A': '#00B4D8',
+    'B': '#2ecc71',
+    'C': '#f1c40f',
+    'D': '#e67e22',
+    'F': '#e74c3c',
     '': 'white'
+  };
+
+  // --- Centralized Save Helper ---
+  const syncToFirebase = async (updates) => {
+    if (user) {
+      try {
+        const userDocRef = doc(db, 'users', user.uid);
+        // Use merge: true so we don't overwrite other fields (like profile info)
+        await setDoc(userDocRef, updates, { merge: true });
+        setSaveStatus('Changes saved to account');
+        setTimeout(() => setSaveStatus(''), 1500);
+      } catch (e) {
+        console.error('Error syncing to Firebase:', e);
+        setSaveStatus('Error saving to cloud');
+      }
+    }
   };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
-      setLoading(false);
-
       if (currentUser) {
         try {
           const userDocRef = doc(db, 'users', currentUser.uid);
@@ -38,21 +51,21 @@ export default function Courses() {
           if (userDoc.exists()) {
             const data = userDoc.data();
             if (data.courses) setCourses(data.courses);
-            if (data.courseGrades) setCourseGrades(data.courseGrades); // ADDED: Load grades
+            if (data.courseGrades) setCourseGrades(data.courseGrades);
             if (data.lockedSections) setLockedSections(data.lockedSections);
-            setSaveStatus('Loaded from your account');
+            setSaveStatus('Schedule loaded');
             setTimeout(() => setSaveStatus(''), 2000);
           }
         } catch (e) {
           console.error('Error loading user data:', e);
         }
       }
+      setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
 
-  // ADDED: Handle Grade Input
   const handleGradeChange = async (inputKey, gradeIndex, value) => {
     const [grade, semester] = inputKey.split('-');
     if (isSectionLocked(grade, semester)) return;
@@ -61,14 +74,8 @@ export default function Courses() {
     const newGrades = { ...courseGrades, [gradeKey]: value };
     setCourseGrades(newGrades);
 
-    if (user) {
-      try {
-        const userDocRef = doc(db, 'users', user.uid);
-        await setDoc(userDocRef, { courseGrades: newGrades }, { merge: true });
-      } catch (e) {
-        console.error('Error saving grade:', e);
-      }
-    }
+    // Immediate Cloud Save
+    await syncToFirebase({ courseGrades: newGrades });
   };
 
   const lockSection = async (grade, semester) => {
@@ -76,12 +83,7 @@ export default function Courses() {
     const newLocked = { ...lockedSections, [sectionKey]: true };
     setLockedSections(newLocked);
 
-    if (user) {
-      const userDocRef = doc(db, 'users', user.uid);
-      await setDoc(userDocRef, { lockedSections: newLocked }, { merge: true });
-      setSaveStatus(`${grade} ${semester} locked & saved`);
-      setTimeout(() => setSaveStatus(''), 2000);
-    }
+    await syncToFirebase({ lockedSections: newLocked });
   };
 
   const unlockSection = async (grade, semester) => {
@@ -90,12 +92,7 @@ export default function Courses() {
     delete newLocked[sectionKey];
     setLockedSections(newLocked);
 
-    if (user) {
-      const userDocRef = doc(db, 'users', user.uid);
-      await setDoc(userDocRef, { lockedSections: newLocked }, { merge: true });
-      setSaveStatus(`${grade} ${semester} unlocked`);
-      setTimeout(() => setSaveStatus(''), 2000);
-    }
+    await syncToFirebase({ lockedSections: newLocked });
   };
 
   const isSectionLocked = (grade, semester) => {
@@ -121,25 +118,48 @@ export default function Courses() {
     setCourses(newCourses);
     localStorage.setItem('courseSelections', JSON.stringify(newCourses));
 
+    // Immediate Cloud Save
     if (user) {
-      try {
-        const userDocRef = doc(db, 'users', user.uid);
-        await setDoc(userDocRef, { courses: newCourses }, { merge: true });
-        setSaveStatus('Auto-saved to your account');
-        setTimeout(() => setSaveStatus(''), 1500);
-      } catch (e) {
-        console.error('Auto-save error:', e);
-      }
+      await syncToFirebase({ courses: newCourses });
     } else {
       setSaveStatus('Auto-saved to browser');
       setTimeout(() => setSaveStatus(''), 1500);
     }
   };
 
+  const clearSemester = async (grade, semester) => {
+    if (window.confirm(`Clear all courses for ${grade} ${semester}?`)) {
+      const newCourses = { ...courses };
+      const newGrades = { ...courseGrades };
+      const newSearchText = { ...searchText };
+
+      Object.keys(newCourses).forEach((key) => {
+        if (key.startsWith(`${grade}-${semester}-`)) delete newCourses[key];
+      });
+      Object.keys(newGrades).forEach((key) => {
+        if (key.startsWith(`${grade}-${semester}-`)) delete newGrades[key];
+      });
+      Object.keys(newSearchText).forEach((key) => {
+        if (key.startsWith(`${grade}-${semester}-`)) delete newSearchText[key];
+      });
+
+      setCourses(newCourses);
+      setCourseGrades(newGrades);
+      setSearchText(newSearchText);
+      localStorage.setItem('courseSelections', JSON.stringify(newCourses));
+
+      // Sync the deletions to Firebase
+      await syncToFirebase({ 
+        courses: newCourses, 
+        courseGrades: newGrades 
+      });
+    }
+  };
+
+  // --- Logic Helpers ---
   const grades = ['9th', '10th', '11th', '12th'];
   const semesters = ['Fall Semester', 'Spring Semester'];
   const classSlots = [1, 2, 3, 4];
-
   const courseList = Object.keys(availableCourses);
 
   const getFilteredCourses = (search) => {
@@ -155,10 +175,8 @@ export default function Courses() {
     setDropdownOpen(prev => ({ ...prev, [key]: value.length > 0 }));
 
     if (!value || value.trim() === '') {
-      const newCourses = { ...courses };
-      delete newCourses[key];
-      setCourses(newCourses);
-      localStorage.setItem('courseSelections', JSON.stringify(newCourses));
+      const [grade, semester, slot] = key.split('-');
+      courseInput(grade, semester, slot, '');
     }
   };
 
@@ -177,103 +195,40 @@ export default function Courses() {
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        if (dropdownOpen[inputKey]) {
-          setHighlightedIndex(prev => ({
-            ...prev,
-            [inputKey]: (currentIndex + 1) % filteredCourses.length
-          }));
-        } else {
-          setDropdownOpen(prev => ({ ...prev, [inputKey]: true }));
-        }
+        setDropdownOpen(prev => ({ ...prev, [inputKey]: true }));
+        setHighlightedIndex(prev => ({
+          ...prev,
+          [inputKey]: (currentIndex + 1) % filteredCourses.length
+        }));
         break;
       case 'ArrowUp':
         e.preventDefault();
-        if (dropdownOpen[inputKey]) {
-          setHighlightedIndex(prev => ({
-            ...prev,
-            [inputKey]: (currentIndex - 1 + filteredCourses.length) % filteredCourses.length
-          }));
-        } else {
-          setDropdownOpen(prev => ({ ...prev, [inputKey]: true }));
-        }
+        setHighlightedIndex(prev => ({
+          ...prev,
+          [inputKey]: (currentIndex - 1 + filteredCourses.length) % filteredCourses.length
+        }));
         break;
       case 'Enter':
         e.preventDefault();
         if (dropdownOpen[inputKey] && filteredCourses.length > 0) {
-          const selectedCourse = filteredCourses[currentIndex];
-          handleCourseSelect(inputKey, selectedCourse);
-        } else if (searchText[inputKey]) {
-          const lowerSearch = searchText[inputKey].toLowerCase();
-          const closestMatch =
-            filteredCourses.find(course =>
-              course.toLowerCase().startsWith(lowerSearch)
-            ) || filteredCourses[0];
-          if (closestMatch) {
-            handleCourseSelect(inputKey, closestMatch);
-          }
+          handleCourseSelect(inputKey, filteredCourses[currentIndex]);
         }
         break;
       case 'Escape':
         setDropdownOpen(prev => ({ ...prev, [inputKey]: false }));
-        setHighlightedIndex(prev => ({ ...prev, [inputKey]: 0 }));
         break;
       default:
         break;
     }
   };
 
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (!e.target.closest('.course-dropdown')) {
-        setDropdownOpen({});
-      }
-    };
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  }, []);
-
-  const clearSemester = (grade, semester) => {
-    if (confirm(`Clear all courses for ${grade} ${semester}?`)) {
-      const newCourses = { ...courses };
-      const newGrades = { ...courseGrades }; // Also clear grades for that semester
-
-      Object.keys(newCourses).forEach((key) => {
-        if (key.startsWith(`${grade}-${semester}-`)) {
-          delete newCourses[key];
-        }
-      });
-      
-      // ADDED: Clear associated grades
-      Object.keys(newGrades).forEach((key) => {
-        if (key.startsWith(`${grade}-${semester}-`)) {
-          delete newGrades[key];
-        }
-      });
-
-      setCourses(newCourses);
-      setCourseGrades(newGrades);
-
-      const newSearchText = { ...searchText };
-      Object.keys(newSearchText).forEach((key) => {
-        if (key.startsWith(`${grade}-${semester}-`)) {
-          delete newSearchText[key];
-        }
-      });
-      setSearchText(newSearchText);
-
-      localStorage.setItem('courseSelections', JSON.stringify(newCourses));
-      setSaveStatus(`${grade} ${semester} cleared`);
-      setTimeout(() => setSaveStatus(''), 2000);
-    }
-  };
+  if (loading) return <div className="loading">Loading Schedule...</div>;
 
   return (
     <main className="services-main">
       <div className="services-header">
         <h1>Course Selection and Credit Requirement</h1>
-        {!user && (
-          <span className="login-hint">Log in to save automatically</span>
-        )}
+        {!user && <span className="login-hint">Log in to sync with your account</span>}
       </div>
 
       {saveStatus && <div className="save-status">{saveStatus}</div>}
@@ -285,73 +240,42 @@ export default function Courses() {
             {semesters.map((sem) => {
               const isLocked = isSectionLocked(grade, sem);
               return (
-                <div
-                  key={sem}
-                  className={`semester-card ${isLocked ? 'locked' : ''}`}
-                >
+                <div key={sem} className={`semester-card ${isLocked ? 'locked' : ''}`}>
                   <div className="semester-header">
-                    <h3>
-                      {sem} {isLocked && '🔒'}
-                    </h3>
+                    <h3>{sem} {isLocked && '🔒'}</h3>
                     <div className="semester-actions">
                       {!isLocked ? (
-                        <button
-                          className="lock-btn"
-                          onClick={() => lockSection(grade, sem)}
-                          disabled={!user}
-                        >
-                          Lock
-                        </button>
+                        <>
+                          <button className="lock-btn" onClick={() => lockSection(grade, sem)} disabled={!user}>Lock</button>
+                          <button className="clear-semester-btn" onClick={() => clearSemester(grade, sem)}>Clear</button>
+                        </>
                       ) : (
-                        <button
-                          className="unlock-btn"
-                          onClick={() => unlockSection(grade, sem)}
-                        >
-                          Unlock
-                        </button>
-                      )}
-                      {!isLocked && (
-                        <button
-                          className="clear-semester-btn"
-                          onClick={() => clearSemester(grade, sem)}
-                        >
-                          Clear
-                        </button>
+                        <button className="unlock-btn" onClick={() => unlockSection(grade, sem)}>Unlock</button>
                       )}
                     </div>
                   </div>
 
                   {classSlots.map((slot) => {
                     const inputKey = `${grade}-${sem}-${slot}`;
-                    const filteredCourses = getFilteredCourses(
-                      searchText[inputKey] || ''
-                    );
-                    const isDropdownOpen =
-                      dropdownOpen[inputKey] && filteredCourses.length > 0;
+                    const filteredCourses = getFilteredCourses(searchText[inputKey] || '');
+                    const isDropdownOpen = dropdownOpen[inputKey] && filteredCourses.length > 0;
 
                     return (
-                      <div key={slot} className="course-period-row"> {/* ADDED: Container for period + grades */}
+                      <div key={slot} className="course-period-row">
                         <div className="course-input-group">
                           <label>Period {slot}</label>
                           <div className="course-dropdown">
                             <input
                               type="text"
-                              placeholder={isLocked ? 'Locked' : 'Course name'}
+                              placeholder={isLocked ? 'Locked' : 'Search courses...'}
                               value={searchText[inputKey] || courses[inputKey] || ''}
                               disabled={isLocked}
                               className="course-input"
-                              onChange={(e) => {
-                                courseInput(grade, sem, slot, e.target.value);
-                                handleSearchChange(inputKey, e.target.value);
-                              }}
+                              onChange={(e) => handleSearchChange(inputKey, e.target.value)}
                               onKeyDown={(e) => handleKeyDown(e, inputKey)}
-                              onFocus={() => {
-                                if (searchText[inputKey] || courses[inputKey]) {
-                                  setDropdownOpen(prev => ({ ...prev, [inputKey]: true }));
-                                }
-                              }}
+                              onFocus={() => setDropdownOpen(prev => ({ ...prev, [inputKey]: true }))}
                             />
-                            {isDropdownOpen && (
+                            {isDropdownOpen && !isLocked && (
                               <ul className="dropdown-list">
                                 {filteredCourses.slice(0, 10).map((course, idx) => (
                                   <li
@@ -367,7 +291,6 @@ export default function Courses() {
                           </div>
                         </div>
 
-                        {/* ADDED: Grade Dropdowns */}
                         <div className="grade-inputs-container">
                           {[1, 2].map((gradeNum) => {
                             const val = courseGrades[`${inputKey}-g${gradeNum}`] || '';
@@ -381,11 +304,7 @@ export default function Courses() {
                                 onChange={(e) => handleGradeChange(inputKey, gradeNum, e.target.value)}
                               >
                                 <option value="">-</option>
-                                <option value="A">A</option>
-                                <option value="B">B</option>
-                                <option value="C">C</option>
-                                <option value="D">D</option>
-                                <option value="F">F</option>
+                                {['A', 'B', 'C', 'D', 'F'].map(g => <option key={g} value={g}>{g}</option>)}
                               </select>
                             );
                           })}
