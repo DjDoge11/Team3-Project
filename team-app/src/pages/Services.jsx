@@ -285,7 +285,7 @@ return (
                         <div className="grade-inputs-container">
                           {/* Credits column - shows value only when course is explicitly selected/confirmed */}
                           <div className="credits-box">
-                            {(courses[inputKey] && courses[inputKey] in availableCourses) ? 5 : ''}
+                            {(courses[inputKey] && courses[inputKey] in availableCourses) ? 10 : ''}
                           </div>
                           {[1, 2].map((gradeNum) => {
                             const val = courseGrades[`${inputKey}-g${gradeNum}`] || '';
