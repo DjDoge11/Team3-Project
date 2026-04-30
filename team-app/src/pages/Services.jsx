@@ -127,37 +127,7 @@ export default function Courses() {
     }
   };
 
-  const clearSemester = async (grade, semester) => {
-    if (window.confirm(`Clear all courses for ${grade} ${semester}?`)) {
-      const newCourses = { ...courses };
-      const newGrades = { ...courseGrades };
-      const newSearchText = { ...searchText };
-
-      Object.keys(newCourses).forEach((key) => {
-        if (key.startsWith(`${grade}-${semester}-`)) delete newCourses[key];
-      });
-      Object.keys(newGrades).forEach((key) => {
-        if (key.startsWith(`${grade}-${semester}-`)) delete newGrades[key];
-      });
-      Object.keys(newSearchText).forEach((key) => {
-        if (key.startsWith(`${grade}-${semester}-`)) delete newSearchText[key];
-      });
-
-      setCourses(newCourses);
-      setCourseGrades(newGrades);
-      setSearchText(newSearchText);
-      localStorage.setItem('courseSelections', JSON.stringify(newCourses));
-
-      // Sync the deletions to Firebase
-      await syncToFirebase({ 
-        courses: newCourses, 
-        courseGrades: newGrades 
-      });
-    }
-  };
-
-  // --- Logic Helpers ---
-  const grades = ['9th', '10th', '11th', '12th'];
+const grades = ['9th', '10th', '11th', '12th'];
   const semesters = ['Fall Semester', 'Spring Semester'];
   const classSlots = [1, 2, 3, 4];
   const courseList = Object.keys(availableCourses);
@@ -239,8 +209,11 @@ export default function Courses() {
           <div className="semester-container">
             {semesters.map((sem) => {
               const isLocked = isSectionLocked(grade, sem);
-              return (
-                <div key={sem} className={`semester-card ${isLocked ? 'locked' : ''}`}>
+return (
+                <div
+                  key={sem}
+                  className={`semester-card ${isLocked ? 'locked' : ''}`}
+                >
                   <div className="semester-header">
                     <h3>{sem} {isLocked && '🔒'}</h3>
                     <div className="semester-actions">
@@ -251,6 +224,23 @@ export default function Courses() {
                         </>
                       ) : (
                         <button className="unlock-btn" onClick={() => unlockSection(grade, sem)}>Unlock</button>
+                      )}
+                    </div>
+                  </div>
+
+<div className="grade-column-header">
+                    <span className="grade-col-spacer"></span>
+                    <div className="grade-column-labels">
+                      {sem === 'Fall Semester' ? (
+                        <>
+                          <span className="quarter-column-label">Q1</span>
+                          <span className="quarter-column-label">Q2</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="quarter-column-label">Q3</span>
+                          <span className="quarter-column-label">Q4</span>
+                        </>
                       )}
                     </div>
                   </div>
@@ -291,7 +281,12 @@ export default function Courses() {
                           </div>
                         </div>
 
+{/* ADDED: Grade Dropdowns */}
                         <div className="grade-inputs-container">
+                          {/* Credits column - shows value only when course is explicitly selected/confirmed */}
+                          <div className="credits-box">
+                            {(courses[inputKey] && courses[inputKey] in availableCourses) ? 10 : ''}
+                          </div>
                           {[1, 2].map((gradeNum) => {
                             const val = courseGrades[`${inputKey}-g${gradeNum}`] || '';
                             return (

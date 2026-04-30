@@ -3,6 +3,7 @@ import { db, auth } from '../firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { availableCourses } from '../data/courseCatalog';
+import './GPACalculator.css';
 
 // Convert availableCourses object to array format used by the component
 const courses = Object.entries(availableCourses).map(([name, data]) => ({
@@ -104,11 +105,12 @@ export default function GPA() {
     }
   };
 
-  const calculateGPA = () => {
-    const allCoursesFilled = selectedCourses.every((c) => c !== '');
-    const allGradesFilled = grades.every((g) => g !== '');
+const canCalculate = selectedCourses.length > 0 && 
+    selectedCourses.every((c) => c !== '') && 
+    grades.every((g) => g !== '');
 
-    if (!allCoursesFilled || !allGradesFilled) {
+  const calculateGPA = () => {
+    if (!canCalculate) {
       const msg = `Please select a course and grade for all ${selectedCourses.length} dropdowns before calculating.`;
       setError(msg);
       setResult(null);
@@ -188,9 +190,9 @@ export default function GPA() {
                   title={course || 'Select Course'}
                 >
                   <option value="">Select Course</option>
-                  {courses.map((c) => {
+{courses.map((c) => {
                     const courseValue = c.value || c.name;
-                    const isOther = c.name === 'Other';
+                    const isOther = c.name === 'Other (Unweighted)' || c.name === 'Other (Weighted)';
                     const isSelectedElsewhere = !isOther && selectedCourses.some(
                       (sc, si) => sc === courseValue && si !== index
                     );
@@ -200,7 +202,7 @@ export default function GPA() {
                         value={courseValue}
                         disabled={isSelectedElsewhere}
                       >
-                        {c.name} {c.weighted ? '(Weighted)' : '(Unweighted)'}
+                        {c.name}
                       </option>
                     );
                   })}
@@ -224,11 +226,11 @@ export default function GPA() {
               ))}
             </div>
           </div>
-          <button className="add-course-btn" onClick={addCourse}>Add Course</button>
-          <div class="button-group">
-          <button className="calculate-btn" onClick={calculateGPA}>Calculate</button>
-          <button className="clear-btn" onClick={clearAll}>Clear</button>
-          </div>
+          <div className="section-buttons">
+            <button onClick={addSection}>Add Section</button>
+            <button onClick={removeSection} disabled={numSections <= 1}>Remove Section</button>
+          </div>          
+<button className="calculate-btn" onClick={calculateGPA} disabled={!canCalculate}>Calculate</button>
           {error && <p className="gpa-error">{error}</p>}
         </div>
 
