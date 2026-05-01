@@ -15,11 +15,6 @@ export default function Navbar() {
 
   return (
     <nav className="navbar">
-        <nav className="username">
-        {user ? (
-          <p><strong>{user.email}</strong></p>) : (
-          <p>Guest</p>)}
-        </nav>
       <ul>
       <li><Link to="/home">Home</Link></li>
         <li><Link to="/gpa">GPA</Link></li>
@@ -27,6 +22,12 @@ export default function Navbar() {
         <li><Link to="/grades">Grades</Link></li>
         <li><Link to="/login">Login</Link></li>
       </ul>
+
+      <div className="username">
+          {user ? (
+          <p>{user.email}</p>
+        ) : (<p>Guest</p>)}
+      </div>
     </nav>
   );
 }

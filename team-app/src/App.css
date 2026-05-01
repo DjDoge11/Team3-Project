@@ -7,21 +7,36 @@ body {
 }
 
 .navbar {
-  
     background-color: #19647E;
     padding: 1rem;
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+    flex-direction: column;    /* Keeps them stacked if you want them on different lines */
+  gap: .5rem;
+}
+
+.username p{
+  margin: 0;
+  padding: 0;
+  line-height: 1.25;  
 }
 
 .username{
-  color: #ffffff;
-  font-weight: lighter;
-
+  list-style: none;
+    display: flex;
+    gap: 0rem;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    color: #EEE5E5;
+    font-weight: bold;
+    font-family: sans-serif;
 }
-
 .navbar ul {
     list-style: none;
     display: flex;
-    gap: 1.5rem;
+    gap: 1rem;
     margin: 0;
     padding: 0;
     justify-content: center;
@@ -36,7 +51,7 @@ body {
     background-color: #28AFB0;
     
     
-    padding: 0.5rem 5.2rem; 
+    padding: 0.5rem 4.5rem; 
     border-radius: .5rem; 
   }
   

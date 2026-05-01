@@ -1,7 +1,6 @@
 import React from 'react';
 import rzLogo from './rzLogo.png';
 import '../App.css'; 
-import AuthPage from '../pages/Auth.jsx';
 
 export default function Footer() {
   return (
