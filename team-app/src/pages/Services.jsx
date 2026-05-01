@@ -338,7 +338,6 @@ export default function Courses() {
                       {!locked ? (
                         <>
                           <button className="lock-btn" onClick={() => lockSection(grade, sem)} disabled={!user}>Lock</button>
-                          <button className="clear-semester-btn" onClick={() => clearSemester(grade, sem)}>Clear</button>
                         </>
                       ) : (
                         <button className="unlock-btn" onClick={() => unlockSection(grade, sem)}>Unlock</button>
