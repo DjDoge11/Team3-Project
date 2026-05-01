@@ -111,93 +111,137 @@ export default function Courses() {
   // -----------------------------
   // 4. Course Input (optimized)
   // -----------------------------
-  const courseInput = async (grade, semester, slot, value) => {
-    const key = `${grade}-${semester}-${slot}`;
+const courseInput = async (grade, semester, slot, value) => {
+  const key = `${grade}-${semester}-${slot}`;
 
-    if (lockedSections[`${grade}-${semester}`]) {
-      setSaveStatus('This section is locked. Unlock to edit.');
-      setTimeout(() => setSaveStatus(''), 2000);
-      return;
-    }
+  if (lockedSections[`${grade}-${semester}`]) {
+    setSaveStatus('This section is locked. Unlock to edit.');
+    setTimeout(() => setSaveStatus(''), 2000);
+    return;
+  }
 
-    const newCourses = { ...courses };
-    if (value && value.trim()) newCourses[key] = value;
-    else delete newCourses[key];
+  const newCourses = { ...courses };
+  if (value && value.trim()) newCourses[key] = value;
+  else delete newCourses[key];
 
-    setCourses(newCourses);
+  setCourses(newCourses);
 
-    saveCache({
-      courses: newCourses,
-      courseGrades,
-      lockedSections,
-      searchText
-    });
+  if (user) {
+    try {
+      const userDocRef = doc(db, 'users', user.uid);
+      await setDoc(
+        userDocRef,
+        { courses: newCourses },
+        { merge: true }
+      );
 
-    if (user) {
-      await syncToFirebase({ courses: newCourses });
-    } else {
-      setSaveStatus('Auto-saved to browser');
+      setSaveStatus('Saved to your account');
+      setTimeout(() => setSaveStatus(''), 1500);
+    } catch (err) {
+      console.error('Firestore save error:', err);
+      setSaveStatus('Error saving');
       setTimeout(() => setSaveStatus(''), 1500);
     }
-  };
+  } else {
+    setSaveStatus('Auto-saved to browser');
+    setTimeout(() => setSaveStatus(''), 1500);
+  }
+};
 
   // -----------------------------
   // 5. Grade Change (optimized)
   // -----------------------------
-  const handleGradeChange = async (inputKey, gradeIndex, value) => {
-    const gradeKey = `${inputKey}-g${gradeIndex}`;
-    const newGrades = { ...courseGrades, [gradeKey]: value };
+ const handleGradeChange = async (inputKey, gradeIndex, value) => {
+  const gradeKey = `${inputKey}-g${gradeIndex}`;
+  const newGrades = { ...courseGrades, [gradeKey]: value };
 
-    setCourseGrades(newGrades);
+  setCourseGrades(newGrades);
 
-    saveCache({
-      courses,
-      courseGrades: newGrades,
-      lockedSections,
-      searchText
-    });
+  if (user) {
+    try {
+      const userDocRef = doc(db, 'users', user.uid);
+      await setDoc(
+        userDocRef,
+        { courseGrades: newGrades },
+        { merge: true }
+      );
 
-    await syncToFirebase({ courseGrades: newGrades });
-  };
+      setSaveStatus('Saved to your account');
+      setTimeout(() => setSaveStatus(''), 1500);
+    } catch (err) {
+      console.error('Firestore save error:', err);
+      setSaveStatus('Error saving');
+      setTimeout(() => setSaveStatus(''), 1500);
+    }
+  } else {
+    setSaveStatus('Auto-saved to browser');
+    setTimeout(() => setSaveStatus(''), 1500);
+  }
+};
+
 
   // -----------------------------
   // 6. Lock / Unlock (optimized)
   // -----------------------------
-  const lockSection = async (grade, semester) => {
-    const key = `${grade}-${semester}`;
-    const newLocked = { ...lockedSections, [key]: true };
+ const lockSection = async (grade, semester) => {
+  const key = `${grade}-${semester}`;
+  const newLocked = { ...lockedSections, [key]: true };
 
-    setLockedSections(newLocked);
+  setLockedSections(newLocked);
 
-    saveCache({
-      courses,
-      courseGrades,
-      lockedSections: newLocked,
-      searchText
-    });
+  if (user) {
+    try {
+      const userDocRef = doc(db, 'users', user.uid);
+      await setDoc(
+        userDocRef,
+        { lockedSections: newLocked },
+        { merge: true }
+      );
 
-    await syncToFirebase({ lockedSections: newLocked });
-  };
+      setSaveStatus(`${grade} ${semester} locked`);
+      setTimeout(() => setSaveStatus(''), 2000);
+    } catch (err) {
+      console.error('Firestore save error:', err);
+      setSaveStatus('Error saving');
+      setTimeout(() => setSaveStatus(''), 2000);
+    }
+  } else {
+    setSaveStatus('Auto-saved to browser');
+    setTimeout(() => setSaveStatus(''), 1500);
+  }
+};
 
-  const unlockSection = async (grade, semester) => {
-    const key = `${grade}-${semester}`;
-    const newLocked = { ...lockedSections };
-    delete newLocked[key];
+const unlockSection = async (grade, semester) => {
+  const key = `${grade}-${semester}`;
+  const newLocked = { ...lockedSections };
+  delete newLocked[key];
 
-    setLockedSections(newLocked);
+  setLockedSections(newLocked);
 
-    saveCache({
-      courses,
-      courseGrades,
-      lockedSections: newLocked,
-      searchText
-    });
+  if (user) {
+    try {
+      const userDocRef = doc(db, 'users', user.uid);
+      await setDoc(
+        userDocRef,
+        { lockedSections: newLocked },
+        { merge: true }
+      );
 
-    await syncToFirebase({ lockedSections: newLocked });
-  };
+      setSaveStatus(`${grade} ${semester} unlocked`);
+      setTimeout(() => setSaveStatus(''), 2000);
+    } catch (err) {
+      console.error('Firestore save error:', err);
+      setSaveStatus('Error saving');
+      setTimeout(() => setSaveStatus(''), 2000);
+    }
+  } else {
+    setSaveStatus('Auto-saved to browser');
+    setTimeout(() => setSaveStatus(''), 1500);
+  }
+};
 
-  const isSectionLocked = (grade, semester) =>
-    lockedSections[`${grade}-${semester}`] === true;
+const isSectionLocked = (grade, semester) =>
+  lockedSections[`${grade}-${semester}`] === true;
 
   // -----------------------------
   // 7. Clear Semester (optimized)
