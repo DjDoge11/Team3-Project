@@ -22,6 +22,25 @@ const gradePoints = {
 
 const gradeOptions = ['A', 'B', 'C', 'D', 'F'];
 
+// -----------------------------
+// LOCAL CACHE HELPERS
+// -----------------------------
+const LOCAL_KEY = "gpaCache";
+
+function saveToCache(courses, grades) {
+  const data = { courses, grades };
+  localStorage.setItem(LOCAL_KEY, JSON.stringify(data));
+}
+
+function loadFromCache() {
+  try {
+    const raw = localStorage.getItem(LOCAL_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 export default function GPA() {
   const [numSections, setNumSections] = useState(4);
   const [selectedCourses, setSelectedCourses] = useState(Array(4).fill(''));
@@ -32,23 +51,38 @@ export default function GPA() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Monitor auth state and load user GPA data from Firestore
+  // -----------------------------
+  // LOAD CACHE FIRST → THEN FIRESTORE
+  // -----------------------------
   useEffect(() => {
+    // Load from local cache immediately
+    const cached = loadFromCache();
+    if (cached) {
+      setSelectedCourses(cached.courses);
+      setGrades(cached.grades);
+      setNumSections(cached.courses.length);
+    }
+
+    // Then load Firestore if logged in
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       setLoading(false);
-      
-      // If user is logged in, load their saved GPA data from Firestore
+
       if (currentUser) {
         try {
           const userDocRef = doc(db, 'users', currentUser.uid);
           const userDoc = await getDoc(userDocRef);
+
           if (userDoc.exists()) {
             const data = userDoc.data();
+
             if (data.gpaCourses && data.gpaGrades) {
               setSelectedCourses(data.gpaCourses);
               setGrades(data.gpaGrades);
-              setNumSections(data.gpaCourses.length || 4);
+              setNumSections(data.gpaCourses.length);
+
+              // Sync Firestore → cache
+              saveToCache(data.gpaCourses, data.gpaGrades);
             }
           }
         } catch (e) {
@@ -56,37 +90,50 @@ export default function GPA() {
         }
       }
     });
+
     return () => unsubscribe();
   }, []);
 
+  // -----------------------------
+  // COURSE CHANGE
+  // -----------------------------
   const handleCourseChange = (index, value) => {
     const newCourses = [...selectedCourses];
     newCourses[index] = value;
     setSelectedCourses(newCourses);
     setError('');
-    
-    // Auto-save to Firestore if user is logged in
+
+    // Save to cache
+    saveToCache(newCourses, grades);
+
+    // Save to Firestore
     if (user) {
       const userDocRef = doc(db, 'users', user.uid);
-      setDoc(userDocRef, { 
-        gpaCourses: newCourses, 
-        gpaGrades: grades 
+      setDoc(userDocRef, {
+        gpaCourses: newCourses,
+        gpaGrades: grades
       }, { merge: true });
     }
   };
 
+  // -----------------------------
+  // GRADE CHANGE
+  // -----------------------------
   const handleGradeChange = (index, value) => {
     const newGrades = [...grades];
     newGrades[index] = value;
     setGrades(newGrades);
     setError('');
-    
-    // Auto-save to Firestore if user is logged in
+
+    // Save to cache
+    saveToCache(selectedCourses, newGrades);
+
+    // Save to Firestore
     if (user) {
       const userDocRef = doc(db, 'users', user.uid);
-      setDoc(userDocRef, { 
-        gpaCourses: selectedCourses, 
-        gpaGrades: newGrades 
+      setDoc(userDocRef, {
+        gpaCourses: selectedCourses,
+        gpaGrades: newGrades
       }, { merge: true });
     }
   };
@@ -99,14 +146,27 @@ export default function GPA() {
 
   const removeSection = () => {
     if (numSections > 1) {
+      const newCourses = selectedCourses.slice(0, -1);
+      const newGrades = grades.slice(0, -1);
+
       setNumSections(numSections - 1);
-      setSelectedCourses(selectedCourses.slice(0, -1));
-      setGrades(grades.slice(0, -1));
+      setSelectedCourses(newCourses);
+      setGrades(newGrades);
+
+      saveToCache(newCourses, newGrades);
+
+      if (user) {
+        const userDocRef = doc(db, 'users', user.uid);
+        setDoc(userDocRef, {
+          gpaCourses: newCourses,
+          gpaGrades: newGrades
+        }, { merge: true });
+      }
     }
   };
 
-const canCalculate = selectedCourses.length > 0 && 
-    selectedCourses.every((c) => c !== '') && 
+  const canCalculate = selectedCourses.length > 0 &&
+    selectedCourses.every((c) => c !== '') &&
     grades.every((g) => g !== '');
 
   const calculateGPA = () => {
@@ -139,15 +199,23 @@ const canCalculate = selectedCourses.length > 0 &&
   };
 
   const clearAll = () => {
-    setSelectedCourses(['', '', '', '']);
-    setGrades(['', '', '', '']);
+    const empty = ['', '', '', ''];
+    setSelectedCourses(empty);
+    setGrades(empty);
     setResult(null);
     setError('');
-  };
 
-  const addCourse = () => {
-    setSelectedCourses([...selectedCourses, '']);
-    setGrades([...grades, '']);
+    // Clear cache
+    saveToCache(empty, empty);
+
+    // Clear Firestore
+    if (user) {
+      const userDocRef = doc(db, 'users', user.uid);
+      setDoc(userDocRef, {
+        gpaCourses: empty,
+        gpaGrades: empty
+      }, { merge: true });
+    }
   };
 
   return (
@@ -190,7 +258,7 @@ const canCalculate = selectedCourses.length > 0 &&
                   title={course || 'Select Course'}
                 >
                   <option value="">Select Course</option>
-{courses.map((c) => {
+                  {courses.map((c) => {
                     const courseValue = c.value || c.name;
                     const isOther = c.name === 'Other (Unweighted)' || c.name === 'Other (Weighted)';
                     const isSelectedElsewhere = !isOther && selectedCourses.some(
@@ -209,6 +277,7 @@ const canCalculate = selectedCourses.length > 0 &&
                 </select>
               ))}
             </div>
+
             <div className="gpa-grade-column">
               <h3>Grade</h3>
               {grades.map((grade, index) => (
@@ -226,11 +295,13 @@ const canCalculate = selectedCourses.length > 0 &&
               ))}
             </div>
           </div>
+
           <div className="section-buttons">
             <button onClick={addSection}>Add Section</button>
             <button onClick={removeSection} disabled={numSections <= 1}>Remove Section</button>
-          </div>          
-<button className="calculate-btn" onClick={calculateGPA} disabled={!canCalculate}>Calculate</button>
+          </div>
+
+          <button className="calculate-btn" onClick={calculateGPA} disabled={!canCalculate}>Calculate</button>
           {error && <p className="gpa-error">{error}</p>}
         </div>
 
@@ -245,4 +316,3 @@ const canCalculate = selectedCourses.length > 0 &&
     </main>
   );
 }
-
