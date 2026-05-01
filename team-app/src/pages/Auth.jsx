@@ -49,7 +49,7 @@ export default function AuthPage() {
         }
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await sendEmailVerification(userCredential.user);
-        setSuccess('登録用の認証メールを送信しました。メール内のリンクをクリックして認証を完了してください。');
+        setSuccess('我們已向您發送了一封註冊確認郵件。請點擊郵件中的連結以完成驗證流程。');
         setLoading(false);
         return;
       }
