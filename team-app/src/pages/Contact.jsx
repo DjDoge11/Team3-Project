@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './Grade.css';
 
 function getLetterGrade(percent) {
   if (percent >= 90) return 'A';
@@ -393,40 +394,9 @@ export default function Grades() {
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
-        <button
-          onClick={addCard}
-          style={{
-            backgroundColor: '#28AFB0',
-            color: '#EEE5E5',
-            border: 'none',
-            padding: '0.75rem 2rem',
-            fontSize: '1rem',
-            fontWeight: 'bold',
-            borderRadius: '0.5rem',
-            cursor: 'pointer',
-            transition: 'background-color 0.3s ease'
-          }}
-        >
-          Add Row
-        </button>
-
-        <button
-          onClick={calculateGrade}
-          style={{
-            backgroundColor: '#19647E',
-            color: '#EEE5E5',
-            border: 'none',
-            padding: '0.75rem 2rem',
-            fontSize: '1rem',
-            fontWeight: 'bold',
-            borderRadius: '0.5rem',
-            cursor: 'pointer',
-            transition: 'background-color 0.3s ease'
-          }}
-        >
-          Calculate
-        </button>
+      <div class="button-container">
+        <button className='addRow-btn' onClick={addCard}>Add Row</button>
+        <button className='calculate-btn' onClick={calculateGrade}>Calculate</button>
       </div>
 
       {error && (
