@@ -12,8 +12,7 @@ body {
     display: flex;
     align-items: center; 
     justify-content: center;
-    flex-direction: column;    /* Keeps them stacked if you want them on different lines */
-  gap: .5rem;
+    gap: 1rem;
 }
 
 .username p{
