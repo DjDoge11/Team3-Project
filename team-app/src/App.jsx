@@ -25,5 +25,52 @@ function App() {
   );
 }
 
+function userName() {
+  const [user, setUser] = useState(null);
+
+  // Monitor auth state here so it's global
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  return (
+    <>
+      {/* Pass the user to the Navbar */}
+      <Navbar user={user} />
+      <Routes>
+        <Route path="/login" element={<AuthPage user={user} />} />
+        {/* ... other routes */}
+      </Routes>
+    </>
+  );
+}
+
+export function userName(){
+  const [user, setUser] = useState(null);
+
+  // Monitor auth state here so it's global
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  return (
+    <>
+      {/* Pass the user to the Navbar */}
+      <Navbar user={user} />
+      <Routes>
+        <Route path="/login" element={<AuthPage user={user} />} />
+        {/* ... other routes */}
+      </Routes>
+    </>
+  );
+
+}
+
 export default App
 
