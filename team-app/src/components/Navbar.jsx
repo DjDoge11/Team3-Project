@@ -14,16 +14,12 @@ export default function Navbar() {
   }, []);
 
   return (
-<<<<<<< Updated upstream
-    <nav className = "navbar">
-=======
     <nav className="navbar">
         <nav className="username">
         {user ? (
           <p><strong>{user.email}</strong></p>) : (
           <p>Guest</p>)}
         </nav>
->>>>>>> Stashed changes
       <ul>
       <li><Link to="/home">Home</Link></li>
         <li><Link to="/gpa">GPA</Link></li>
