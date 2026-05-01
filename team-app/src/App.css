@@ -12,6 +12,12 @@ body {
     padding: 1rem;
 }
 
+.username{
+  color: #ffffff;
+  font-weight: lighter;
+
+}
+
 .navbar ul {
     list-style: none;
     display: flex;
