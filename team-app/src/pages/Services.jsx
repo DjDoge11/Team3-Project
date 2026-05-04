@@ -19,6 +19,7 @@ export default function Courses() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const servicesRef = useRef(null);
+  const saveTimeoutRef = useRef(null);
 
   const gradeColors = {
     'A': '#00B4D8',
@@ -90,21 +91,27 @@ export default function Courses() {
   };
 
   // -----------------------------
-  // 2. Firebase Sync Helper
+  // 2. Firebase Sync Helper (debounced)
   // -----------------------------
   const syncToFirebase = async (updates) => {
     if (!user) return;
 
-    try {
-      const userDocRef = doc(db, 'users', user.uid);
-      await setDoc(userDocRef, updates, { merge: true });
-
-      setSaveStatus('Changes saved to account');
-      setTimeout(() => setSaveStatus(''), 1500);
-    } catch (e) {
-      console.error('Error syncing to Firebase:', e);
-      setSaveStatus('Error saving to cloud');
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
     }
+
+    saveTimeoutRef.current = setTimeout(async () => {
+      try {
+        const userDocRef = doc(db, 'users', user.uid);
+        await setDoc(userDocRef, updates, { merge: true });
+
+        setSaveStatus('Changes saved to account');
+        setTimeout(() => setSaveStatus(''), 1500);
+      } catch (e) {
+        console.error('Error syncing to Firebase:', e);
+        setSaveStatus('Error saving to cloud');
+      }
+    }, 500); // Debounce saves by 500ms
   };
 
   // -----------------------------
@@ -139,6 +146,17 @@ export default function Courses() {
     });
 
     return () => unsubscribe();
+  }, []);
+
+  // Clear pending saves on unmount
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+        // Optionally, trigger the save immediately
+        // But since it's async, and component is unmounting, perhaps not.
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -178,21 +196,7 @@ const courseInput = async (grade, semester, slot, value) => {
   }
 
   if (user) {
-    try {
-      const userDocRef = doc(db, 'users', user.uid);
-      await setDoc(
-        userDocRef,
-        { courses: newCourses },
-        { merge: true }
-      );
-
-      setSaveStatus('Saved to your account');
-      setTimeout(() => setSaveStatus(''), 1500);
-    } catch (err) {
-      console.error('Firestore save error:', err);
-      setSaveStatus('Error saving');
-      setTimeout(() => setSaveStatus(''), 1500);
-    }
+    syncToFirebase({ courses: newCourses });
   } else {
     setSaveStatus('Please log in to save changes');
     setTimeout(() => setSaveStatus(''), 1500);
@@ -209,21 +213,7 @@ const courseInput = async (grade, semester, slot, value) => {
   setCourseGrades(newGrades);
 
   if (user) {
-    try {
-      const userDocRef = doc(db, 'users', user.uid);
-      await setDoc(
-        userDocRef,
-        { courseGrades: newGrades },
-        { merge: true }
-      );
-
-      setSaveStatus('Saved to your account');
-      setTimeout(() => setSaveStatus(''), 1500);
-    } catch (err) {
-      console.error('Firestore save error:', err);
-      setSaveStatus('Error saving');
-      setTimeout(() => setSaveStatus(''), 1500);
-    }
+    syncToFirebase({ courseGrades: newGrades });
   } else {
     setSaveStatus('Please log in to save changes');
     setTimeout(() => setSaveStatus(''), 1500);
@@ -241,21 +231,7 @@ const courseInput = async (grade, semester, slot, value) => {
   setLockedSections(newLocked);
 
   if (user) {
-    try {
-      const userDocRef = doc(db, 'users', user.uid);
-      await setDoc(
-        userDocRef,
-        { lockedSections: newLocked },
-        { merge: true }
-      );
-
-      setSaveStatus(`${grade} ${semester} locked`);
-      setTimeout(() => setSaveStatus(''), 2000);
-    } catch (err) {
-      console.error('Firestore save error:', err);
-      setSaveStatus('Error saving');
-      setTimeout(() => setSaveStatus(''), 2000);
-    }
+    syncToFirebase({ lockedSections: newLocked });
   } else {
     setSaveStatus('Please log in to save changes');
     setTimeout(() => setSaveStatus(''), 1500);
@@ -270,21 +246,7 @@ const unlockSection = async (grade, semester) => {
   setLockedSections(newLocked);
 
   if (user) {
-    try {
-      const userDocRef = doc(db, 'users', user.uid);
-      await setDoc(
-        userDocRef,
-        { lockedSections: newLocked },
-        { merge: true }
-      );
-
-      setSaveStatus(`${grade} ${semester} unlocked`);
-      setTimeout(() => setSaveStatus(''), 2000);
-    } catch (err) {
-      console.error('Firestore save error:', err);
-      setSaveStatus('Error saving');
-      setTimeout(() => setSaveStatus(''), 2000);
-    }
+    syncToFirebase({ lockedSections: newLocked });
   } else {
     setSaveStatus('Please log in to save changes');
     setTimeout(() => setSaveStatus(''), 1500);
@@ -313,7 +275,7 @@ const isSectionLocked = (grade, semester) =>
     setCourseGrades(newGrades);
 
     if (user) {
-      await syncToFirebase({
+      syncToFirebase({
         courses: newCourses,
         courseGrades: newGrades
       });
@@ -475,8 +437,7 @@ const isSectionLocked = (grade, semester) =>
 
                       <div className="grade-column-header">
                         <span className="grade-col-spacer"></span>
-                        <div className="grade-column-labels">
-                          {sem === 'Fall Semester' ? (
+                        <div className="grade-column-labels">                          <span className="credits-label">Credits</span>                          {sem === 'Fall Semester' ? (
                             <>
                               <span className="quarter-column-label">Q1</span>
                               <span className="quarter-column-label">Q2</span>
@@ -610,6 +571,8 @@ const isSectionLocked = (grade, semester) =>
               );
             })}
           </div>
+
+          <hr />
 
           <div className="gpa-calculator">
             <h3>GPA Calculator</h3>
