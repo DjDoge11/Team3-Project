@@ -57,12 +57,17 @@
 }
 
 .save-status {
+  position: fixed;
+  top: 80px;
+  right: 20px;
   padding: 0.5rem 1rem;
-  background-color: #d4edda;
+  background-color: #e8e8e8;
+  border: 1px solid #3b78b6;
   border-radius: 0.25rem;
-  margin-bottom: 1rem;
-  color: #155724;
+  color: #495057;
   font-size: 0.9rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  z-index: 1000;
 }
 
 .grade-section {
@@ -312,6 +317,19 @@
   appearance: none;
   -webkit-appearance: none;
   background-color: white;
+}
+
+.grade-input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.quarter-label {
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: #19647E;
 }
 
 /* Centers text for select dropdowns */

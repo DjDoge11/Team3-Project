@@ -1,38 +1,18 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { db, auth } from '../firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
-import { availableCourses } from '../data/courseCatalog';
+import { availableCourses, requiredCredits, totalCreditsRequired } from '../data/courseCatalog';
 import './Services.css';
-
-// -----------------------------
-// Local Cache Helpers
-// -----------------------------
-const CACHE_KEY = "coursePlannerCache";
-
-function loadCache() {
-  try {
-    const raw = localStorage.getItem(CACHE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
-function saveCache(data) {
-  localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-}
 
 export default function Courses() {
   // -----------------------------
-  // 1. Lazy initialization (instant load)
+  // 1. State initialization
   // -----------------------------
-  const cached = loadCache() || {};
-
-  const [courses, setCourses] = useState(cached.courses || {});
-  const [courseGrades, setCourseGrades] = useState(cached.courseGrades || {});
-  const [lockedSections, setLockedSections] = useState(cached.lockedSections || {});
-  const [searchText, setSearchText] = useState(cached.searchText || {});
+  const [courses, setCourses] = useState({});
+  const [courseGrades, setCourseGrades] = useState({});
+  const [lockedSections, setLockedSections] = useState({});
+  const [searchText, setSearchText] = useState({});
   const [dropdownOpen, setDropdownOpen] = useState({});
   const [highlightedIndex, setHighlightedIndex] = useState({});
   const [saveStatus, setSaveStatus] = useState('');
@@ -67,7 +47,7 @@ export default function Courses() {
   };
 
   // -----------------------------
-  // 3. Load Firebase AFTER cache (fast)
+  // 3. Load from Firestore
   // -----------------------------
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -85,14 +65,6 @@ export default function Courses() {
             if (data.courses) setCourses(prev => prev !== data.courses ? data.courses : prev);
             if (data.courseGrades) setCourseGrades(prev => prev !== data.courseGrades ? data.courseGrades : prev);
             if (data.lockedSections) setLockedSections(prev => prev !== data.lockedSections ? data.lockedSections : prev);
-
-            // Sync Firebase → cache
-            saveCache({
-              courses: data.courses || {},
-              courseGrades: data.courseGrades || {},
-              lockedSections: data.lockedSections || {},
-              searchText
-            });
 
             setSaveStatus('Schedule loaded');
             setTimeout(() => setSaveStatus(''), 2000);
@@ -143,7 +115,7 @@ const courseInput = async (grade, semester, slot, value) => {
       setTimeout(() => setSaveStatus(''), 1500);
     }
   } else {
-    setSaveStatus('Auto-saved to browser');
+    setSaveStatus('Please log in to save changes');
     setTimeout(() => setSaveStatus(''), 1500);
   }
 };
@@ -174,7 +146,7 @@ const courseInput = async (grade, semester, slot, value) => {
       setTimeout(() => setSaveStatus(''), 1500);
     }
   } else {
-    setSaveStatus('Auto-saved to browser');
+    setSaveStatus('Please log in to save changes');
     setTimeout(() => setSaveStatus(''), 1500);
   }
 };
@@ -206,7 +178,7 @@ const courseInput = async (grade, semester, slot, value) => {
       setTimeout(() => setSaveStatus(''), 2000);
     }
   } else {
-    setSaveStatus('Auto-saved to browser');
+    setSaveStatus('Please log in to save changes');
     setTimeout(() => setSaveStatus(''), 1500);
   }
 };
@@ -235,7 +207,7 @@ const unlockSection = async (grade, semester) => {
       setTimeout(() => setSaveStatus(''), 2000);
     }
   } else {
-    setSaveStatus('Auto-saved to browser');
+    setSaveStatus('Please log in to save changes');
     setTimeout(() => setSaveStatus(''), 1500);
   }
 };
@@ -261,13 +233,6 @@ const isSectionLocked = (grade, semester) =>
     setCourses(newCourses);
     setCourseGrades(newGrades);
 
-    saveCache({
-      courses: newCourses,
-      courseGrades: newGrades,
-      lockedSections,
-      searchText
-    });
-
     if (user) {
       await syncToFirebase({
         courses: newCourses,
@@ -292,12 +257,12 @@ const isSectionLocked = (grade, semester) =>
     const updated = { ...searchText, [key]: value };
     setSearchText(updated);
 
-    saveCache({
-      courses,
-      courseGrades,
-      lockedSections,
-      searchText: updated
-    });
+    // saveCache({
+    //   courses,
+    //   courseGrades,
+    //   lockedSections,
+    //   searchText: updated
+    // });
 
     setDropdownOpen(prev => ({ ...prev, [key]: value.length > 0 }));
 
