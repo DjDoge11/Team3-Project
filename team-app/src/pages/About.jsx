@@ -139,7 +139,49 @@ const canCalculate = selectedCourses.length > 0 &&
     setError('');
   };
 
-  // kept functionality minimal: clear and add handled via UI buttons if present
+  const getGPAClass = (value) => {
+    const numeric = parseFloat(value);
+    if (Number.isNaN(numeric) || numeric === 0) {
+      return 'gpa-score-gray';
+    }
+    if (numeric >= 5.0) {
+      return 'gpa-score-blue';
+    }
+    if (numeric >= 4.0) {
+      return 'gpa-score-green';
+    }
+    if (numeric >= 3.0) {
+      return 'gpa-score-yellow';
+    }
+    if (numeric >= 2.0) {
+      return 'gpa-score-orange';
+    }
+    if (numeric >= 1.0) {
+      return 'gpa-score-red';
+    }
+
+    return 'gpa-score-gray';
+  };
+
+  const clearAll = () => {
+    const empty = ['', '', '', ''];
+    setSelectedCourses(empty);
+    setGrades(empty);
+    setResult(null);
+    setError('');
+
+    // Clear cache
+    saveToCache(empty, empty);
+
+    // Clear Firestore
+    if (user) {
+      const userDocRef = doc(db, 'users', user.uid);
+      setDoc(userDocRef, {
+        gpaCourses: empty,
+        gpaGrades: empty
+      }, { merge: true });
+    }
+  };
 
   return (
     <main className="gpa-page">
@@ -220,8 +262,18 @@ const canCalculate = selectedCourses.length > 0 &&
         {result && (
           <div className="gpa-result card">
             <h2>Your GPA</h2>
-            <p><strong>Unweighted GPA:</strong> {result.unweighted}</p>
-            <p><strong>Weighted GPA:</strong> {result.weighted}</p>
+            <p>
+              <strong>Unweighted GPA:</strong>
+              <span className={`gpa-score ${getGPAClass(result.unweighted)}`}>
+                {result.unweighted}
+              </span>
+            </p>
+            <p>
+              <strong>Weighted GPA:</strong>
+              <span className={`gpa-score ${getGPAClass(result.weighted)}`}>
+                {result.weighted}
+              </span>
+            </p>
           </div>
         )}
       </div>
