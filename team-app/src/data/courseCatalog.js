@@ -176,9 +176,15 @@ export const availableCourses = {
   "Human Computer Interaction": { credits: 10, category: "Practical Arts/CTE", weighted: false },
   "Machine Learning": { credits: 10, category: "Practical Arts/CTE", weighted: false },
 
-// AP Computer Science courses
+  // AP Computer Science courses
   "AP Computer Science A": { credits: 10, category: "Practical Arts/CTE", weighted: true },
   "AP Computer Science Principles": { credits: 10, category: "Practical Arts/CTE", weighted: true },
+
+  //Business electives
+  "Introduction to Business": { credits: 10, category: "Practical Arts/CTE", weighted: false },
+  "Marketing Principles": { credits: 10, category: "Practical Arts/CTE", weighted: false },
+  "Advance Business": { credits: 10, category: "Practical Arts/CTE", weighted: false },
+  "Finance": { credits: 10, category: "Practical Arts/CTE", weighted: false },
 
   // Other courses (can select multiple without restriction)
   "Other (Unweighted)": { credits: 10, category: "Elective", weighted: false },

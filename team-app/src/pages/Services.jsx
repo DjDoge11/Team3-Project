@@ -539,9 +539,8 @@ const isSectionLocked = (grade, semester) =>
   // -----------------------------
   // 9. UI Rendering
   // -----------------------------
-  if (loading) return <div className="loading">Loading Schedule...</div>;
-
   return (
+    
     <main className="services-main" ref={servicesRef}>
       <div className="services-content">
         <div className="services-left">
