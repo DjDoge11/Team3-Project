@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { db, auth } from '../firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -18,6 +18,7 @@ export default function Courses() {
   const [saveStatus, setSaveStatus] = useState('');
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const servicesRef = useRef(null);
 
   const gradeColors = {
     'A': '#00B4D8',
@@ -80,6 +81,17 @@ export default function Courses() {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    const handleDocumentClick = (event) => {
+      if (servicesRef.current && !servicesRef.current.contains(event.target)) {
+        setDropdownOpen({});
+      }
+    };
+
+    document.addEventListener('mousedown', handleDocumentClick);
+    return () => document.removeEventListener('mousedown', handleDocumentClick);
+  }, []);
+
   // -----------------------------
   // 4. Course Input (optimized)
   // -----------------------------
@@ -97,6 +109,13 @@ const courseInput = async (grade, semester, slot, value) => {
   else delete newCourses[key];
 
   setCourses(newCourses);
+  if (!value || !value.trim()) {
+    setSearchText(prev => {
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+  }
 
   if (user) {
     try {
@@ -263,6 +282,33 @@ const isSectionLocked = (grade, semester) =>
     return total;
   };
 
+  const calculateCategoryCredits = () => {
+    const rawTotals = Object.values(courses).reduce((totals, course) => {
+      if (course && availableCourses[course]) {
+        const { category, credits } = availableCourses[course];
+        const bucket = requiredCredits[category] ? category : 'Elective';
+        totals[bucket] = (totals[bucket] || 0) + credits;
+      }
+      return totals;
+    }, {});
+
+    let electiveOverflow = rawTotals.Elective || 0;
+    const cappedTotals = Object.entries(requiredCredits).reduce((totals, [category, required]) => {
+      const earned = rawTotals[category] || 0;
+      const capped = Math.min(earned, required);
+      electiveOverflow += Math.max(0, earned - required);
+      totals[category] = capped;
+      return totals;
+    }, {});
+
+    return {
+      ...cappedTotals,
+      Elective: electiveOverflow,
+    };
+  };
+
+  const categoryCredits = calculateCategoryCredits();
+
   const handleSearchChange = (key, value) => {
     const updated = { ...searchText, [key]: value };
     setSearchText(updated);
@@ -332,7 +378,7 @@ const isSectionLocked = (grade, semester) =>
   if (loading) return <div className="loading">Loading Schedule...</div>;
 
   return (
-    <main className="services-main">
+    <main className="services-main" ref={servicesRef}>
       <div className="services-content">
         <div className="services-left">
           <div className="services-header">
@@ -403,7 +449,20 @@ const isSectionLocked = (grade, semester) =>
                                   onChange={(e) => handleSearchChange(inputKey, e.target.value)}
                                   onKeyDown={(e) => handleKeyDown(e, inputKey)}
                                   onFocus={() => setDropdownOpen(prev => ({ ...prev, [inputKey]: true }))}
+                                  onBlur={() => setTimeout(() => setDropdownOpen(prev => ({ ...prev, [inputKey]: false })), 100)}
                                 />
+
+                                {courses[inputKey] && !locked && (
+                                  <button
+                                    type="button"
+                                    className="clear-course-btn"
+                                    onMouseDown={(e) => e.preventDefault()}
+                                    onClick={() => courseInput(grade, sem, slot, '')}
+                                    title="Clear course"
+                                  >
+                                    ×
+                                  </button>
+                                )}
 
                                 {isOpen && !locked && (
                                   <ul className="dropdown-list">
@@ -470,6 +529,25 @@ const isSectionLocked = (grade, semester) =>
             <div className="progress-text">
               {calculateTotalCredits()} / {totalCreditsRequired} Credits
             </div>
+          </div>
+
+          <div className="category-progress">
+            {Object.entries(requiredCredits).map(([category, required]) => {
+              const earned = categoryCredits[category] || 0;
+              const percent = Math.min((earned / required) * 100, 100);
+
+              return (
+                <div key={category} className="category-row">
+                  <div className="category-label">
+                    <span>{category}</span>
+                    <span>{earned} / {required}</span>
+                  </div>
+                  <div className="category-bar">
+                    <div className="category-fill" style={{ width: `${percent}%` }}></div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
