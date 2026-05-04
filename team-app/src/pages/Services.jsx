@@ -16,6 +16,13 @@ export default function Courses() {
   const [dropdownOpen, setDropdownOpen] = useState({});
   const [highlightedIndex, setHighlightedIndex] = useState({});
   const [saveStatus, setSaveStatus] = useState('');
+  const [_dropdownOpen, _setDropdownOpen] = useState({});
+  const [searchText, setSearchText] = useState({});
+  const [_highlightedIndex, _setHighlightedIndex] = useState({});
+  const [totalCredits, setTotalCredits] = useState(() => {
+    try { const s = localStorage.getItem('totalCredits'); return s ? Number(s) : 0; } catch { return 0; }
+  });
+  const [showTips, setShowTips] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const servicesRef = useRef(null);
@@ -139,14 +146,13 @@ export default function Courses() {
   // 3. Load from Firestore
   // -----------------------------
   useEffect(() => {
+    // Load any saved state from localStorage first (allows offline use)
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
-
       if (currentUser) {
         try {
           const userDocRef = doc(db, 'users', currentUser.uid);
           const userDoc = await getDoc(userDocRef);
-
           if (userDoc.exists()) {
             const data = userDoc.data();
 
@@ -164,7 +170,6 @@ export default function Courses() {
           console.error('Error loading user data:', e);
         }
       }
-
       setLoading(false);
     });
 
@@ -279,20 +284,21 @@ const unlockSection = async (grade, semester) => {
 const isSectionLocked = (grade, semester) =>
   lockedSections[`${grade}-${semester}`] === true;
 
-  // -----------------------------
-  // 7. Clear Semester (optimized)
-  // -----------------------------
-  const clearSemester = async (grade, semester) => {
+  const courseInput = async (grade, semester, slot, value) => {
+    if (isSectionLocked(grade, semester)) {
+      setSaveStatus('This section is locked. Unlock to edit.');
+      setTimeout(() => setSaveStatus(''), 2000);
+      return;
+    }
+
+    const key = `${grade}-${semester}-${slot}`;
     const newCourses = { ...courses };
-    const newGrades = { ...courseGrades };
 
-    Object.keys(newCourses).forEach(key => {
-      if (key.startsWith(`${grade}-${semester}`)) delete newCourses[key];
-    });
-
-    Object.keys(newGrades).forEach(key => {
-      if (key.startsWith(`${grade}-${semester}`)) delete newGrades[key];
-    });
+    if (value && value.trim()) {
+      newCourses[key] = value;
+    } else {
+      delete newCourses[key];
+    }
 
     setCourses(newCourses);
     setCourseGrades(newGrades);
@@ -305,17 +311,23 @@ const isSectionLocked = (grade, semester) =>
     }
   };
 
-
-  const grades = ['9th', '10th', '11th', '12th'];
-  const semesters = ['Fall Semester', 'Spring Semester'];
-  const classSlots = [1, 2, 3, 4];
-  const courseList = Object.keys(availableCourses);
-
-  const getFilteredCourses = (search) => {
-    if (!search) return courseList;
-    const lower = search.toLowerCase();
-    return courseList.filter(c => c.toLowerCase().includes(lower));
+  const semesterIsComplete = (grade, semester) => {
+    // every slot must have a selected course and both grade inputs filled
+    for (let slot of classSlots) {
+      const key = `${grade}-${semester}-${slot}`;
+      if (!courses[key]) return false;
+      const g1 = courseGrades[`${key}-g1`];
+      const g2 = courseGrades[`${key}-g2`];
+      if (!g1 || !g2) return false;
+    }
+    return true;
   };
+  
+  const clearSemester = async (grade, semester) => {
+    if (window.confirm(`Clear all courses for ${grade} ${semester}?`)) {
+      const newCourses = { ...courses };
+      const newGrades = { ...courseGrades };
+      const newSearchText = { ...searchText };
 
   const calculateTotalCredits = () => {
     let total = 0;
@@ -378,56 +390,32 @@ const isSectionLocked = (grade, semester) =>
     //   searchText: updated
     // });
 
-    setDropdownOpen(prev => ({ ...prev, [key]: value.length > 0 }));
+      setCourses(newCourses);
+      setCourseGrades(newGrades);
+      setSearchText(newSearchText);
+      localStorage.setItem('courseSelections', JSON.stringify(newCourses));
+      try { localStorage.setItem('courseGrades', JSON.stringify(newGrades)); } catch { /* ignore */ }
 
-    if (!value.trim()) {
-      const [grade, semester, slot] = key.split('-');
-      courseInput(grade, semester, slot, '');
+      // Sync the deletions to Firebase
+      await syncToFirebase({ 
+        courses: newCourses, 
+        courseGrades: newGrades 
+      });
     }
   };
 
-  const handleCourseSelect = (key, course) => {
-    const [grade, semester, slot] = key.split('-');
-    courseInput(grade, semester, slot, course);
+  // --- Logic Helpers ---
+  const grades = ['9th', '10th', '11th', '12th'];
+  const semesters = ['Fall Semester', 'Spring Semester'];
+  const classSlots = [1, 2, 3, 4];
+  const courseList = Object.keys(availableCourses);
 
-    setSearchText(prev => ({ ...prev, [key]: course }));
-    setDropdownOpen(prev => ({ ...prev, [key]: false }));
-    setHighlightedIndex(prev => ({ ...prev, [key]: 0 }));
-  };
-
-  const handleKeyDown = (e, inputKey) => {
-    const filtered = getFilteredCourses(searchText[inputKey] || '');
-    const currentIndex = highlightedIndex[inputKey] || 0;
-
-    switch (e.key) {
-      case 'ArrowDown':
-        e.preventDefault();
-        setDropdownOpen(prev => ({ ...prev, [inputKey]: true }));
-        setHighlightedIndex(prev => ({
-          ...prev,
-          [inputKey]: (currentIndex + 1) % filtered.length
-        }));
-        break;
-
-      case 'ArrowUp':
-        e.preventDefault();
-        setHighlightedIndex(prev => ({
-          ...prev,
-          [inputKey]: (currentIndex - 1 + filtered.length) % filtered.length
-        }));
-        break;
-
-      case 'Enter':
-        e.preventDefault();
-        if (dropdownOpen[inputKey] && filtered.length > 0) {
-          handleCourseSelect(inputKey, filtered[currentIndex]);
-        }
-        break;
-
-      case 'Escape':
-        setDropdownOpen(prev => ({ ...prev, [inputKey]: false }));
-        break;
-    }
+  const getFilteredCourses = (search) => {
+    if (!search || search.length === 0) return courseList;
+    const lowerSearch = search.toLowerCase();
+    return courseList.filter(course =>
+      course.toLowerCase().includes(lowerSearch)
+    );
   };
 
   const handleOffCampusCourseChange = (index, value) => {
