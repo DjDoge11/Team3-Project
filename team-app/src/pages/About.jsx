@@ -198,6 +198,30 @@ export default function GPA() {
     setError('');
   };
 
+  const getGPAClass = (value) => {
+    const numeric = parseFloat(value);
+    if (Number.isNaN(numeric) || numeric === 0) {
+      return 'gpa-score-gray';
+    }
+    if (numeric >= 5.0) {
+      return 'gpa-score-blue';
+    }
+    if (numeric >= 4.0) {
+      return 'gpa-score-green';
+    }
+    if (numeric >= 3.0) {
+      return 'gpa-score-yellow';
+    }
+    if (numeric >= 2.0) {
+      return 'gpa-score-orange';
+    }
+    if (numeric >= 1.0) {
+      return 'gpa-score-red';
+    }
+
+    return 'gpa-score-gray';
+  };
+
   const clearAll = () => {
     const empty = ['', '', '', ''];
     setSelectedCourses(empty);
@@ -308,8 +332,18 @@ export default function GPA() {
         {result && (
           <div className="gpa-result">
             <h2>Your GPA</h2>
-            <p><strong>Unweighted GPA:</strong> {result.unweighted}</p>
-            <p><strong>Weighted GPA:</strong> {result.weighted}</p>
+            <p>
+              <strong>Unweighted GPA:</strong>
+              <span className={`gpa-score ${getGPAClass(result.unweighted)}`}>
+                {result.unweighted}
+              </span>
+            </p>
+            <p>
+              <strong>Weighted GPA:</strong>
+              <span className={`gpa-score ${getGPAClass(result.weighted)}`}>
+                {result.weighted}
+              </span>
+            </p>
           </div>
         )}
       </div>

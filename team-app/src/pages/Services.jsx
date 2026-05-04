@@ -29,6 +29,66 @@ export default function Courses() {
     '': 'white'
   };
 
+  const gradePoints = {
+    'A': 4.0,
+    'B': 3.0,
+    'C': 2.0,
+    'D': 1.0,
+    'F': 0.0,
+  };
+
+  const getGradeColor = (grade) => gradeColors[grade] || 'white';
+
+  const getGPAClass = (value) => {
+    if (value === 'N/A') return 'gpa-score-gray';
+
+    const numeric = parseFloat(value);
+    if (Number.isNaN(numeric) || numeric === 0) return 'gpa-score-gray';
+    if (numeric >= 5.0) return 'gpa-score-blue';
+    if (numeric >= 4.0) return 'gpa-score-green';
+    if (numeric >= 3.0) return 'gpa-score-yellow';
+    if (numeric >= 2.0) return 'gpa-score-orange';
+    if (numeric >= 1.0) return 'gpa-score-red';
+    return 'gpa-score-gray';
+  };
+
+  const calculateGPAResult = () => {
+    const gradeEntries = Object.entries(courseGrades).filter(
+      ([key, value]) => value && gradePoints[value] !== undefined
+    );
+
+    if (gradeEntries.length === 0) {
+      return { unweighted: 'N/A', weighted: 'N/A' };
+    }
+
+    let totalUnweighted = 0;
+    let totalWeighted = 0;
+    let count = 0;
+
+    gradeEntries.forEach(([key, value]) => {
+      const courseKey = key.replace(/-g\d+$/, '');
+      const courseName = courses[courseKey];
+
+      if (!courseName || !availableCourses[courseName]) {
+        return;
+      }
+
+      const points = gradePoints[value];
+      totalUnweighted += points;
+      totalWeighted += availableCourses[courseName].weighted ? points + 1.0 : points;
+      count += 1;
+    });
+
+    if (count === 0) {
+      return { unweighted: 'N/A', weighted: 'N/A' };
+    }
+
+    return {
+      unweighted: (totalUnweighted / count).toFixed(2),
+      weighted: (totalWeighted / count).toFixed(2),
+    };
+  };
+
   // -----------------------------
   // 2. Firebase Sync Helper
   // -----------------------------
@@ -308,6 +368,7 @@ const isSectionLocked = (grade, semester) =>
   };
 
   const categoryCredits = calculateCategoryCredits();
+  const gpaResult = calculateGPAResult();
 
   const handleSearchChange = (key, value) => {
     const updated = { ...searchText, [key]: value };
@@ -495,7 +556,7 @@ const isSectionLocked = (grade, semester) =>
                                     className="grade-box"
                                     value={val}
                                     disabled={locked}
-                                    style={{ backgroundColor: gradeColors[val] }}
+                                    style={{ backgroundColor: getGradeColor(val) }}
                                     onChange={(e) => handleGradeChange(inputKey, gradeNum, e.target.value)}
                                   >
                                     <option value="">-</option>
@@ -548,6 +609,23 @@ const isSectionLocked = (grade, semester) =>
                 </div>
               );
             })}
+          </div>
+
+          <div className="gpa-calculator">
+            <h3>GPA Calculator</h3>
+            <div className="gpa-value">
+              <span>Unweighted GPA</span>
+              <span className={`gpa-score ${getGPAClass(gpaResult.unweighted)}`}>
+                {gpaResult.unweighted}
+              </span>
+            </div>
+            <div className="gpa-value">
+              <span>Weighted GPA</span>
+              <span className={`gpa-score ${getGPAClass(gpaResult.weighted)}`}>
+                {gpaResult.weighted}
+              </span>
+            </div>
+            <p className="gpa-note">Calculated from selected courses and their assigned grades.</p>
           </div>
         </div>
       </div>
