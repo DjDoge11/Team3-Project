@@ -153,3 +153,262 @@ body {
   .gpa-calculator-container { flex-direction:column; gap:1rem; }
   .navbar ul { gap:0.5rem; }
 }
+
+.gpa-calculator-container {
+  display: flex;
+  gap: 3rem;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.gpa-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.gpa-columns {
+  display: flex;
+  gap: 1rem;
+}
+
+.gpa-course-column,
+.gpa-grade-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.gpa-course-column h3,
+.gpa-grade-column h3 {
+  margin: 0 0 0.5rem 0;
+  color: #19647E;
+}
+
+.gpa-select {
+  padding: 0.6rem;
+  border-radius: 0.4rem;
+  border: 2px solid #28AFB0;
+  background-color: #ffffff;
+  color: #1C2541;
+  font-size: 1rem;
+  width: 260px;
+  outline: none;
+}
+
+.gpa-select.course-select {
+  width: 320px;
+}
+
+.gpa-select:focus {
+  border-color: #19647E;
+}
+
+.add-course-btn {
+  align-self: flex-start;
+  background-color: #19647E;
+  color: #EEE5E5;
+  border: none;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 0.5rem;
+}
+.add-course-btn:hover {
+  background-color: #28AFB0;
+}
+
+.button-group {
+  display: flex;       
+  gap: 1rem;          
+  margin-top: 0.5rem; 
+}
+
+.calculate-btn {
+  align-self: flex-start;
+  background-color: #28AFB0;
+  color: #EEE5E5;
+  border: none;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.calculate-btn:hover {
+  background-color: #19647E;
+}
+
+.clear-btn {
+  align-self: flex-start;
+  background-color: #28AFB0;
+  color: #EEE5E5;
+  border: none;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.clear-btn:hover {
+  background-color: #19647E;
+}
+
+.gpa-result {
+  background-color: #ffffff;
+  padding: 1.5rem 2rem;
+  border-radius: 0.75rem;
+  border: 2px solid #28AFB0;
+  min-width: 240px;
+  margin-top: 2.2rem;
+}
+
+.gpa-result h2 {
+  margin-top: 0;
+  color: #19647E;
+}
+
+.gpa-result p {
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+}
+
+.gpa-error {
+  color: #c0392b;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin: 0.5rem 0 0 0;
+  background-color: #fdecea;
+  padding: 0.6rem 1rem;
+  border-radius: 0.4rem;
+  border: 1px solid #e74c3c;
+  max-width: 560px;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(28, 37, 65, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-box {
+  position: relative;
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  border: 2px solid #28AFB0;
+  max-width: 350px;
+  width: 90%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.popup-box h2 {
+  margin-top: 0;
+  color: #19647E;
+  font-size: 1.2rem;
+}
+
+.popup-box h3 {
+  color: #28AFB0;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.popup-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem 0;
+}
+
+.popup-box li {
+  padding: 0.15rem 0;
+  font-size: 0.95rem;
+}
+
+.popup-box p {
+  font-size: 0.95rem;
+  margin: 0.5rem 0;
+}
+
+.popup-close-x {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: #19647E;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.popup-close-x:hover {
+  color: #28AFB0;
+}
+
+.features {
+  padding-bottom: 1.25rem;
+}
+
+.homepagePadding {
+  padding-left: 3rem;
+  padding-right: 3rem;
+  font-size: 1.2rem;
+}
+
+.aboutUs{
+  padding-left: 3rem;
+  padding-right: 3rem;
+  font-size: 1.2rem;
+  text-align: right;
+  list-style-type: none;
+}
+
+.aboutUs ul{
+  list-style-type: none;
+}
+
+.aboutUs p{
+  margin-bottom: 2rem;
+
+}
+
+.aboutUs li{
+  margin-bottom: 1rem;
+
+}
+
+.members {
+  display: flex;
+  overflow-x: auto; 
+  gap: 1rem;
+  padding: 1rem 0;
+  list-style: none;
+  scroll-snap-type: x mandatory; 
+  -webkit-overflow-scrolling: touch;
+}
+
+.members li {
+  flex: 0 0 40rem; 
+  scroll-snap-align: start;
+  background: #f4f4f4;
+  padding: 1rem;
+  border-radius: 1rem;
+}
