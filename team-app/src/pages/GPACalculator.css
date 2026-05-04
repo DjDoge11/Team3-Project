@@ -41,45 +41,38 @@
   opacity: 0.6;
 }
 
-/* Popup and helper button */
-.question-mark-btn { background:#19647E; color:#fff; border:none; border-radius:6px; width:34px; height:34px; cursor:pointer; font-weight:700; }
-.popup-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; z-index:1500; }
-.popup-box { background:#fff; padding:1rem 1.25rem; border-radius:8px; width:360px; max-width:90%; box-shadow:0 8px 24px rgba(0,0,0,0.2); position:relative; }
-.popup-close-x { position:absolute; right:8px; top:6px; background:none; border:none; font-size:1.25rem; cursor:pointer; }
-
-/* Card wrappers to align with global styles */
-.gpa-calculator-container { display:flex; gap:1rem; align-items:flex-start; }
-.gpa-inputs.card { flex:1; }
-.gpa-result.card { min-width:220px; }
-.gpa-course-column .course-dropdown { margin-bottom:0.6rem; }
-.gpa-course-column .course-dropdown .course-input { width:100%; }
-.gpa-grade-column select { margin-bottom:0.6rem; width:100%; }
-
-.gpa-rows { display:flex; flex-direction:column; gap:0.45rem; }
-/* Two-column layout: even grid columns for course/grade */
-.gpa-columns { 
-  display: flex;
-  gap: 0.5rem;
-  align-items: flex-start;
+.gpa-score {
+  display: inline-block;
+  min-width: 4rem;
+  margin-left: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  text-align: center;
+  color: #fff;
 }
-.gpa-course-column {
-  flex: 1;
-  display:flex; 
-  flex-direction:column; 
-  gap:0.5rem; 
-}
-.gpa-grade-column {
-  flex: 1;
-  min-width: 100px;
-  max-width: 140px;
-  display:flex; 
-  flex-direction:column; 
-  gap:0.5rem; 
-  align-items:stretch; 
-}
-.gpa-course-column h3 { margin-bottom:0.25rem; }
-.gpa-course-item { }
-.gpa-course-item .course-dropdown { width:100%; }
 
-.gpa-grade-column h3 { margin-bottom:0.25rem; }
-.gpa-grade-item select { width:100%; height:40px; padding:0.5rem; border-radius:0.5rem; border:1px solid #e6f2f3; background:var(--color-surface); }
+.gpa-score-gray {
+  background-color: #7f8c8d;
+}
+
+.gpa-score-red {
+  background-color: #e74c3c;
+}
+
+.gpa-score-orange {
+  background-color: #d35400;
+}
+
+.gpa-score-yellow {
+  background-color: #f1c40f;
+  color: #2c3e50;
+}
+
+.gpa-score-green {
+  background-color: #27ae60;
+}
+
+.gpa-score-blue {
+  background-color: #3498db;
+}

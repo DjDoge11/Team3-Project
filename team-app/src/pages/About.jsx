@@ -139,7 +139,49 @@ const canCalculate = selectedCourses.length > 0 &&
     setError('');
   };
 
-  // kept functionality minimal: clear and add handled via UI buttons if present
+  const getGPAClass = (value) => {
+    const numeric = parseFloat(value);
+    if (Number.isNaN(numeric) || numeric === 0) {
+      return 'gpa-score-gray';
+    }
+    if (numeric >= 5.0) {
+      return 'gpa-score-blue';
+    }
+    if (numeric >= 4.0) {
+      return 'gpa-score-green';
+    }
+    if (numeric >= 3.0) {
+      return 'gpa-score-yellow';
+    }
+    if (numeric >= 2.0) {
+      return 'gpa-score-orange';
+    }
+    if (numeric >= 1.0) {
+      return 'gpa-score-red';
+    }
+
+    return 'gpa-score-gray';
+  };
+
+  const clearAll = () => {
+    const empty = ['', '', '', ''];
+    setSelectedCourses(empty);
+    setGrades(empty);
+    setResult(null);
+    setError('');
+
+    // Clear cache
+    saveToCache(empty, empty);
+
+    // Clear Firestore
+    if (user) {
+      const userDocRef = doc(db, 'users', user.uid);
+      setDoc(userDocRef, {
+        gpaCourses: empty,
+        gpaGrades: empty
+      }, { merge: true });
+    }
+  };
 
   return (
     <main className="gpa-page">
