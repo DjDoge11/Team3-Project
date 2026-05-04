@@ -174,7 +174,6 @@ body {
   border-radius: 0.5rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  margin-top: 0.5rem;
 }
 
 .calculate-btn:hover {
@@ -192,11 +191,10 @@ body {
   border-radius: 0.5rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  margin-top: 0.5rem;
 }
 
 .clear-btn:hover {
-  background-color: #19647E;
+  background-color: #d02e2e;
 }
 
 .gpa-result {
