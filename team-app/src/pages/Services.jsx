@@ -4,6 +4,7 @@ import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { availableCourses } from '../data/courseCatalog';
 import './Services.css';
+import CourseDropdown from '../components/CourseDropdown';
 
 // -----------------------------
 // Local Cache Helpers
@@ -70,6 +71,7 @@ export default function Courses() {
   // 3. Load Firebase AFTER cache (fast)
   // -----------------------------
   useEffect(() => {
+    // Load any saved state from localStorage first (allows offline use)
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
 
@@ -149,6 +151,7 @@ export default function Courses() {
     const newGrades = { ...courseGrades, [gradeKey]: value };
 
     setCourseGrades(newGrades);
+    try { localStorage.setItem('courseGrades', JSON.stringify(newGrades)); } catch { /* ignore */ }
 
     saveCache({
       courses,
@@ -168,6 +171,18 @@ export default function Courses() {
     const newLocked = { ...lockedSections, [key]: true };
 
     setLockedSections(newLocked);
+    // persist locally so offline users keep their locked state
+    try { localStorage.setItem('lockedSections', JSON.stringify(newLocked)); } catch { /* ignore */ }
+
+    // compute credits for this semester (count selected courses in this semester)
+    let semesterCount = 0;
+    classSlots.forEach((slot) => {
+      const key = `${grade}-${semester}-${slot}`;
+      if (courses[key] && courses[key] in availableCourses) semesterCount += 1;
+    });
+    const semesterCredits = semesterCount * 10;
+    const newTotal = (totalCredits || 0) + semesterCredits;
+    setTotalCredits(newTotal);
 
     saveCache({
       courses,
@@ -185,6 +200,17 @@ export default function Courses() {
     delete newLocked[key];
 
     setLockedSections(newLocked);
+    try { localStorage.setItem('lockedSections', JSON.stringify(newLocked)); } catch { /* ignore */ }
+
+    // subtract credits belonging to this semester from totalCredits
+    let semesterCount = 0;
+    classSlots.forEach((slot) => {
+      const key = `${grade}-${semester}-${slot}`;
+      if (courses[key] && courses[key] in availableCourses) semesterCount += 1;
+    });
+    const semesterCredits = semesterCount * 10;
+    const newTotal = Math.max(0, (totalCredits || 0) - semesterCredits);
+    setTotalCredits(newTotal);
 
     saveCache({
       courses,
@@ -316,8 +342,28 @@ export default function Courses() {
     <main className="services-main">
       <div className="services-header">
         <h1>Course Selection and Credit Requirement</h1>
-        {!user && <span className="login-hint">Log in to sync with your account</span>}
+        <div className="header-actions">
+          <div className="credits-card">
+            <div className="credits-summary">Credits: {totalCredits} / 230</div>
+          </div>
+          <button className="question-mark-btn" onClick={() => setShowTips(true)}>?</button>
+          {!user && (
+            <div className="login-card">
+              <span className="login-hint">Log in to sync with your account</span>
+            </div>
+          )}
+        </div>
       </div>
+
+      {showTips && (
+        <div className="popup-overlay" onClick={() => setShowTips(false)}>
+          <div className="popup-box" onClick={(e) => e.stopPropagation()}>
+            <button className="popup-close-x" onClick={() => setShowTips(false)}>×</button>
+            <h2>Tips</h2>
+            <p>Fill in all boxes for a semester before locking.</p>
+          </div>
+        </div>
+      )}
 
       {saveStatus && <div className="save-status">{saveStatus}</div>}
 
@@ -338,7 +384,6 @@ export default function Courses() {
                       {!locked ? (
                         <>
                           <button className="lock-btn" onClick={() => lockSection(grade, sem)} disabled={!user}>Lock</button>
-                          <button className="clear-semester-btn" onClick={() => clearSemester(grade, sem)}>Clear</button>
                         </>
                       ) : (
                         <button className="unlock-btn" onClick={() => unlockSection(grade, sem)}>Unlock</button>

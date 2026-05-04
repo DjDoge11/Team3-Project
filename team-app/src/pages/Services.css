@@ -65,6 +65,16 @@
   font-size: 0.9rem;
 }
 
+.header-actions { display:flex; align-items:center; gap:0.75rem; }
+.credits-summary { font-weight:800; color:#19647E; font-size:1.05rem; }
+.credits-card { display:flex; align-items:center; padding:0.5rem 0.9rem; border-radius:0.6rem; min-width:160px; justify-content:center; box-shadow:0 4px 12px rgba(25,100,126,0.04); }
+.login-card { display:flex; align-items:center; padding:0.35rem 0.9rem; border-radius:0.6rem; background:linear-gradient(180deg, rgba(0,0,0,0.01), rgba(0,0,0,0.01)); border:1px solid rgba(0,0,0,0.03); }
+.login-hint { font-size:0.95rem; color:var(--color-muted); margin-left:0.25rem }
+.question-mark-btn { background:#19647E; color:#fff; border:none; border-radius:6px; width:36px; height:36px; cursor:pointer; font-weight:700; }
+.popup-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; z-index:1500; }
+.popup-box { background:#fff; padding:1rem 1.25rem; border-radius:8px; width:320px; max-width:90%; box-shadow:0 8px 24px rgba(0,0,0,0.2); position:relative; }
+.popup-close-x { position:absolute; right:8px; top:6px; background:none; border:none; font-size:1.25rem; cursor:pointer; }
+
 .grade-section {
   margin-bottom: 2rem;
   border-bottom: 1px solid #EEE5E5;
@@ -77,16 +87,19 @@
 
 .semester-container {
   display: flex;
-  gap: 2rem;
+  gap: 1rem;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .semester-card {
-  border: 0.15rem solid #333;
-  padding: 1.5rem;
-  border-radius: 0.5rem;
-  min-width: 320px;
-  width: fit-content;
+  border: 1px solid rgba(0,0,0,0.06);
+  padding: 1rem;
+  border-radius: 0.75rem;
+  flex: 1 1 340px; /* allow cards to grow/shrink and fill row */
+  max-width: 420px;
+  background: var(--color-surface);
+  box-shadow: 0 6px 18px rgba(25,100,126,0.04);
 }
 
 .semester-card.locked {
@@ -111,12 +124,12 @@
 }
 
 .lock-btn {
-  padding: 0.3rem 0.6rem;
-  font-size: 0.75rem;
-  background-color: #28a745;
-  color: white;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  background-color: var(--color-primary);
+  color: var(--color-surface);
   border: none;
-  border-radius: 0.25rem;
+  border-radius: 0.35rem;
   cursor: pointer;
 }
 
@@ -126,12 +139,12 @@
 }
 
 .unlock-btn {
-  padding: 0.3rem 0.6rem;
-  font-size: 0.75rem;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
   background-color: #dc3545;
-  color: white;
+  color: var(--color-surface);
   border: none;
-  border-radius: 0.25rem;
+  border-radius: 0.35rem;
   cursor: pointer;
 }
 
@@ -161,14 +174,13 @@
 }
 
 .course-input {
-  padding: 0.6rem;
-  padding-right: 2rem;
+  padding: 0.6rem 0.8rem;
   width: 100%;
   box-sizing: border-box;
-  border-radius: 0.25rem;
-  border: 0.1rem solid #ccc;
+  border-radius: 0.5rem;
+  border: 1px solid #e0eef0;
   outline: none;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   display: block;
 }
 
@@ -206,16 +218,16 @@
   top: 100%;
   left: 0;
   right: 0;
-  max-height: 200px;
+  max-height: 220px;
   overflow-y: auto;
-  border: 0.1rem solid #ccc;
-  border-radius: 0.25rem;
-  background-color: #fff;
+  border: 1px solid #e6f2f3;
+  border-radius: 0.5rem;
+  background-color: var(--color-surface);
   list-style: none;
-  padding: 0;
+  padding: 0.25rem 0;
   margin: 0;
   z-index: 1000;
-  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
 }
 
 .dropdown-item {

@@ -20,9 +20,9 @@ export default function Home() {
     <p>Thanks for using our website!</p>
     </div>
 
-    <div className="aboutUs">
-      <h3>About Our Team</h3>
-      <p>This website was created by five team members, each with respective roles.</p>
+      <div className="card aboutUs" style={{ marginBottom: '2rem' }}>
+        <h3>About Our Team</h3>
+        <p>This website was created by five team members, each with respective roles.</p>
         <ul className="members">
           <li>UX Researcher: Zoey</li>
           <li>UI Designer: Layla</li>
@@ -30,8 +30,7 @@ export default function Home() {
           <li>Back-End Developer: Shogo</li>
           <li>Project Manager: Parker</li>
         </ul>
-  </div> 
-  
+      </div>
     </main>
   );
 }
