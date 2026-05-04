@@ -4,6 +4,7 @@ import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { availableCourses } from '../data/courseCatalog';
 import './GPACalculator.css';
+import CourseDropdown from '../components/CourseDropdown';
 
 // Convert availableCourses object to array format used by the component
 const courses = Object.entries(availableCourses).map(([name, data]) => ({
@@ -49,7 +50,7 @@ export default function GPA() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
 
   // -----------------------------
   // LOAD CACHE FIRST → THEN FIRESTORE
@@ -240,12 +241,13 @@ export default function GPA() {
               <li>F = 0.0</li>
             </ul>
             <p><strong>Weighted:</strong> AP and Integrated Math 3 Honors get +1.0.</p>
+            <p>If you don’t see your course, use the Other course option.</p>
           </div>
         </div>
       )}
 
-      <div className="gpa-calculator-container">
-        <div className="gpa-inputs">
+      <div className="gpa-calculator-container container">
+        <div className="gpa-inputs card">
           <div className="gpa-columns">
             <div className="gpa-course-column">
               <h3>Course</h3>
@@ -281,17 +283,19 @@ export default function GPA() {
             <div className="gpa-grade-column">
               <h3>Grade</h3>
               {grades.map((grade, index) => (
-                <select
-                  key={`grade-${index}`}
-                  value={grade}
-                  onChange={(e) => handleGradeChange(index, e.target.value)}
-                  className="gpa-select"
-                >
-                  <option value="">Select Grade</option>
-                  {gradeOptions.map((g) => (
-                    <option key={g} value={g}>{g}</option>
-                  ))}
-                </select>
+                <div key={`grade-${index}`} className="gpa-grade-item">
+                  <select
+                    value={grades[index]}
+                    onChange={(e) => handleGradeChange(index, e.target.value)}
+                    className="gpa-select input-common"
+                    aria-label={`Grade for section ${index + 1}`}
+                  >
+                    <option value="">Grade</option>
+                    {gradeOptions.map((g) => (
+                      <option key={g} value={g}>{g}</option>
+                    ))}
+                  </select>
+                </div>
               ))}
             </div>
           </div>
@@ -306,7 +310,7 @@ export default function GPA() {
         </div>
 
         {result && (
-          <div className="gpa-result">
+          <div className="gpa-result card">
             <h2>Your GPA</h2>
             <p><strong>Unweighted GPA:</strong> {result.unweighted}</p>
             <p><strong>Weighted GPA:</strong> {result.weighted}</p>

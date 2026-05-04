@@ -17,28 +17,10 @@
 }
 
 /* Add Section Button */
-.section-buttons button:first-child {
-  background-color: #19647E;
-  color: white;
-}
-
-.section-buttons button:first-child:hover {
-  background-color: #155a6e;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-}
-
-/* Remove Section Button */
-.section-buttons button:nth-child(2) {
-  background-color: #dc3545;
-  color: white;
-}
-
-.section-buttons button:nth-child(2):hover {
-  background-color: #c82333;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-}
+.section-buttons button:first-child { background-color: var(--color-primary); color: var(--color-surface); border-radius: var(--radius); padding: 0.5rem 0.9rem; }
+.section-buttons button:first-child:hover { background-color: var(--color-accent); }
+.section-buttons button:nth-child(2) { background-color: #dc3545; color: var(--color-surface); border-radius: var(--radius); padding: 0.5rem 0.9rem; }
+.section-buttons button:nth-child(2):hover { background-color: #c82333; }
 
 /* Disabled state for Remove Section (when numSections <= 1) */
 .section-buttons button:disabled {
@@ -50,27 +32,54 @@
 }
 
 /* Calculate Button Styling - matching original theme colors */
-.calculate-btn {
-  align-self: flex-start;
-  background-color: #19647E;
-  color: #EEE5E5;
-  border: none;
-  padding: 0.75rem 2rem;
-  font-size: 1rem;
-  font-weight: bold;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 0.5rem;
-  width: 100%;
-}
-
-.calculate-btn:hover:not(:disabled) {
-  background-color: #28AFB0;
-}
+.calculate-btn { align-self:flex-start; background-color: var(--color-primary); color: var(--color-surface); border:none; padding:0.6rem 1rem; border-radius:var(--radius); font-weight:700; }
+.calculate-btn:hover:not(:disabled) { background-color: var(--color-accent); }
 
 .calculate-btn:disabled {
   background-color: #ccc;
   cursor: not-allowed;
   opacity: 0.6;
 }
+
+/* Popup and helper button */
+.question-mark-btn { background:#19647E; color:#fff; border:none; border-radius:6px; width:34px; height:34px; cursor:pointer; font-weight:700; }
+.popup-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; z-index:1500; }
+.popup-box { background:#fff; padding:1rem 1.25rem; border-radius:8px; width:360px; max-width:90%; box-shadow:0 8px 24px rgba(0,0,0,0.2); position:relative; }
+.popup-close-x { position:absolute; right:8px; top:6px; background:none; border:none; font-size:1.25rem; cursor:pointer; }
+
+/* Card wrappers to align with global styles */
+.gpa-calculator-container { display:flex; gap:1rem; align-items:flex-start; }
+.gpa-inputs.card { flex:1; }
+.gpa-result.card { min-width:220px; }
+.gpa-course-column .course-dropdown { margin-bottom:0.6rem; }
+.gpa-course-column .course-dropdown .course-input { width:100%; }
+.gpa-grade-column select { margin-bottom:0.6rem; width:100%; }
+
+.gpa-rows { display:flex; flex-direction:column; gap:0.45rem; }
+/* Two-column layout: even grid columns for course/grade */
+.gpa-columns { 
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+.gpa-course-column {
+  flex: 1;
+  display:flex; 
+  flex-direction:column; 
+  gap:0.5rem; 
+}
+.gpa-grade-column {
+  flex: 1;
+  min-width: 100px;
+  max-width: 140px;
+  display:flex; 
+  flex-direction:column; 
+  gap:0.5rem; 
+  align-items:stretch; 
+}
+.gpa-course-column h3 { margin-bottom:0.25rem; }
+.gpa-course-item { }
+.gpa-course-item .course-dropdown { width:100%; }
+
+.gpa-grade-column h3 { margin-bottom:0.25rem; }
+.gpa-grade-item select { width:100%; height:40px; padding:0.5rem; border-radius:0.5rem; border:1px solid #e6f2f3; background:var(--color-surface); }
