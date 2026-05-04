@@ -20,19 +20,42 @@ export default function Home() {
     <p>Thanks for using our website!</p>
     </div>
 
-    <div className="aboutUs">
-      <h3>About Our Team</h3>
-      <p>This website was created by five team members, each with respective roles.</p>
+      <div className="card aboutUs" style={{ marginBottom: '2rem' }}>
+        <h3>About Our Team</h3>
+        <p>This website was created by five team members, each with respective roles.</p>
         <ul className="members">
-          <li>UX Researcher: Zoey</li>
-          <li>UI Designer: Layla</li>
-          <li>Front-End Developer: Kevin</li>
-          <li>Back-End Developer: Shogo</li>
-          <li>Project Manager: Parker</li>
+          <li>
+            <strong>Zoey, </strong>
+            <span>UX Researcher</span>
+            <p>My name is Zoey Zhang. I am the UX researcher for Group 3.
+My job is to send surveys, conduct interviews, and view data spreads to find pain points and general concepts before we make the projects.
+I am a sophomore at CCA, in Exploring Computer Science, Period 3. </p>
+          </li>
+          <li>
+            <strong>Layla, </strong>
+            <span>UI Researcher</span>
+            <p>My name's Layla, and I'm a freshman at CCA, and I'm the UI/UX designer in Group 3 for the final project. My role is to add wireframe files and Figma links for the project.</p>
+          </li>
+          <li>
+            <strong>Shogo, </strong>
+            <span> Back-End Developer</span>
+            <p>Shogo Muranaka, Back End Developer
+</p>
+            </li>
+          <li>
+            <strong>Parker, </strong>
+            <span> Project Manager</span>
+            <p>Parker Bio, I am the Project Manager
+</p>
+          </li>
+          <li>
+            <strong> Kevin, </strong>
+            <span>Front-End Developer</span>
+            <p>Frontend developer for team project, Sophomore, has some coding experience
+</p>
+          </li>
         </ul>
-  </div> 
-  
+      </div>
     </main>
   );
 }
-
