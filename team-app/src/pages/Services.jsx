@@ -253,6 +253,16 @@ const isSectionLocked = (grade, semester) =>
     return courseList.filter(c => c.toLowerCase().includes(lower));
   };
 
+  const calculateTotalCredits = () => {
+    let total = 0;
+    Object.values(courses).forEach(course => {
+      if (course && availableCourses[course]) {
+        total += availableCourses[course].credits;
+      }
+    });
+    return total;
+  };
+
   const handleSearchChange = (key, value) => {
     const updated = { ...searchText, [key]: value };
     setSearchText(updated);
@@ -323,127 +333,146 @@ const isSectionLocked = (grade, semester) =>
 
   return (
     <main className="services-main">
-      <div className="services-header">
-        <h1>Course Selection and Credit Requirement</h1>
-        {!user && <span className="login-hint">Log in to sync with your account</span>}
-      </div>
+      <div className="services-content">
+        <div className="services-left">
+          <div className="services-header">
+            <h1>Course Selection and Credit Requirement</h1>
+            {!user && <span className="login-hint">Log in to sync with your account</span>}
+          </div>
 
-      {saveStatus && <div className="save-status">{saveStatus}</div>}
+          {saveStatus && <div className="save-status">{saveStatus}</div>}
 
-      {grades.map((grade) => (
-        <section key={grade} className="grade-section">
-          <h2>{grade} Grade</h2>
+          {grades.map((grade) => (
+            <section key={grade} className="grade-section">
+              <h2>{grade} Grade</h2>
 
-          <div className="semester-container">
-            {semesters.map((sem) => {
-              const locked = isSectionLocked(grade, sem);
+              <div className="semester-container">
+                {semesters.map((sem) => {
+                  const locked = isSectionLocked(grade, sem);
 
-              return (
-                <div key={sem} className={`semester-card ${locked ? 'locked' : ''}`}>
-                  <div className="semester-header">
-                    <h3>{sem} {locked && '🔒'}</h3>
+                  return (
+                    <div key={sem} className={`semester-card ${locked ? 'locked' : ''}`}>
+                      <div className="semester-header">
+                        <h3>{sem} {locked && '🔒'}</h3>
 
-                    <div className="semester-actions">
-                      {!locked ? (
-                        <>
-                          <button className="lock-btn" onClick={() => lockSection(grade, sem)} disabled={!user}>Lock</button>
-                        </>
-                      ) : (
-                        <button className="unlock-btn" onClick={() => unlockSection(grade, sem)}>Unlock</button>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="grade-column-header">
-                    <span className="grade-col-spacer"></span>
-                    <div className="grade-column-labels">
-                      {sem === 'Fall Semester' ? (
-                        <>
-                          <span className="quarter-column-label">Q1</span>
-                          <span className="quarter-column-label">Q2</span>
-                        </>
-                      ) : (
-                        <>
-                          <span className="quarter-column-label">Q3</span>
-                          <span className="quarter-column-label">Q4</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-
-                  {classSlots.map((slot) => {
-                    const inputKey = `${grade}-${sem}-${slot}`;
-                    const filtered = getFilteredCourses(searchText[inputKey] || '');
-                    const isOpen = dropdownOpen[inputKey] && filtered.length > 0;
-
-                    return (
-                      <div key={slot} className="course-period-row">
-                        <div className="course-input-group">
-                          <label>Period {slot}</label>
-
-                          <div className="course-dropdown">
-                            <input
-                              type="text"
-                              placeholder={locked ? 'Locked' : 'Search courses...'}
-                              value={searchText[inputKey] || courses[inputKey] || ''}
-                              disabled={locked}
-                              className="course-input"
-                              onChange={(e) => handleSearchChange(inputKey, e.target.value)}
-                              onKeyDown={(e) => handleKeyDown(e, inputKey)}
-                              onFocus={() => setDropdownOpen(prev => ({ ...prev, [inputKey]: true }))}
-                            />
-
-                            {isOpen && !locked && (
-                              <ul className="dropdown-list">
-                                {filtered.slice(0, 10).map((course, idx) => (
-                                  <li
-                                    key={course}
-                                    className={`dropdown-item ${idx === highlightedIndex[inputKey] ? 'highlighted' : ''}`}
-                                    onClick={() => handleCourseSelect(inputKey, course)}
-                                  >
-                                    {course}
-                                    <span className="course-category">({availableCourses[course].category})</span>
-                                  </li>
-                                ))}
-                              </ul>
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="grade-inputs-container">
-                          <div className="credits-box">
-                            {(courses[inputKey] && courses[inputKey] in availableCourses) ? 10 : ''}
-                          </div>
-
-                          {[1, 2].map((gradeNum) => {
-                            const val = courseGrades[`${inputKey}-g${gradeNum}`] || '';
-
-                            return (
-                              <select
-                                key={gradeNum}
-                                className="grade-box"
-                                value={val}
-                                disabled={locked}
-                                style={{ backgroundColor: gradeColors[val] }}
-                                onChange={(e) => handleGradeChange(inputKey, gradeNum, e.target.value)}
-                              >
-                                <option value="">-</option>
-                                {['A', 'B', 'C', 'D', 'F'].map(g => (
-                                  <option key={g} value={g}>{g}</option>
-                                ))}
-                              </select>
-                            );
-                          })}
+                        <div className="semester-actions">
+                          {!locked ? (
+                            <>
+                              <button className="lock-btn" onClick={() => lockSection(grade, sem)} disabled={!user}>Lock</button>
+                            </>
+                          ) : (
+                            <button className="unlock-btn" onClick={() => unlockSection(grade, sem)}>Unlock</button>
+                          )}
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
-              );
-            })}
+
+                      <div className="grade-column-header">
+                        <span className="grade-col-spacer"></span>
+                        <div className="grade-column-labels">
+                          {sem === 'Fall Semester' ? (
+                            <>
+                              <span className="quarter-column-label">Q1</span>
+                              <span className="quarter-column-label">Q2</span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="quarter-column-label">Q3</span>
+                              <span className="quarter-column-label">Q4</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      {classSlots.map((slot) => {
+                        const inputKey = `${grade}-${sem}-${slot}`;
+                        const filtered = getFilteredCourses(searchText[inputKey] || '');
+                        const isOpen = dropdownOpen[inputKey] && filtered.length > 0;
+
+                        return (
+                          <div key={slot} className="course-period-row">
+                            <div className="course-input-group">
+                              <label>Period {slot}</label>
+
+                              <div className="course-dropdown">
+                                <input
+                                  type="text"
+                                  placeholder={locked ? 'Locked' : 'Search courses...'}
+                                  value={searchText[inputKey] || courses[inputKey] || ''}
+                                  disabled={locked}
+                                  className="course-input"
+                                  onChange={(e) => handleSearchChange(inputKey, e.target.value)}
+                                  onKeyDown={(e) => handleKeyDown(e, inputKey)}
+                                  onFocus={() => setDropdownOpen(prev => ({ ...prev, [inputKey]: true }))}
+                                />
+
+                                {isOpen && !locked && (
+                                  <ul className="dropdown-list">
+                                    {filtered.slice(0, 10).map((course, idx) => (
+                                      <li
+                                        key={course}
+                                        className={`dropdown-item ${idx === highlightedIndex[inputKey] ? 'highlighted' : ''}`}
+                                        onClick={() => handleCourseSelect(inputKey, course)}
+                                      >
+                                        {course}
+                                        <span className="course-category">({availableCourses[course].category})</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="grade-inputs-container">
+                              <div className="credits-box">
+                                {(courses[inputKey] && courses[inputKey] in availableCourses) ? 10 : ''}
+                              </div>
+
+                              {[1, 2].map((gradeNum) => {
+                                const val = courseGrades[`${inputKey}-g${gradeNum}`] || '';
+
+                                return (
+                                  <select
+                                    key={gradeNum}
+                                    className="grade-box"
+                                    value={val}
+                                    disabled={locked}
+                                    style={{ backgroundColor: gradeColors[val] }}
+                                    onChange={(e) => handleGradeChange(inputKey, gradeNum, e.target.value)}
+                                  >
+                                    <option value="">-</option>
+                                    {['A', 'B', 'C', 'D', 'F'].map(g => (
+                                      <option key={g} value={g}>{g}</option>
+                                    ))}
+                                  </select>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          ))}
+        </div>
+
+        <div className="services-sidebar">
+          <h3>Credit Progress</h3>
+          <div className="credit-progress">
+            <div className="progress-bar">
+              <div
+                className="progress-fill"
+                style={{ width: `${Math.min((calculateTotalCredits() / totalCreditsRequired) * 100, 100)}%` }}
+              ></div>
+            </div>
+            <div className="progress-text">
+              {calculateTotalCredits()} / {totalCreditsRequired} Credits
+            </div>
           </div>
-        </section>
-      ))}
+        </div>
+      </div>
     </main>
   );
 }
