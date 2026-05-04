@@ -1,1 +1,1 @@
-My name's Layla i'm a frashman at CCA and i'm the UI/UX designer in Group 3 for the final project. My role is to Adds wireframe files and Figma links for the project.
+My name's Layla, and I'm a freshman at CCA, and I'm the UI/UX designer in Group 3 for the final project. My role is to add wireframe files and Figma links for the project.
