@@ -20,6 +20,11 @@ export default function Courses() {
   const [loading, setLoading] = useState(true);
   const servicesRef = useRef(null);
   const saveTimeoutRef = useRef(null);
+  const [offCampusCourses, setOffCampusCourses] = useState([]);
+  const [offCampusGrades, setOffCampusGrades] = useState([]);
+  const [offCampusSearchText, setOffCampusSearchText] = useState({});
+  const [offCampusDropdownOpen, setOffCampusDropdownOpen] = useState({});
+  const [offCampusHighlightedIndex, setOffCampusHighlightedIndex] = useState({});
 
   const gradeColors = {
     'A': '#00B4D8',
@@ -58,6 +63,14 @@ export default function Courses() {
       ([key, value]) => value && gradePoints[value] !== undefined
     );
 
+    // Add off-campus grades
+    offCampusCourses.forEach((course, index) => {
+      const grade = offCampusGrades[index];
+      if (grade && gradePoints[grade] !== undefined) {
+        gradeEntries.push([`off-${index}`, grade]);
+      }
+    });
+
     if (gradeEntries.length === 0) {
       return { unweighted: 'N/A', weighted: 'N/A' };
     }
@@ -68,15 +81,23 @@ export default function Courses() {
 
     gradeEntries.forEach(([key, value]) => {
       const courseKey = key.replace(/-g\d+$/, '');
-      const courseName = courses[courseKey];
+      let courseName = courses[courseKey];
+      let isWeighted = false;
 
-      if (!courseName || !availableCourses[courseName]) {
-        return;
+      if (key.startsWith('off-')) {
+        const index = parseInt(key.split('-')[1]);
+        courseName = offCampusCourses[index];
+      } else {
+        courseName = courses[courseKey];
+      }
+
+      if (courseName && availableCourses[courseName]) {
+        isWeighted = availableCourses[courseName].weighted;
       }
 
       const points = gradePoints[value];
       totalUnweighted += points;
-      totalWeighted += availableCourses[courseName].weighted ? points + 1.0 : points;
+      totalWeighted += isWeighted ? points + 1.0 : points;
       count += 1;
     });
 
@@ -133,6 +154,8 @@ export default function Courses() {
             if (data.courses) setCourses(prev => prev !== data.courses ? data.courses : prev);
             if (data.courseGrades) setCourseGrades(prev => prev !== data.courseGrades ? data.courseGrades : prev);
             if (data.lockedSections) setLockedSections(prev => prev !== data.lockedSections ? data.lockedSections : prev);
+            if (data.offCampusCourses) setOffCampusCourses(prev => prev !== data.offCampusCourses ? data.offCampusCourses : prev);
+            if (data.offCampusGrades) setOffCampusGrades(prev => prev !== data.offCampusGrades ? data.offCampusGrades : prev);
 
             setSaveStatus('Schedule loaded');
             setTimeout(() => setSaveStatus(''), 2000);
@@ -301,6 +324,11 @@ const isSectionLocked = (grade, semester) =>
         total += availableCourses[course].credits;
       }
     });
+    offCampusCourses.forEach(course => {
+      if (course && availableCourses[course]) {
+        total += availableCourses[course].credits;
+      }
+    });
     return total;
   };
 
@@ -313,6 +341,13 @@ const isSectionLocked = (grade, semester) =>
       }
       return totals;
     }, {});
+
+    // Add off-campus credits to Elective
+    offCampusCourses.forEach(course => {
+      if (course && availableCourses[course]) {
+        rawTotals.Elective = (rawTotals.Elective || 0) + availableCourses[course].credits;
+      }
+    });
 
     let electiveOverflow = rawTotals.Elective || 0;
     const cappedTotals = Object.entries(requiredCredits).reduce((totals, [category, required]) => {
@@ -391,6 +426,112 @@ const isSectionLocked = (grade, semester) =>
 
       case 'Escape':
         setDropdownOpen(prev => ({ ...prev, [inputKey]: false }));
+        break;
+    }
+  };
+
+  const handleOffCampusCourseChange = (index, value) => {
+    // Prevent selecting courses already in regular schedule
+    if (value && Object.values(courses).includes(value)) {
+      setSaveStatus('Course already selected in schedule');
+      setTimeout(() => setSaveStatus(''), 2000);
+      return;
+    }
+
+    // Prevent duplicates in off-campus
+    if (value && offCampusCourses.some((c, i) => c === value && i !== index)) {
+      setSaveStatus('Course already selected in off-campus');
+      setTimeout(() => setSaveStatus(''), 2000);
+      return;
+    }
+
+    const newCourses = [...offCampusCourses];
+    newCourses[index] = value;
+    setOffCampusCourses(newCourses);
+
+    if (user) {
+      syncToFirebase({ offCampusCourses: newCourses });
+    }
+  };
+
+  const handleOffCampusGradeChange = (index, value) => {
+    const newGrades = [...offCampusGrades];
+    newGrades[index] = value;
+    setOffCampusGrades(newGrades);
+
+    if (user) {
+      syncToFirebase({ offCampusGrades: newGrades });
+    }
+  };
+
+  const addOffCampusSection = () => {
+    setOffCampusCourses([...offCampusCourses, '']);
+    setOffCampusGrades([...offCampusGrades, '']);
+  };
+
+  const removeOffCampusSection = () => {
+    if (offCampusCourses.length > 0) {
+      const newCourses = offCampusCourses.slice(0, -1);
+      const newGrades = offCampusGrades.slice(0, -1);
+      setOffCampusCourses(newCourses);
+      setOffCampusGrades(newGrades);
+
+      if (user) {
+        syncToFirebase({ offCampusCourses: newCourses, offCampusGrades: newGrades });
+      }
+    }
+  };
+
+  const handleOffCampusSearchChange = (index, value) => {
+    const updated = { ...offCampusSearchText, [index]: value };
+    setOffCampusSearchText(updated);
+
+    setOffCampusDropdownOpen(prev => ({ ...prev, [index]: value.length > 0 }));
+
+    if (!value.trim()) {
+      handleOffCampusCourseChange(index, '');
+    }
+  };
+
+  const handleOffCampusCourseSelect = (index, course) => {
+    handleOffCampusCourseChange(index, course);
+
+    setOffCampusSearchText(prev => ({ ...prev, [index]: course }));
+    setOffCampusDropdownOpen(prev => ({ ...prev, [index]: false }));
+    setOffCampusHighlightedIndex(prev => ({ ...prev, [index]: 0 }));
+  };
+
+  const handleOffCampusKeyDown = (e, index) => {
+    const filtered = getFilteredCourses(offCampusSearchText[index] || '');
+    const currentIndex = offCampusHighlightedIndex[index] || 0;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setOffCampusDropdownOpen(prev => ({ ...prev, [index]: true }));
+        setOffCampusHighlightedIndex(prev => ({
+          ...prev,
+          [index]: (currentIndex + 1) % filtered.length
+        }));
+        break;
+
+      case 'ArrowUp':
+        e.preventDefault();
+        setOffCampusHighlightedIndex(prev => ({
+          ...prev,
+          [index]: (currentIndex - 1 + filtered.length) % filtered.length
+        }));
+        break;
+
+      case 'Enter':
+        e.preventDefault();
+        if (offCampusDropdownOpen[index] && filtered.length > 0) {
+          handleOffCampusCourseSelect(index, filtered[currentIndex]);
+        }
+        break;
+
+      case 'Escape':
+        setOffCampusDropdownOpen(prev => ({ ...prev, [index]: false }));
         break;
     }
   };
@@ -537,6 +678,81 @@ const isSectionLocked = (grade, semester) =>
               </div>
             </section>
           ))}
+        </div>
+
+        <div className="services-middle">
+          <div className="off-campus-credits">
+            <h3>Off-Campus Credits</h3>
+            {offCampusCourses.map((course, index) => {
+              const filtered = getFilteredCourses(offCampusSearchText[index] || '');
+              const isOpen = offCampusDropdownOpen[index] && filtered.length > 0;
+
+              return (
+                <div key={index} className="off-campus-row">
+                  <div className="off-campus-input-group">
+                    <div className="off-campus-dropdown">
+                      <input
+                        type="text"
+                        placeholder="Search courses..."
+                        value={offCampusSearchText[index] || course || ''}
+                        className="off-campus-input"
+                        onChange={(e) => handleOffCampusSearchChange(index, e.target.value)}
+                        onKeyDown={(e) => handleOffCampusKeyDown(e, index)}
+                        onFocus={() => setOffCampusDropdownOpen(prev => ({ ...prev, [index]: true }))}
+                        onBlur={() => setTimeout(() => setOffCampusDropdownOpen(prev => ({ ...prev, [index]: false })), 100)}
+                      />
+
+                      {course && (
+                        <button
+                          type="button"
+                          className="off-campus-clear-btn"
+                          onMouseDown={(e) => e.preventDefault()}
+                          onClick={() => handleOffCampusCourseChange(index, '')}
+                          title="Clear course"
+                        >
+                          ×
+                        </button>
+                      )}
+
+                      {isOpen && (
+                        <ul className="off-campus-dropdown-list">
+                          {filtered.slice(0, 10).map((c, idx) => (
+                            <li
+                              key={c}
+                              className={`off-campus-dropdown-item ${idx === offCampusHighlightedIndex[index] ? 'highlighted' : ''}`}
+                              onClick={() => handleOffCampusCourseSelect(index, c)}
+                            >
+                              {c}
+                              <span className="off-campus-course-category">({availableCourses[c].category})</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="off-campus-credits-display">
+                    {course && availableCourses[course] ? availableCourses[course].credits : ''}
+                  </div>
+
+                  <select
+                    value={offCampusGrades[index] || ''}
+                    onChange={(e) => handleOffCampusGradeChange(index, e.target.value)}
+                    className="off-campus-grade-select"
+                  >
+                    <option value="">Grade</option>
+                    {['A', 'B', 'C', 'D', 'F'].map(g => (
+                      <option key={g} value={g}>{g}</option>
+                    ))}
+                  </select>
+                </div>
+              );
+            })}
+            <div className="off-campus-buttons">
+              <button onClick={addOffCampusSection}>Add Off-Campus Course</button>
+              <button onClick={removeOffCampusSection} disabled={offCampusCourses.length === 0}>Remove</button>
+            </div>
+          </div>
         </div>
 
         <div className="services-sidebar">
