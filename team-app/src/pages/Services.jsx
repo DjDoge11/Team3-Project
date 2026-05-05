@@ -282,10 +282,27 @@ const isSectionLocked = (grade, semester) =>
   const classSlots = [1, 2, 3, 4];
   const courseList = Object.keys(availableCourses);
 
-  const getFilteredCourses = (search) => {
-    if (!search) return courseList;
+  // Get all selected courses (for excluding from dropdown)
+  const getSelectedCourses = () => {
+    const selected = new Set(Object.values(courses).filter(c => c));
+    offCampusCourses.forEach(course => {
+      if (course) selected.add(course);
+    });
+    return selected;
+  };
+
+  const getFilteredCourses = (search, excludeSelected = true) => {
+    let filtered = courseList;
+    
+    // Exclude already selected courses if requested
+    if (excludeSelected) {
+      const selected = getSelectedCourses();
+      filtered = filtered.filter(c => !selected.has(c));
+    }
+    
+    if (!search) return filtered;
     const lower = search.toLowerCase();
-    return courseList.filter(c => c.toLowerCase().includes(lower));
+    return filtered.filter(c => c.toLowerCase().includes(lower));
   };
 
   const calculateTotalCredits = () => {
