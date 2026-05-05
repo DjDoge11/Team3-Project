@@ -5,7 +5,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { availableCourses, requiredCredits, totalCreditsRequired } from '../data/courseCatalog';
 import './Services.css';
 
-export default function Courses() {
+export default function Services() {
   // -----------------------------
   // 1. State initialization
   // -----------------------------
@@ -17,7 +17,6 @@ export default function Courses() {
   const [highlightedIndex, setHighlightedIndex] = useState({});
   const [saveStatus, setSaveStatus] = useState('');
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
   const servicesRef = useRef(null);
   const saveTimeoutRef = useRef(null);
   const [offCampusCourses, setOffCampusCourses] = useState([]);
@@ -60,7 +59,7 @@ export default function Courses() {
 
   const calculateGPAResult = () => {
     const gradeEntries = Object.entries(courseGrades).filter(
-      ([key, value]) => value && gradePoints[value] !== undefined
+      ([, value]) => value && gradePoints[value] !== undefined
     );
 
     // Add off-campus grades
@@ -165,7 +164,6 @@ export default function Courses() {
         }
       }
 
-      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -278,33 +276,6 @@ const unlockSection = async (grade, semester) => {
 
 const isSectionLocked = (grade, semester) =>
   lockedSections[`${grade}-${semester}`] === true;
-
-  // -----------------------------
-  // 7. Clear Semester (optimized)
-  // -----------------------------
-  const clearSemester = async (grade, semester) => {
-    const newCourses = { ...courses };
-    const newGrades = { ...courseGrades };
-
-    Object.keys(newCourses).forEach(key => {
-      if (key.startsWith(`${grade}-${semester}`)) delete newCourses[key];
-    });
-
-    Object.keys(newGrades).forEach(key => {
-      if (key.startsWith(`${grade}-${semester}`)) delete newGrades[key];
-    });
-
-    setCourses(newCourses);
-    setCourseGrades(newGrades);
-
-    if (user) {
-      syncToFirebase({
-        courses: newCourses,
-        courseGrades: newGrades
-      });
-    }
-  };
-
 
   const grades = ['9th', '10th', '11th', '12th'];
   const semesters = ['Fall Semester', 'Spring Semester'];
@@ -577,7 +548,9 @@ const isSectionLocked = (grade, semester) =>
 
                       <div className="grade-column-header">
                         <span className="grade-col-spacer"></span>
-                        <div className="grade-column-labels">                          <span className="credits-label">Credits</span>                          {sem === 'Fall Semester' ? (
+                        <div className="grade-column-labels">
+                          <span className="credits-label">Credits</span>
+                          {sem === 'Fall Semester' ? (
                             <>
                               <span className="quarter-column-label">Q1</span>
                               <span className="quarter-column-label">Q2</span>

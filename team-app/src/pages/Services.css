@@ -171,16 +171,18 @@
 
 .semester-container {
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem;
   flex-wrap: wrap;
+  justify-content: flex-start;
 }
 
 .semester-card {
   border: 0.15rem solid #333;
   padding: 1.5rem;
   border-radius: 0.5rem;
-  min-width: 320px;
-  width: fit-content;
+  min-width: 350px;
+  width: 100%;
+  max-width: 500px;
 }
 
 .semester-card.locked {
@@ -255,15 +257,16 @@
 }
 
 .course-input {
-  padding: 0.6rem;
-  padding-right: 2rem;
+  padding: 0.75rem;
+  padding-right: 2.5rem;
   width: 100%;
   box-sizing: border-box;
   border-radius: 0.25rem;
   border: 0.1rem solid #ccc;
   outline: none;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   display: block;
+  min-height: 44px;
 }
 
 .course-input:focus {
@@ -389,14 +392,15 @@
 /* Force Input and Grade boxes to be identical in height */
 .course-input, 
 .grade-box {
-  height: 40px; 
+  height: 44px; 
   box-sizing: border-box;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
 
 .grade-box {
-  width: 45px;
+  width: 50px;
+  min-width: 50px;
   text-align: center;
   font-weight: bold;
   cursor: pointer;
@@ -406,6 +410,7 @@
   appearance: none;
   -webkit-appearance: none;
   background-color: white;
+  font-size: 0.9rem;
 }
 
 .grade-input-group {
@@ -456,8 +461,9 @@ select.grade-box {
 }
 
 .quarter-column-label {
-  width: 42px;
-  font-size: 0.65rem;
+  width: 50px;
+  min-width: 50px;
+  font-size: 0.7rem;
   font-weight: 600;
   color: #19647E;
   text-transform: uppercase;
@@ -466,8 +472,9 @@ select.grade-box {
 }
 
 .credits-label {
-  width: 42px;
-  font-size: 0.65rem;
+  width: 50px;
+  min-width: 50px;
+  font-size: 0.7rem;
   font-weight: 600;
   color: #19647E;
   text-transform: uppercase;
@@ -477,8 +484,9 @@ select.grade-box {
 }
 
 .credits-box {
-  width: 42px;
-  height: 38px;
+  width: 50px;
+  min-width: 50px;
+  height: 42px;
   text-align: center;
   font-weight: bold;
   border: 1px solid #ccc;
@@ -587,16 +595,16 @@ select.grade-box {
 }
 
 .off-campus-input {
-  padding: 0.6rem;
-  padding-right: 2rem;
+  padding: 0.75rem;
+  padding-right: 2.5rem;
   width: 100%;
   box-sizing: border-box;
   border-radius: 0.25rem;
   border: 0.1rem solid #ccc;
   outline: none;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   display: block;
-  height: 40px;
+  min-height: 44px;
 }
 
 .off-campus-input:focus {
@@ -662,8 +670,9 @@ select.grade-box {
 }
 
 .off-campus-credits-display {
-  width: 42px;
-  height: 40px;
+  width: 50px;
+  min-width: 50px;
+  height: 44px;
   text-align: center;
   font-weight: bold;
   background-color: #f5f5f5;
@@ -676,8 +685,9 @@ select.grade-box {
 }
 
 .off-campus-grade-select {
-  width: 60px;
-  height: 40px;
+  width: 65px;
+  min-width: 65px;
+  height: 44px;
   text-align: center;
   font-weight: bold;
   cursor: pointer;
@@ -698,14 +708,272 @@ select.grade-box {
   margin-top: 0.75rem;
 }
 
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .services-content {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .services-middle,
+  .services-sidebar {
+    width: 100%;
+  }
+
+  .semester-container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .semester-card {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .grade-column-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .grade-column-labels {
+    justify-content: flex-start;
+    gap: 1rem;
+  }
+
+  .course-period-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .grade-inputs-container {
+    justify-content: flex-start;
+    margin-bottom: 0;
+  }
+
+  .off-campus-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .gpa-value {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .services-main {
+    padding: 0.75rem;
+  }
+
+  .services-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .services-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .semester-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .semester-actions {
+    align-self: stretch;
+    justify-content: space-between;
+  }
+
+  .grade-column-labels {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .quarter-column-label,
+  .credits-label {
+    width: 48px;
+    min-width: 48px;
+    font-size: 0.65rem;
+  }
+
+  .credits-box {
+    width: 48px;
+    min-width: 48px;
+    height: 40px;
+  }
+
+  .grade-box {
+    width: 48px;
+    min-width: 48px;
+    height: 42px;
+  }
+
+  .course-input,
+  .off-campus-input {
+    min-height: 42px;
+    font-size: 0.9rem;
+    padding: 0.6rem;
+  }
+
+  .off-campus-credits-display {
+    width: 48px;
+    min-width: 48px;
+    height: 42px;
+  }
+
+  .off-campus-grade-select {
+    width: 60px;
+    min-width: 60px;
+    height: 42px;
+  }
+
+  .off-campus-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .off-campus-buttons button {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .category-row {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .category-label {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    font-size: 0.8rem;
+  }
+
+  .gpa-value {
+    gap: 0.75rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .services-main {
+    padding: 0.5rem;
+  }
+
+  .services-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .grade-section h2 {
+    font-size: 1.25rem;
+  }
+
+  .semester-card {
+    padding: 1rem;
+    min-width: 300px;
+  }
+
+  .course-input,
+  .off-campus-input {
+    font-size: 0.85rem;
+    padding: 0.5rem;
+    min-height: 40px;
+  }
+
+  .grade-box,
+  .credits-box,
+  .off-campus-credits-display,
+  .off-campus-grade-select {
+    height: 40px;
+    font-size: 0.8rem;
+  }
+
+  .grade-box {
+    width: 44px;
+    min-width: 44px;
+  }
+
+  .credits-box {
+    width: 44px;
+    min-width: 44px;
+  }
+
+  .quarter-column-label,
+  .credits-label {
+    width: 44px;
+    min-width: 44px;
+    font-size: 0.6rem;
+  }
+
+  .off-campus-credits-display {
+    width: 44px;
+    min-width: 44px;
+  }
+
+  .off-campus-grade-select {
+    width: 55px;
+    min-width: 55px;
+  }
+
+  .dropdown-list,
+  .off-campus-dropdown-list {
+    max-height: 150px;
+  }
+
+  .dropdown-item,
+  .off-campus-dropdown-item {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.5rem;
+  }
+
+  .progress-bar {
+    height: 18px;
+  }
+
+  .category-bar {
+    height: 10px;
+  }
+
+  .gpa-score {
+    min-width: 42px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .course-period-row {
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .grade-inputs-container {
+    gap: 6px;
+  }
+
+  .off-campus-row {
+    gap: 0.5rem;
+  }
+}
+
 .off-campus-buttons button {
-  padding: 0.4rem 0.8rem;
+  padding: 0.5rem 1rem;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 500;
   background-color: #19647E;
   color: white;
+  min-height: 40px;
+  transition: background-color 0.2s ease;
 }
 
 .off-campus-buttons button:hover {

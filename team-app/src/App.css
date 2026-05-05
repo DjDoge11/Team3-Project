@@ -7,15 +7,35 @@ body {
 }
 
 .navbar {
-  
-    background-color: #19647E;
-    padding: 1rem;
+  background-color: #19647E;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.username p{
+  margin: 0;
+  padding: 0;
+  line-height: 1.25;
+  font-size: 0.9rem;
+}
+
+.username{
+  position: absolute;
+  right: 2rem;
+  color: #EEE5E5;
+  font-weight: bold;
+  font-family: sans-serif;
+  font-size: 0.95rem;
 }
 
 .navbar ul {
     list-style: none;
     display: flex;
-    gap: 1.5rem;
+    gap: 1rem;
     margin: 0;
     padding: 0;
     justify-content: center;
@@ -37,6 +57,23 @@ body {
   .navbar a:hover {
     color: #19647E;
     background-color: #DDCECD;
+}
+
+.username {
+  position: absolute;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #EEE5E5;
+  font-weight: bold;
+  font-size: 0.95rem;
+}
+
+.username p {
+  margin: 0;
+  padding: 0.5rem 1rem;
+  background-color: rgba(40, 175, 176, 0.3);
+  border-radius: 0.25rem;
 }
 
 .footer {

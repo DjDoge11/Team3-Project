@@ -1,8 +1,21 @@
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { auth } from '../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
 export default function Navbar() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
-    <nav className = "navbar">
+    <nav className="navbar">
       <ul>
         <li><Link to="/home">Home</Link></li>
         <li><Link to="/gpa">GPA</Link></li>
@@ -10,6 +23,13 @@ export default function Navbar() {
         <li><Link to="/grades">Grades</Link></li>
         <li><Link to="/login">Login</Link></li>
       </ul>
+      <div className="username">
+        {user ? (
+          <p>{user.email}</p>
+        ) : (
+          <p>Guest</p>
+        )}
+      </div>
     </nav>
   );
 }
