@@ -160,25 +160,25 @@ export const availableCourses = {
   "Weight Training": { credits: 10, category: "Physical Education", weighted: false },
 
   // English Electives
-  "Speech and Debate": { credits: 10, category: "Elective", weighted: false },
-  "Journalism": { credits: 10, category: "Elective", weighted: false },
-  "Yearbook": { credits: 10, category: "Elective", weighted: false },
-  "Creative Writing": { credits: 10, category: "Elective", weighted: false },
+  "Speech and Debate": { credits: 10, category: "Practical Arts/CTE", weighted: false },
+  "Journalism": { credits: 10, category: "Practical Arts/CTE", weighted: false },
+  "Yearbook": { credits: 10, category: "Practical Arts/CTE", weighted: false },
+  "Creative Writing": { credits: 10, category: "Practical Arts/CTE", weighted: false },
 
   // Engineering electives
-  "Introduction to Engineering Techniques": { credits: 10, category: "Elective", weighted: false },
-  "Digital Electronics": { credits: 10, category: "Elective", weighted: false },
-  "Advance Engineering Techniques": { credits: 10, category: "Elective", weighted: false },
+  "Introduction to Engineering Techniques": { credits: 10, category: "Practical Arts/CTE", weighted: false },
+  "Digital Electronics": { credits: 10, category: "Practical Arts/CTE", weighted: false },
+  "Advance Engineering Techniques": { credits: 10, category: "Practical Arts/CTE", weighted: false },
 
   // Computer Science electives
-  "Computer Science Foundation": { credits: 10, category: "Elective", weighted: false },
-  "Computer Game Design": { credits: 10, category: "Elective", weighted: false },
-  "Human Computer Interaction": { credits: 10, category: "Elective", weighted: false },
-  "Machine Learning": { credits: 10, category: "Elective", weighted: false },
+  "Computer Science Foundation": { credits: 10, category: "Practical Arts/CTE", weighted: false },
+  "Computer Game Design": { credits: 10, category: "Practical Arts/CTE", weighted: false },
+  "Human Computer Interaction": { credits: 10, category: "Practical Arts/CTE", weighted: false },
+  "Machine Learning": { credits: 10, category: "Practical Arts/CTE", weighted: false },
 
 // AP Computer Science courses
-  "AP Computer Science A": { credits: 10, category: "Elective", weighted: true },
-  "AP Computer Science Principles": { credits: 10, category: "Elective", weighted: true },
+  "AP Computer Science A": { credits: 10, category: "Practical Arts/CTE", weighted: true },
+  "AP Computer Science Principles": { credits: 10, category: "Practical Arts/CTE", weighted: true },
 
   // Other courses (can select multiple without restriction)
   "Other (Unweighted)": { credits: 10, category: "Elective", weighted: false },

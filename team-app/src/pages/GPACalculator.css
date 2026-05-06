@@ -17,28 +17,10 @@
 }
 
 /* Add Section Button */
-.section-buttons button:first-child {
-  background-color: #19647E;
-  color: white;
-}
-
-.section-buttons button:first-child:hover {
-  background-color: #155a6e;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-}
-
-/* Remove Section Button */
-.section-buttons button:nth-child(2) {
-  background-color: #dc3545;
-  color: white;
-}
-
-.section-buttons button:nth-child(2):hover {
-  background-color: #c82333;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-}
+.section-buttons button:first-child { background-color: var(--color-primary); color: var(--color-surface); border-radius: var(--radius); padding: 0.5rem 0.9rem; }
+.section-buttons button:first-child:hover { background-color: var(--color-accent); }
+.section-buttons button:nth-child(2) { background-color: #dc3545; color: var(--color-surface); border-radius: var(--radius); padding: 0.5rem 0.9rem; }
+.section-buttons button:nth-child(2):hover { background-color: #c82333; }
 
 /* Disabled state for Remove Section (when numSections <= 1) */
 .section-buttons button:disabled {
@@ -50,27 +32,47 @@
 }
 
 /* Calculate Button Styling - matching original theme colors */
-.calculate-btn {
-  align-self: flex-start;
-  background-color: #19647E;
-  color: #EEE5E5;
-  border: none;
-  padding: 0.75rem 2rem;
-  font-size: 1rem;
-  font-weight: bold;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 0.5rem;
-  width: 100%;
-}
-
-.calculate-btn:hover:not(:disabled) {
-  background-color: #28AFB0;
-}
+.calculate-btn { align-self:flex-start; background-color: var(--color-primary); color: var(--color-surface); border:none; padding:0.6rem 1rem; border-radius:var(--radius); font-weight:700; }
+.calculate-btn:hover:not(:disabled) { background-color: var(--color-accent); }
 
 .calculate-btn:disabled {
   background-color: #ccc;
   cursor: not-allowed;
   opacity: 0.6;
+}
+
+.gpa-score {
+  display: inline-block;
+  min-width: 4rem;
+  margin-left: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  text-align: center;
+  color: #fff;
+}
+
+.gpa-score-gray {
+  background-color: #7f8c8d;
+}
+
+.gpa-score-red {
+  background-color: #e74c3c;
+}
+
+.gpa-score-orange {
+  background-color: #d35400;
+}
+
+.gpa-score-yellow {
+  background-color: #f1c40f;
+  color: #2c3e50;
+}
+
+.gpa-score-green {
+  background-color: #27ae60;
+}
+
+.gpa-score-blue {
+  background-color: #3498db;
 }
