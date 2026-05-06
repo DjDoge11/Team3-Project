@@ -163,25 +163,7 @@ const canCalculate = selectedCourses.length > 0 &&
     return 'gpa-score-gray';
   };
 
-  const clearAll = () => {
-    const empty = ['', '', '', ''];
-    setSelectedCourses(empty);
-    setGrades(empty);
-    setResult(null);
-    setError('');
 
-    // Clear cache
-    saveToCache(empty, empty);
-
-    // Clear Firestore
-    if (user) {
-      const userDocRef = doc(db, 'users', user.uid);
-      setDoc(userDocRef, {
-        gpaCourses: empty,
-        gpaGrades: empty
-      }, { merge: true });
-    }
-  };
 
   return (
     <main className="gpa-page">
