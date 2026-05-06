@@ -798,4 +798,4 @@ const isSectionLocked = (grade, semester) =>
       </div>
     </main>
   );
-}
+}}
