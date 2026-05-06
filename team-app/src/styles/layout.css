@@ -1,0 +1,222 @@
+/* Layout pieces */
+
+.bbai-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+
+  /* Glassy gradient header */
+  background: linear-gradient(
+    90deg,
+    rgba(25, 100, 126, 0.88),
+    rgba(40, 175, 176, 0.86),
+    rgba(42, 176, 176, 0.86)
+  );
+  background-size: 240% 240%;
+  animation: bbaiGradientShift 9s ease-in-out infinite;
+
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.14),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.16);
+
+  overflow: hidden;
+}
+
+
+.bbai-navbar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.65;
+  background: radial-gradient(600px 120px at 50% 0%, rgba(255, 255, 255, 0.10), transparent 60%);
+}
+
+
+
+@keyframes bbaiGradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.bbai-navbar__inner {
+  max-width: var(--grid-max);
+  margin: 0 auto;
+  padding: 18px 24px 18px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.bbai-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  min-width: max-content;
+}
+
+.bbai-brand__mark {
+  display: block;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
+}
+
+
+
+.bbai-brand__name {
+  font-size: clamp(1rem, 2vw, 1.24rem);
+  font-weight: 900;
+  line-height: 1;
+  opacity: 0.98;
+  white-space: nowrap;
+}
+
+
+@keyframes bbaiLogoFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+.bbai-navLinks {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  width: auto;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+
+
+.bbai-navLink {
+  position: relative;
+  text-decoration: none;
+  color: #fff;
+  font-weight: 800;
+  padding: 11px 18px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: transform 150ms ease, background-color 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+  will-change: transform;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.08);
+}
+
+
+
+/* removed “dot/sphere” tab highlight */
+.bbai-navLink::before {
+  content: none;
+}
+
+
+.bbai-navLink:hover {
+  background: rgba(40, 175, 176, 0.3);
+  transform: translateY(-1px);
+}
+
+.bbai-navLink:hover {
+  background: rgba(40, 175, 176, 0.28);
+  transform: translateY(-1px);
+}
+
+
+.bbai-footer {
+  margin-top: 56px;
+  background:
+    radial-gradient(900px 260px at 10% 10%, rgba(40, 175, 176, 0.45), transparent 52%),
+    radial-gradient(700px 240px at 90% 0%, rgba(25, 100, 126, 0.35), transparent 50%),
+    linear-gradient(90deg, #1a5f7a, #2ab0b0);
+  color: rgba(255, 255, 255, 0.98);
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 -16px 38px rgba(0, 0, 0, 0.09);
+  position: relative;
+  padding: 20px 0;
+}
+
+
+
+
+.bbai-footer__inner {
+  max-width: var(--grid-max);
+  margin: 0 auto;
+  padding: 22px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 70px;
+  flex-wrap: wrap;
+}
+
+
+
+.bbai-footer__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 900;
+  margin-right: auto;
+}
+
+
+.bbai-footer__logo img {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+}
+
+
+.bbai-page {
+  padding: 46px 0 16px;
+}
+
+/* Responsive nav: keep it simple, full links on large; wrap on small */
+@media (max-width: 640px) {
+  .bbai-navbar__inner {
+    padding-left: 10px;
+  }
+
+  .bbai-navLinks {
+    gap: 8px;
+  }
+
+  .bbai-navLink {
+    padding: 9px 12px;
+    font-size: 0.95rem;
+    border-radius: 12px;
+  }
+
+  .bbai-brand__name {
+    font-size: 1rem;
+  }
+}
+
+
+

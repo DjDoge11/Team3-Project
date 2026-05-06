@@ -10,7 +10,7 @@ import './App.css';
 
 function App() {
   return (
-    <>
+    <div className="bbai-app">
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -21,7 +21,7 @@ function App() {
         <Route path="/login" element={<Login />} />
       </Routes>
       <Footer />
-    </>
+    </div>
   );
 }
 

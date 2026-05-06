@@ -3,6 +3,7 @@ import { auth, googleAuthProvider, githubAuthProvider } from '../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut, onAuthStateChanged, sendPasswordResetEmail, sendEmailVerification } from 'firebase/auth';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './Auth.css';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -142,108 +143,64 @@ export default function AuthPage() {
   // If user is logged in, show logout button
   if (user) {
     return (
-      <div style={{ 
-        maxWidth: '400px', 
-        margin: '4rem auto', 
-        padding: '2rem',
-        border: '1px solid #ccc',
-        borderRadius: '8px',
-        textAlign: 'center'
-      }}>
+      <main className="auth-page">
+      <div className="auth-card auth-card--center">
+        <span className="home-eyebrow">Account</span>
         <h2>Welcome!</h2>
         <p>You are logged in as <strong>{user.email}</strong></p>
-        <button 
-          onClick={handleLogout}
-          style={{
-            padding: '0.75rem 1.5rem',
-            backgroundColor: '#dc3545',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontSize: '1rem',
-            marginTop: '1rem'
-          }}
-        >
+        <button className="auth-button auth-button--danger" onClick={handleLogout}>
           Logout
         </button>
       </div>
+      </main>
     );
   }
 
   return (
-    <div style={{ 
-      maxWidth: '400px', 
-      margin: '4rem auto', 
-      padding: '2rem',
-      border: '1px solid #ccc',
-      borderRadius: '8px'
-    }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+    <main className="auth-page">
+    <section className="auth-shell">
+      <div className="auth-intro">
+        <span className="home-eyebrow">Student workspace</span>
+        <h1>{isForgotPassword ? 'Reset your password.' : isLogin ? 'Welcome back.' : 'Create your account.'}</h1>
+        <p>
+          Save your schedules, grade scenarios, GPA calculations, and course progress in one clean academic planning space.
+        </p>
+      </div>
+
+      <div className="auth-card">
+      <h2>
         {isForgotPassword ? 'Reset Password' : isLogin ? 'Login' : 'Sign Up'}
       </h2>
       
       {error && (
-        <div style={{ 
-          color: '#dc3545', 
-          backgroundColor: '#f8d7da',
-          padding: '0.75rem',
-          borderRadius: '4px',
-          marginBottom: '1rem',
-          fontSize: '0.9rem'
-        }}>
+        <div className="auth-alert auth-alert--error">
           {error}
         </div>
       )}
 
       {success && (
-        <div style={{ 
-          color: '#155724', 
-          backgroundColor: '#d4edda',
-          padding: '0.75rem',
-          borderRadius: '4px',
-          marginBottom: '1rem',
-          fontSize: '0.9rem'
-        }}>
+        <div className="auth-alert auth-alert--success">
           {success}
         </div>
       )}
 
       {isForgotPassword ? (
         <form onSubmit={handleForgotPassword}>
-          <div style={{ marginBottom: '1rem' }}>
-            <label style={{ display: 'block', marginBottom: '0.5rem' }}>Enter your email</label>
+          <div className="auth-field">
+            <label>Enter your email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="your@email.com"
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '1rem',
-                boxSizing: 'border-box'
-              }}
             />
           </div>
 
           <button
+            className="auth-button auth-button--primary"
             type="submit"
             disabled={loading}
-            style={{
-              width: '100%',
-              padding: '0.75rem',
-              backgroundColor: '#19647E',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              fontSize: '1rem',
-              opacity: loading ? 0.7 : 1
-            }}
           >
             {loading ? 'Sending...' : 'Send Reset Email'}
           </button>
@@ -251,112 +208,58 @@ export default function AuthPage() {
       ) : (
         <>
           <form onSubmit={handleSubmit}>
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem' }}>Email</label>
+            <div className="auth-field">
+              <label>Email</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  fontSize: '1rem',
-                  boxSizing: 'border-box'
-                }}
               />
             </div>
 
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem' }}>Password</label>
+            <div className="auth-field">
+              <label>Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  fontSize: '1rem',
-                  boxSizing: 'border-box'
-                }}
               />
             </div>
 
             {!isLogin && (
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', marginBottom: '0.5rem' }}>Confirm Password</label>
+              <div className="auth-field">
+                <label>Confirm Password</label>
                 <input
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    border: '1px solid #ccc',
-                    borderRadius: '4px',
-                    fontSize: '1rem',
-                    boxSizing: 'border-box'
-                  }}
                 />
               </div>
             )}
 
             <button
+              className="auth-button auth-button--primary"
               type="submit"
               disabled={loading}
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                backgroundColor: '#19647E',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                fontSize: '1rem',
-                opacity: loading ? 0.7 : 1
-              }}
             >
               {loading ? 'Loading...' : isLogin ? 'Login' : 'Sign Up'}
             </button>
           </form>
           
           {/* Social Login Buttons */}
-          <div style={{ marginTop: '1.5rem' }}>
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              marginBottom: '1rem' 
-            }}>
-              <div style={{ flex: 1, height: '1px', backgroundColor: '#ccc' }}></div>
-              <span style={{ padding: '0 1rem', color: '#666', fontSize: '0.85rem' }}>or</span>
-              <div style={{ flex: 1, height: '1px', backgroundColor: '#ccc' }}></div>
+          <div className="auth-social">
+            <div className="auth-divider">
+              <span>or</span>
             </div>
             
             <button
+              className="auth-button auth-button--social"
               type="button"
               onClick={handleGoogleLogin}
               disabled={loading}
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                backgroundColor: '#fff',
-                color: '#333',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                fontSize: '1rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.5rem',
-                marginBottom: '0.75rem'
-              }}
             >
               <svg width="20" height="20" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -368,23 +271,10 @@ export default function AuthPage() {
             </button>
 
             <button
+              className="auth-button auth-button--github"
               type="button"
               onClick={handleGithubLogin}
               disabled={loading}
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                backgroundColor: '#24292e',
-                color: '#fff',
-                border: '1px solid #24292e',
-                borderRadius: '4px',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                fontSize: '1rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.5rem'
-              }}
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
                 <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
@@ -395,7 +285,7 @@ export default function AuthPage() {
         </>
       )}
 
-      <p style={{ textAlign: 'center', marginTop: '1.5rem' }}>
+      <p className="auth-switch">
         {isLogin && !isForgotPassword && (
           <button
             type="button"
@@ -403,14 +293,6 @@ export default function AuthPage() {
               setIsForgotPassword(true);
               setError('');
               setSuccess('');
-            }}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#19647E',
-              cursor: 'pointer',
-              fontSize: '0.9rem',
-              textDecoration: 'underline'
             }}
           >
             Forgot Password?
@@ -423,14 +305,6 @@ export default function AuthPage() {
               setIsForgotPassword(false);
               setError('');
               setSuccess('');
-            }}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#19647E',
-              cursor: 'pointer',
-              fontSize: '0.9rem',
-              textDecoration: 'underline'
             }}
           >
             Back to Login
@@ -445,20 +319,14 @@ export default function AuthPage() {
                 setIsLogin(!isLogin);
                 setError('');
               }}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: '#19647E',
-                cursor: 'pointer',
-                fontSize: '1rem',
-                textDecoration: 'underline'
-              }}
             >
               {isLogin ? 'Sign Up' : 'Login'}
             </button>
           </>
         )}
       </p>
-    </div>
+      </div>
+    </section>
+    </main>
   );
 }

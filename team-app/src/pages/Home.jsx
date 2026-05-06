@@ -2,27 +2,53 @@ import "/src/App.css"
 
 export default function Home() {
   return (
-    <main>
-      <div className="homepagePadding">       
-      <h1>Welcome To Our Website!</h1>
-      <h3>This is a website for calculating grades, made for primarily Canyon Crest Academy Students.</h3>
-           
-      <h4>Our features include:</h4>
-      <ul className="features">
-        <li>A grade point average calculator</li>
-        <li>Course selection profile, including recommendations</li>
-        <li>Credits for different classes, including weighted or unweighted classes</li>
-        <li>An area to input your own grades, allowing faster GPA calculation, and credit information!</li>
-      </ul>
-    <p>To get started, use the navigation menu at the top of the page to explore our grade calculation tools and resources. For the best experience, we recommend creating an account or logging in so you can securely save your classes, assignments, and grade scenarios for future visits. This allows you to track your progress over time, experiment with “what-if” grades, and quickly return to your saved calculations from any device.</p>
-    <p>Logging in is optional—our calculators remain fully functional without an account, and you are welcome to use all core features as a guest. We do not collect personally identifiable academic information, and any data you choose to save is handled securely and kept confidential.</p>
-    <p>Whether you are planning your path to a target final grade, checking how an upcoming exam could impact your average, or simply staying on top of your coursework, this tool is designed to be straightforward, reliable, and easy to use.</p>
-    <p>Thanks for using our website!</p>
-    </div>
+      <main className="home-page">
+      <section className="home-hero bbai-hero">
+        <div>
+          <span className="home-eyebrow">CCA academic planning toolkit</span>
+          <h1 className="bbai-title">Plan classes, calculate grades, and see your progress clearly.</h1>
+          <p className="bbai-subtitle">
+            A fresh workspace for GPA planning, course selection, credit tracking, and grade scenarios built with Canyon Crest Academy students in mind.
+          </p>
+        </div>
+      </section>
+      <section className="feature-grid" aria-label="Website features">
+        <article className="feature-card">
+          <span>01</span>
+          <h3>GPA Calculator</h3>
+          <p>Choose courses and grades to quickly compare weighted and unweighted GPA.</p>
+        </article>
+        <article className="feature-card">
+          <span>02</span>
+          <h3>Course Planning</h3>
+          <p>Build a course profile with recommendations and easy schedule tracking.</p>
+        </article>
+        <article className="feature-card">
+          <span>03</span>
+          <h3>Credit Progress</h3>
+          <p>Check class credits, graduation requirements, and weighted course details.</p>
+        </article>
+        <article className="feature-card">
+          <span>04</span>
+          <h3>Grade Scenarios</h3>
+          <p>Enter assignments and what-if scores to understand your current grade.</p>
+        </article>
+      </section>
 
-      <div className="card aboutUs" style={{ marginBottom: '2rem' }}>
-        <h3>About Our Team</h3>
-        <p>This website was created by five team members, each with respective roles.</p>
+      <section className="info-card">
+        <h2>Get Started</h2>
+        <p>
+          Use the navigation menu to explore the grade calculation tools and course resources. Logging in is optional, but it lets you save classes, assignments, and grade scenarios so you can return to them later.
+        </p>
+        <p>
+          The calculators remain fully usable as a guest. Whether you are planning for a target final grade, checking how an upcoming exam could affect your average, or organizing coursework, the site is designed to stay straightforward and easy to use.
+        </p>
+      </section>
+
+      <section className="team-section">
+        <div className="team-heading">
+          <span className="home-eyebrow">About our team</span>
+        <h2>This website was created by five team members, each with respective roles.</h2>
         <ul className="members">
           <li>
             <strong>Zoey, </strong>
@@ -56,6 +82,7 @@ I am a sophomore at CCA, in Exploring Computer Science, Period 3. </p>
           </li>
         </ul>
       </div>
+      </section>
     </main>
   );
 }
