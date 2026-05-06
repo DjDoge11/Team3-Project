@@ -4,7 +4,6 @@ import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { availableCourses } from '../data/courseCatalog';
 import './GPACalculator.css';
-import CourseDropdown from '../components/CourseDropdown';
 
 // Convert availableCourses object to array format used by the component
 const courses = Object.entries(availableCourses).map(([name, data]) => ({
@@ -23,6 +22,25 @@ const gradePoints = {
 
 const gradeOptions = ['A', 'B', 'C', 'D', 'F'];
 
+// -----------------------------
+// LOCAL CACHE HELPERS
+// -----------------------------
+const LOCAL_KEY = "gpaCache";
+
+function saveToCache(courses, grades) {
+  const data = { courses, grades };
+  localStorage.setItem(LOCAL_KEY, JSON.stringify(data));
+}
+
+function loadFromCache() {
+  try {
+    const raw = localStorage.getItem(LOCAL_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 export default function GPA() {
   const [numSections, setNumSections] = useState(4);
   const [selectedCourses, setSelectedCourses] = useState(Array(4).fill(''));
@@ -31,25 +49,40 @@ export default function GPA() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
-  const [_loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
-  // Monitor auth state and load user GPA data from Firestore
+  // -----------------------------
+  // LOAD CACHE FIRST → THEN FIRESTORE
+  // -----------------------------
   useEffect(() => {
+    // Load from local cache immediately
+    const cached = loadFromCache();
+    if (cached) {
+      setSelectedCourses(cached.courses);
+      setGrades(cached.grades);
+      setNumSections(cached.courses.length);
+    }
+
+    // Then load Firestore if logged in
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       setLoading(false);
-      
-      // If user is logged in, load their saved GPA data from Firestore
+
       if (currentUser) {
         try {
           const userDocRef = doc(db, 'users', currentUser.uid);
           const userDoc = await getDoc(userDocRef);
+
           if (userDoc.exists()) {
             const data = userDoc.data();
+
             if (data.gpaCourses && data.gpaGrades) {
               setSelectedCourses(data.gpaCourses);
               setGrades(data.gpaGrades);
-              setNumSections(data.gpaCourses.length || 4);
+              setNumSections(data.gpaCourses.length);
+
+              // Sync Firestore → cache
+              saveToCache(data.gpaCourses, data.gpaGrades);
             }
           }
         } catch (e) {
@@ -57,37 +90,50 @@ export default function GPA() {
         }
       }
     });
+
     return () => unsubscribe();
   }, []);
 
+  // -----------------------------
+  // COURSE CHANGE
+  // -----------------------------
   const handleCourseChange = (index, value) => {
     const newCourses = [...selectedCourses];
     newCourses[index] = value;
     setSelectedCourses(newCourses);
     setError('');
-    
-    // Auto-save to Firestore if user is logged in
+
+    // Save to cache
+    saveToCache(newCourses, grades);
+
+    // Save to Firestore
     if (user) {
       const userDocRef = doc(db, 'users', user.uid);
-      setDoc(userDocRef, { 
-        gpaCourses: newCourses, 
-        gpaGrades: grades 
+      setDoc(userDocRef, {
+        gpaCourses: newCourses,
+        gpaGrades: grades
       }, { merge: true });
     }
   };
 
+  // -----------------------------
+  // GRADE CHANGE
+  // -----------------------------
   const handleGradeChange = (index, value) => {
     const newGrades = [...grades];
     newGrades[index] = value;
     setGrades(newGrades);
     setError('');
-    
-    // Auto-save to Firestore if user is logged in
+
+    // Save to cache
+    saveToCache(selectedCourses, newGrades);
+
+    // Save to Firestore
     if (user) {
       const userDocRef = doc(db, 'users', user.uid);
-      setDoc(userDocRef, { 
-        gpaCourses: selectedCourses, 
-        gpaGrades: newGrades 
+      setDoc(userDocRef, {
+        gpaCourses: selectedCourses,
+        gpaGrades: newGrades
       }, { merge: true });
     }
   };
@@ -100,14 +146,27 @@ export default function GPA() {
 
   const removeSection = () => {
     if (numSections > 1) {
+      const newCourses = selectedCourses.slice(0, -1);
+      const newGrades = grades.slice(0, -1);
+
       setNumSections(numSections - 1);
-      setSelectedCourses(selectedCourses.slice(0, -1));
-      setGrades(grades.slice(0, -1));
+      setSelectedCourses(newCourses);
+      setGrades(newGrades);
+
+      saveToCache(newCourses, newGrades);
+
+      if (user) {
+        const userDocRef = doc(db, 'users', user.uid);
+        setDoc(userDocRef, {
+          gpaCourses: newCourses,
+          gpaGrades: newGrades
+        }, { merge: true });
+      }
     }
   };
 
-const canCalculate = selectedCourses.length > 0 && 
-    selectedCourses.every((c) => c !== '') && 
+  const canCalculate = selectedCourses.length > 0 &&
+    selectedCourses.every((c) => c !== '') &&
     grades.every((g) => g !== '');
 
   const calculateGPA = () => {
@@ -205,62 +264,73 @@ const canCalculate = selectedCourses.length > 0 &&
               <li>F = 0.0</li>
             </ul>
             <p><strong>Weighted:</strong> AP and Integrated Math 3 Honors get +1.0.</p>
-            <p>If you don’t see your course, use the Other course option.</p>
           </div>
         </div>
       )}
 
-      <div className="gpa-calculator-container container">
-        <div className="gpa-inputs card">
+      <div className="gpa-calculator-container">
+        <div className="gpa-inputs">
           <div className="gpa-columns">
             <div className="gpa-course-column">
               <h3>Course</h3>
               {selectedCourses.map((course, index) => (
-                <div key={`course-${index}`} className="gpa-course-item">
-                  <CourseDropdown
-                    inputKey={`gpa-${index}`}
-                    value={course}
-                    onChange={(v) => handleCourseChange(index, v)}
-                    disabled={false}
-                    availableCourses={availableCourses}
-                    isSelectedElsewhere={(candidate) => {
-                      const isOther = candidate === 'Other (Weighted)' || candidate === 'Other (Unweighted)';
-                      if (isOther) return false;
-                      return selectedCourses.some((sc, si) => si !== index && sc === candidate);
-                    }}
-                  />
-                </div>
+                <select
+                  key={`course-${index}`}
+                  value={course}
+                  onChange={(e) => handleCourseChange(index, e.target.value)}
+                  className="gpa-select course-select"
+                  title={course || 'Select Course'}
+                >
+                  <option value="">Select Course</option>
+                  {courses.map((c) => {
+                    const courseValue = c.value || c.name;
+                    const isOther = c.name === 'Other (Unweighted)' || c.name === 'Other (Weighted)';
+                    const isSelectedElsewhere = !isOther && selectedCourses.some(
+                      (sc, si) => sc === courseValue && si !== index
+                    );
+                    return (
+                      <option
+                        key={courseValue}
+                        value={courseValue}
+                        disabled={isSelectedElsewhere}
+                      >
+                        {c.name}
+                      </option>
+                    );
+                  })}
+                </select>
               ))}
             </div>
+
             <div className="gpa-grade-column">
               <h3>Grade</h3>
               {grades.map((grade, index) => (
-                <div key={`grade-${index}`} className="gpa-grade-item">
-                  <select
-                    value={grades[index]}
-                    onChange={(e) => handleGradeChange(index, e.target.value)}
-                    className="gpa-select input-common"
-                    aria-label={`Grade for section ${index + 1}`}
-                  >
-                    <option value="">Grade</option>
-                    {gradeOptions.map((g) => (
-                      <option key={g} value={g}>{g}</option>
-                    ))}
-                  </select>
-                </div>
+                <select
+                  key={`grade-${index}`}
+                  value={grade}
+                  onChange={(e) => handleGradeChange(index, e.target.value)}
+                  className="gpa-select"
+                >
+                  <option value="">Select Grade</option>
+                  {gradeOptions.map((g) => (
+                    <option key={g} value={g}>{g}</option>
+                  ))}
+                </select>
               ))}
             </div>
           </div>
+
           <div className="section-buttons">
             <button onClick={addSection}>Add Section</button>
             <button onClick={removeSection} disabled={numSections <= 1}>Remove Section</button>
-          </div>          
-<button className="calculate-btn" onClick={calculateGPA} disabled={!canCalculate}>Calculate</button>
+          </div>
+
+          <button className="calculate-btn" onClick={calculateGPA} disabled={!canCalculate}>Calculate</button>
           {error && <p className="gpa-error">{error}</p>}
         </div>
 
         {result && (
-          <div className="gpa-result card">
+          <div className="gpa-result">
             <h2>Your GPA</h2>
             <p>
               <strong>Unweighted GPA:</strong>
@@ -280,4 +350,3 @@ const canCalculate = selectedCourses.length > 0 &&
     </main>
   );
 }
-

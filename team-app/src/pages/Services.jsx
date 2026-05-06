@@ -5,7 +5,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { availableCourses, requiredCredits, totalCreditsRequired } from '../data/courseCatalog';
 import './Services.css';
 
-export default function Courses() {
+export default function Services() {
   // -----------------------------
   // 1. State initialization
   // -----------------------------
@@ -16,15 +16,7 @@ export default function Courses() {
   const [dropdownOpen, setDropdownOpen] = useState({});
   const [highlightedIndex, setHighlightedIndex] = useState({});
   const [saveStatus, setSaveStatus] = useState('');
-  const [_dropdownOpen, _setDropdownOpen] = useState({});
-  const [searchText, setSearchText] = useState({});
-  const [_highlightedIndex, _setHighlightedIndex] = useState({});
-  const [totalCredits, setTotalCredits] = useState(() => {
-    try { const s = localStorage.getItem('totalCredits'); return s ? Number(s) : 0; } catch { return 0; }
-  });
-  const [showTips, setShowTips] = useState(false);
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
   const servicesRef = useRef(null);
   const saveTimeoutRef = useRef(null);
   const [offCampusCourses, setOffCampusCourses] = useState([]);
@@ -67,7 +59,7 @@ export default function Courses() {
 
   const calculateGPAResult = () => {
     const gradeEntries = Object.entries(courseGrades).filter(
-      ([key, value]) => value && gradePoints[value] !== undefined
+      ([, value]) => value && gradePoints[value] !== undefined
     );
 
     // Add off-campus grades
@@ -146,13 +138,14 @@ export default function Courses() {
   // 3. Load from Firestore
   // -----------------------------
   useEffect(() => {
-    // Load any saved state from localStorage first (allows offline use)
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+
       if (currentUser) {
         try {
           const userDocRef = doc(db, 'users', currentUser.uid);
           const userDoc = await getDoc(userDocRef);
+
           if (userDoc.exists()) {
             const data = userDoc.data();
 
@@ -170,7 +163,7 @@ export default function Courses() {
           console.error('Error loading user data:', e);
         }
       }
-      setLoading(false);
+
     });
 
     return () => unsubscribe();
@@ -284,50 +277,33 @@ const unlockSection = async (grade, semester) => {
 const isSectionLocked = (grade, semester) =>
   lockedSections[`${grade}-${semester}`] === true;
 
-  const courseInput = async (grade, semester, slot, value) => {
-    if (isSectionLocked(grade, semester)) {
-      setSaveStatus('This section is locked. Unlock to edit.');
-      setTimeout(() => setSaveStatus(''), 2000);
-      return;
-    }
+  const grades = ['9th', '10th', '11th', '12th'];
+  const semesters = ['Fall Semester', 'Spring Semester'];
+  const classSlots = [1, 2, 3, 4];
+  const courseList = Object.keys(availableCourses);
 
-    const key = `${grade}-${semester}-${slot}`;
-    const newCourses = { ...courses };
-
-    if (value && value.trim()) {
-      newCourses[key] = value;
-    } else {
-      delete newCourses[key];
-    }
-
-    setCourses(newCourses);
-    setCourseGrades(newGrades);
-
-    if (user) {
-      syncToFirebase({
-        courses: newCourses,
-        courseGrades: newGrades
-      });
-    }
+  // Get all selected courses (for excluding from dropdown)
+  const getSelectedCourses = () => {
+    const selected = new Set(Object.values(courses).filter(c => c));
+    offCampusCourses.forEach(course => {
+      if (course) selected.add(course);
+    });
+    return selected;
   };
 
-  const semesterIsComplete = (grade, semester) => {
-    // every slot must have a selected course and both grade inputs filled
-    for (let slot of classSlots) {
-      const key = `${grade}-${semester}-${slot}`;
-      if (!courses[key]) return false;
-      const g1 = courseGrades[`${key}-g1`];
-      const g2 = courseGrades[`${key}-g2`];
-      if (!g1 || !g2) return false;
+  const getFilteredCourses = (search, excludeSelected = true) => {
+    let filtered = courseList;
+    
+    // Exclude already selected courses if requested
+    if (excludeSelected) {
+      const selected = getSelectedCourses();
+      filtered = filtered.filter(c => !selected.has(c));
     }
-    return true;
+    
+    if (!search) return filtered;
+    const lower = search.toLowerCase();
+    return filtered.filter(c => c.toLowerCase().includes(lower));
   };
-  
-  const clearSemester = async (grade, semester) => {
-    if (window.confirm(`Clear all courses for ${grade} ${semester}?`)) {
-      const newCourses = { ...courses };
-      const newGrades = { ...courseGrades };
-      const newSearchText = { ...searchText };
 
   const calculateTotalCredits = () => {
     let total = 0;
@@ -390,32 +366,56 @@ const isSectionLocked = (grade, semester) =>
     //   searchText: updated
     // });
 
-      setCourses(newCourses);
-      setCourseGrades(newGrades);
-      setSearchText(newSearchText);
-      localStorage.setItem('courseSelections', JSON.stringify(newCourses));
-      try { localStorage.setItem('courseGrades', JSON.stringify(newGrades)); } catch { /* ignore */ }
+    setDropdownOpen(prev => ({ ...prev, [key]: value.length > 0 }));
 
-      // Sync the deletions to Firebase
-      await syncToFirebase({ 
-        courses: newCourses, 
-        courseGrades: newGrades 
-      });
+    if (!value.trim()) {
+      const [grade, semester, slot] = key.split('-');
+      courseInput(grade, semester, slot, '');
     }
   };
 
-  // --- Logic Helpers ---
-  const grades = ['9th', '10th', '11th', '12th'];
-  const semesters = ['Fall Semester', 'Spring Semester'];
-  const classSlots = [1, 2, 3, 4];
-  const courseList = Object.keys(availableCourses);
+  const handleCourseSelect = (key, course) => {
+    const [grade, semester, slot] = key.split('-');
+    courseInput(grade, semester, slot, course);
 
-  const getFilteredCourses = (search) => {
-    if (!search || search.length === 0) return courseList;
-    const lowerSearch = search.toLowerCase();
-    return courseList.filter(course =>
-      course.toLowerCase().includes(lowerSearch)
-    );
+    setSearchText(prev => ({ ...prev, [key]: course }));
+    setDropdownOpen(prev => ({ ...prev, [key]: false }));
+    setHighlightedIndex(prev => ({ ...prev, [key]: 0 }));
+  };
+
+  const handleKeyDown = (e, inputKey) => {
+    const filtered = getFilteredCourses(searchText[inputKey] || '');
+    const currentIndex = highlightedIndex[inputKey] || 0;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setDropdownOpen(prev => ({ ...prev, [inputKey]: true }));
+        setHighlightedIndex(prev => ({
+          ...prev,
+          [inputKey]: (currentIndex + 1) % filtered.length
+        }));
+        break;
+
+      case 'ArrowUp':
+        e.preventDefault();
+        setHighlightedIndex(prev => ({
+          ...prev,
+          [inputKey]: (currentIndex - 1 + filtered.length) % filtered.length
+        }));
+        break;
+
+      case 'Enter':
+        e.preventDefault();
+        if (dropdownOpen[inputKey] && filtered.length > 0) {
+          handleCourseSelect(inputKey, filtered[currentIndex]);
+        }
+        break;
+
+      case 'Escape':
+        setDropdownOpen(prev => ({ ...prev, [inputKey]: false }));
+        break;
+    }
   };
 
   const handleOffCampusCourseChange = (index, value) => {
@@ -527,9 +527,8 @@ const isSectionLocked = (grade, semester) =>
   // -----------------------------
   // 9. UI Rendering
   // -----------------------------
-  if (loading) return <div className="loading">Loading Schedule...</div>;
-
   return (
+    
     <main className="services-main" ref={servicesRef}>
       <div className="services-content">
         <div className="services-left">
@@ -566,7 +565,9 @@ const isSectionLocked = (grade, semester) =>
 
                       <div className="grade-column-header">
                         <span className="grade-col-spacer"></span>
-                        <div className="grade-column-labels">                          <span className="credits-label">Credits</span>                          {sem === 'Fall Semester' ? (
+                        <div className="grade-column-labels">
+                          <span className="credits-label">Credits</span>
+                          {sem === 'Fall Semester' ? (
                             <>
                               <span className="quarter-column-label">Q1</span>
                               <span className="quarter-column-label">Q2</span>
