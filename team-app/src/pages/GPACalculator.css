@@ -1,4 +1,4 @@
-/* GPA Calculator - Section Buttons Styling */
+/* This is the sections for the buttons styling :) */
 .section-buttons {
   display: flex;
   gap: 1rem;
@@ -16,13 +16,28 @@
   transition: all 0.2s ease;
 }
 
-/* Add Section Button */
-.section-buttons button:first-child { background-color: var(--color-primary); color: var(--color-surface); border-radius: var(--radius); padding: 0.5rem 0.9rem; }
-.section-buttons button:first-child:hover { background-color: var(--color-accent); }
-.section-buttons button:nth-child(2) { background-color: #dc3545; color: var(--color-surface); border-radius: var(--radius); padding: 0.5rem 0.9rem; }
-.section-buttons button:nth-child(2):hover { background-color: #c82333; }
+.section-buttons button:first-child {
+  background-color: var(--color-primary);
+  color: var(--color-surface);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.9rem;
+}
 
-/* Disabled state for Remove Section (when numSections <= 1) */
+.section-buttons button:first-child:hover {
+  background-color: var(--color-accent);
+}
+
+.section-buttons button:nth-child(2) {
+  background-color: #dc3545;
+  color: var(--color-surface);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.9rem;
+}
+
+.section-buttons button:nth-child(2):hover {
+  background-color: #c82333;
+}
+
 .section-buttons button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
@@ -31,9 +46,19 @@
   box-shadow: none;
 }
 
-/* Calculate Button Styling - matching original theme colors */
-.calculate-btn { align-self:flex-start; background-color: var(--color-primary); color: var(--color-surface); border:none; padding:0.6rem 1rem; border-radius:var(--radius); font-weight:700; }
-.calculate-btn:hover:not(:disabled) { background-color: var(--color-accent); }
+.calculate-btn {
+  align-self: flex-start;
+  background-color: var(--color-primary);
+  color: var(--color-surface);
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius);
+  font-weight: 700;
+}
+
+.calculate-btn:hover:not(:disabled) {
+  background-color: var(--color-accent);
+}
 
 .calculate-btn:disabled {
   background-color: #ccc;
