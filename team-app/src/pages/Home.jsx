@@ -41,7 +41,7 @@ export default function Home() {
           Use the navigation menu to explore the grade calculation tools and course resources. Logging in is optional, but it lets you save classes, assignments, and grade scenarios so you can return to them later.
         </p>
         <p>
-          All functions remain fully usable as a guest. Whether you are planning for a target final grade, checking how an upcoming exam could affect your average, or organizing coursework, the site is designed to stay straightforward and easy to use. All data is private, and will not be connected to you.
+          All functions remain fully usable as a guest. Whether you are planning for a target final grade, checking how an upcoming exam could affect your average, or organizing coursework, the site is designed to stay straightforward and easy to use. All data is private, and will not be connected to you. Thanks for using our website!
         </p>
       </section>
 
