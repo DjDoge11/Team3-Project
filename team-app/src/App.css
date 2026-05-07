@@ -32,6 +32,7 @@ body {
   margin: 0;
   padding: 0;
   justify-content: center;
+  
 }
 
 .navbar a {
@@ -43,6 +44,14 @@ body {
   padding: 0.5rem 1.25rem;
   border-radius: var(--radius);
   display: inline-block;
+  color: #fff;
+  font-weight: 800;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: transform 150ms ease, background-color 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+  will-change: transform;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.08);
 }
 
 .navbar a:hover {
