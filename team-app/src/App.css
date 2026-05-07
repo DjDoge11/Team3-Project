@@ -1,8 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
-/* Legacy App.css is kept for now during UI migration.
-   New design system styles live in src/styles/*.css and src/index.css.
-*/
-
 @import url('https://googleapis.com');
 
 body {
@@ -12,35 +7,74 @@ body {
 }
 
 .navbar {
-  background-color: var(--color-primary);
+  background-color: #19647E;
   padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.username p{
+  margin: 0;
+  padding: 0;
+  line-height: 1.25;
+  font-size: 0.9rem;
+}
+
+.username{
+  position: absolute;
+  right: 2rem;
+  color: #EEE5E5;
+  font-weight: bold;
+  font-family: sans-serif;
+  font-size: 0.95rem;
 }
 
 .navbar ul {
-  list-style: none;
-  display: flex;
-  gap: 1rem;
-  margin: 0;
-  padding: 0;
-  justify-content: center;
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    justify-content: center;
 }
 
 .navbar a {
-  text-decoration: none;
-  color: var(--color-surface);
-  font-weight: 700;
-  transition: all 0.18s ease;
-  background-color: var(--color-accent);
-  padding: 0.5rem 1.25rem;
-  border-radius: var(--radius);
-  display: inline-block;
+    text-decoration: none;
+    color: #EEE5E5;
+    font-weight: bold;
+    font-family: sans-serif;
+    transition: all 0.3s ease;
+    background-color: #28AFB0;
+    
+    
+    padding: 0.5rem 5.2rem; 
+    border-radius: .5rem; 
+  }
+  
+  .navbar a:hover {
+    color: #19647E;
+    background-color: #DDCECD;
 }
 
-.navbar a:hover {
-  color: #fff;
-  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-2));
+.username {
+  position: absolute;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #EEE5E5;
+  font-weight: bold;
+  font-size: 0.95rem;
 }
 
+.username p {
+  margin: 0;
+  padding: 0.5rem 1rem;
+  background-color: rgba(40, 175, 176, 0.3);
+  border-radius: 0.25rem;
+}
 
 .footer {
     margin-top: 2rem;
@@ -127,81 +161,20 @@ body {
 .gpa-select {
   padding: 0.6rem;
   border-radius: 0.4rem;
-  border: 2px solid rgba(40, 175, 176, 0.9);
+  border: 2px solid #28AFB0;
   background-color: #ffffff;
-  color: var(--color-text);
+  color: #1C2541;
   font-size: 1rem;
   width: 260px;
   outline: none;
 }
-
 
 .gpa-select.course-select {
   width: 320px;
 }
 
 .gpa-select:focus {
-  border-color: var(--color-primary);
-}
-
-
-.add-course-btn {
-  align-self: flex-start;
-  background-color: #19647E;
-  color: #EEE5E5;
-  border: none;
-  padding: 0.75rem 2rem;
-  font-size: 1rem;
-  font-weight: bold;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 0.5rem;
-}
-.add-course-btn:hover {
-  background-color: #28AFB0;
-}
-
-.button-group {
-  display: flex;       
-  gap: 1rem;          
-  margin-top: 0.5rem; 
-}
-
-.calculate-btn {
-  align-self: flex-start;
-  background-color: #28AFB0;
-  color: #EEE5E5;
-  border: none;
-  padding: 0.75rem 2rem;
-  font-size: 1rem;
-  font-weight: bold;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 0.5rem;
-}
-
-.calculate-btn:hover {
-  background-color: #19647E;
-}
-
-.clear-btn {
-  align-self: flex-start;
-  background-color: #28AFB0;
-  color: #EEE5E5;
-  border: none;
-  padding: 0.75rem 2rem;
-  font-size: 1rem;
-  font-weight: bold;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 0.5rem;
-}
-
-.clear-btn:hover {
-  background-color: #19647E;
+  border-color: #19647E;
 }
 
 .gpa-result {
@@ -347,292 +320,9 @@ body {
 }
 
 .members li {
-  flex: 0 0 40rem;
+  flex: 0 0 40rem; 
   scroll-snap-align: start;
-  background: #ffffff;
-  border: 1px solid rgba(40, 175, 176, 0.12);
+  background: #f4f4f4;
   padding: 1rem;
   border-radius: 1rem;
-  box-shadow: 0 6px 18px rgba(25, 100, 126, 0.04);
-}
-
-/* Modern refresh */
-.bbai-app {
-  min-height: 100vh;
-}
-
-.home-page,
-.gpa-page {
-  max-width: var(--grid-max);
-  margin: 0 auto;
-  padding: 48px 24px 18px;
-}
-
-.home-hero {
-  min-height: 360px;
-  display: flex;
-  align-items: center;
-}
-
-.home-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  width: fit-content;
-  margin-bottom: 16px;
-  padding: 8px 13px;
-  border: 1px solid rgba(40, 175, 176, 0.22);
-  border-radius: 999px;
-  background: #ffffff;
-  color: var(--color-primary);
-  font-size: 0.82rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.feature-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 22px;
-  margin: 28px 0;
-}
-
-.feature-card,
-.info-card,
-.team-section,
-.card,
-.gpa-inputs,
-.gpa-result {
-  background: #ffffff;
-  border: 1px solid rgba(25, 100, 126, 0.1);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-}
-
-.feature-card {
-  min-height: 190px;
-  padding: 26px;
-}
-
-.feature-card span {
-  color: var(--color-accent);
-  font-size: 0.86rem;
-  font-weight: 900;
-}
-
-.feature-card h3,
-.info-card h2,
-.team-heading h2 {
-  margin: 16px 0 10px;
-  color: var(--color-primary);
-  letter-spacing: 0;
-}
-
-.feature-card h3 {
-  font-size: 1.25rem;
-}
-
-.feature-card p,
-.info-card p,
-.members p {
-  color: var(--color-muted);
-  line-height: 1.65;
-}
-
-.info-card,
-.team-section {
-  padding: clamp(26px, 4vw, 42px);
-  margin-bottom: 28px;
-}
-
-.info-card {
-  font-size: 1.08rem;
-}
-
-.team-heading {
-  max-width: 720px;
-  margin-bottom: 20px;
-}
-
-.team-heading h2 {
-  font-size: clamp(26px, 3vw, 38px);
-}
-
-.members {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 18px;
-  overflow: visible;
-  padding: 0;
-  margin: 0;
-}
-
-.members li {
-  flex: initial;
-  min-height: 220px;
-  padding: 24px;
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(40, 175, 176, 0.14);
-  box-shadow: none;
-}
-
-.members strong,
-.members span {
-  display: block;
-}
-
-.members strong {
-  color: var(--color-primary);
-  font-size: 1.18rem;
-}
-
-.members span {
-  margin-top: 6px;
-  color: var(--color-accent);
-  font-weight: 800;
-}
-
-.gpa-page {
-  padding-top: 52px;
-}
-
-.gpa-header {
-  margin-bottom: 24px;
-}
-
-.gpa-header h1 {
-  font-size: clamp(34px, 4vw, 52px);
-  letter-spacing: 0;
-}
-
-.question-mark-btn {
-  width: 42px;
-  height: 42px;
-  background: #ffffff;
-  color: var(--color-primary);
-  border: 2px solid rgba(40, 175, 176, 0.42);
-  box-shadow: var(--shadow-sm);
-}
-
-.gpa-calculator-container {
-  gap: 28px;
-  justify-content: flex-start;
-  padding: 0;
-}
-
-.gpa-inputs,
-.gpa-result {
-  padding: 28px;
-}
-
-.gpa-inputs {
-  flex: 1;
-  min-width: 0;
-}
-
-.gpa-columns {
-  gap: 24px;
-}
-
-.gpa-course-column,
-.gpa-grade-column {
-  gap: 12px;
-}
-
-.gpa-select,
-.input-common,
-input,
-select {
-  border-radius: 10px;
-  border-color: rgba(25, 100, 126, 0.16);
-  min-height: 46px;
-  font-size: 1rem;
-}
-
-.section-buttons {
-  justify-content: flex-start;
-  gap: 12px;
-  margin: 20px 0 6px;
-}
-
-.section-buttons button,
-.calculate-btn,
-.btn {
-  min-height: 44px;
-  border-radius: 10px;
-  padding: 0.72rem 1.2rem;
-  font-size: 0.98rem;
-  box-shadow: 0 12px 24px rgba(25, 100, 126, 0.12);
-}
-
-.calculate-btn {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-  color: #ffffff;
-}
-
-.gpa-result {
-  min-width: 280px;
-  border: 1px solid rgba(40, 175, 176, 0.22);
-}
-
-.gpa-result h2 {
-  font-size: 1.55rem;
-}
-
-.popup-box {
-  max-width: 430px;
-  padding: 28px;
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(40, 175, 176, 0.28);
-  box-shadow: var(--shadow-md);
-}
-
-@media (max-width: 980px) {
-  .feature-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .gpa-calculator-container,
-  .gpa-columns {
-    flex-direction: column;
-  }
-
-  .gpa-result {
-    width: 100%;
-  }
-}
-
-@media (max-width: 640px) {
-  .home-page,
-  .gpa-page {
-    padding: 30px 16px 10px;
-  }
-
-  .feature-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .feature-card {
-    min-height: 0;
-  }
-
-  :root{
-  --color-primary: #19647E;
-  --color-accent: #28AFB0;
-  --color-bg: #EEE5E5;
-  --color-surface: #ffffff;
-  --color-text: #1C2541;
-  --color-muted: #888;
-  --radius: 0.5rem;
-}
-
-/* Global typography & base */
-body {
-  margin: 0;
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-}
 }
