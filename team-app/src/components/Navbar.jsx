@@ -22,14 +22,14 @@ export default function Navbar() {
         <li><Link className="bbai-navLink" to="/courses">Courses</Link></li>
         <li><Link className="bbai-navLink" to="/grades">Grades</Link></li>
         <li><Link className="bbai-navLink" to="/login">Login</Link></li>
-      </ul>
-      <div className="username">
+        <li><div className="username">
         {user ? (
           <p>{user.email}</p>
         ) : (
           <p>Guest</p>
         )}
-      </div>
+      </div></li>
+      </ul>
     </nav>
   );
 }
