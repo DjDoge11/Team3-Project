@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+/* New design system foundation */
+@import url('./styles/global.css');
+@import url('./styles/components.css');
+@import url('./styles/layout.css');
+@import url('./styles/animations.css');
+
+/* Legacy compatibility (keep until pages are migrated) */
+:root {
+  --color-primary: #19647E;
+  --color-primary-2: #155a6e;
+  --color-accent: #28AFB0;
+  --color-accent-2: #2ab0b0;
+  --color-bg: #f6fbfb;
+  --color-surface: #ffffff;
+  --color-text: #1C2541;
+  --color-muted: rgba(28, 37, 65, 0.7);
+  --radius: 0.5rem;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
