@@ -65,19 +65,19 @@ I am a sophomore at CCA, in Exploring Computer Science, Period 3. </p>
           <li>
             <strong>Shogo, </strong>
             <span> Back-End Developer</span>
-            <p>Shogo Muranaka, Back End Developer
+            <p>My name is Shogo. I am the back-end developer for group three. I am a sophomore at CCA.
 </p>
             </li>
           <li>
             <strong>Parker, </strong>
             <span> Project Manager</span>
-            <p>Parker Bio, I am the Project Manager
+            <p>I am the Project Manager. I am a sophomore at CCA. My job is to manage the Github, and distribute tasks.
 </p>
           </li>
           <li>
             <strong> Kevin, </strong>
             <span>Front-End Developer</span>
-            <p>Frontend developer for team project, Sophomore, has some coding experience
+            <p>I am the front-end developer for our team project. I am a Sophomore, and I have some coding experience.
 </p>
           </li>
         </ul>
