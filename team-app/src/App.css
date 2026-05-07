@@ -1,25 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
-/* Legacy App.css is kept for now during UI migration.
-   New design system styles live in src/styles/*.css and src/index.css.
-*/
+
 
 @import url('https://googleapis.com');
 
 body {
-    background-color: #EEE5E5;
-    color: #1C2541;
-    font-family: 'Inter', sans-serif;
+  background-color: #EEE5E5;
+  color: #1C2541;
+  font-family: 'Inter', sans-serif;
 }
 
 .navbar {
   background-color: var(--color-primary);
   padding: 1rem;
-  background: linear-gradient(
-    90deg,
-    rgba(25, 100, 126, 0.88),
-    rgba(40, 175, 176, 0.86),
-    rgba(42, 176, 176, 0.86)
-  );
+  background: linear-gradient(90deg,
+      rgba(25, 100, 126, 0.88),
+      rgba(40, 175, 176, 0.86),
+      rgba(42, 176, 176, 0.86));
   background-size: 240% 240%;
   animation: bbaiGradientShift 9s ease-in-out infinite;
 
@@ -32,7 +28,7 @@ body {
   margin: 0;
   padding: 0;
   justify-content: center;
-  align-items: center; 
+  align-items: center;
 }
 
 
@@ -52,38 +48,41 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.18);
   transition: transform 150ms ease, background-color 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
   will-change: transform;
-  box-shadow: 0 10px 26px rgba(0,0,0,0.08);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
 }
 
 .navbar a:hover {
   color: #fff;
   background: linear-gradient(135deg, var(--color-accent), var(--color-accent-2));
 }
+
 .username p {
-    margin: 0;
-    line-height: 1; /* Keeps it tight to the baseline */
+  margin: 0;
+  line-height: 1;
 }
+
 .username {
   color: #19647E;
   font-weight: 700;
-  padding: 0.5rem 0; /* Vertical padding matching your links */}
+  padding: 0.5rem 0;
+}
 
 .footer {
-    margin-top: 2rem;
-    background-color: #1C2541;
-    padding: 1.5rem;
-    text-align: left;
-    color: #EEE5E5;
+  margin-top: 2rem;
+  background-color: #1C2541;
+  padding: 1.5rem;
+  text-align: left;
+  color: #EEE5E5;
 
 }
 
 .footer-text {
-    font-size: 1rem;
-    font-weight: 500;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 0 auto;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 auto;
 }
 
 .gpa-page {
@@ -184,14 +183,15 @@ body {
   transition: background-color 0.3s ease;
   margin-top: 0.5rem;
 }
+
 .add-course-btn:hover {
   background-color: #28AFB0;
 }
 
 .button-group {
-  display: flex;       
-  gap: 1rem;          
-  margin-top: 0.5rem; 
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
 }
 
 .calculate-btn {
@@ -340,7 +340,7 @@ body {
   font-size: 1.2rem;
 }
 
-.aboutUs{
+.aboutUs {
   padding-left: 3rem;
   padding-right: 3rem;
   font-size: 1.2rem;
@@ -348,27 +348,27 @@ body {
   list-style-type: none;
 }
 
-.aboutUs ul{
+.aboutUs ul {
   list-style-type: none;
 }
 
-.aboutUs p{
+.aboutUs p {
   margin-bottom: 2rem;
 
 }
 
-.aboutUs li{
+.aboutUs li {
   margin-bottom: 1rem;
 
 }
 
 .members {
   display: flex;
-  overflow-x: auto; 
+  overflow-x: auto;
   gap: 1rem;
   padding: 1rem 0;
   list-style: none;
-  scroll-snap-type: x mandatory; 
+  scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -629,6 +629,7 @@ select {
 }
 
 @media (max-width: 640px) {
+
   .home-page,
   .gpa-page {
     padding: 30px 16px 10px;
@@ -642,23 +643,23 @@ select {
     min-height: 0;
   }
 
-  :root{
-  --color-primary: #19647E;
-  --color-accent: #28AFB0;
-  --color-bg: #EEE5E5;
-  --color-surface: #ffffff;
-  --color-text: #1C2541;
-  --color-muted: #888;
-  --radius: 0.5rem;
-}
+  :root {
+    --color-primary: #19647E;
+    --color-accent: #28AFB0;
+    --color-bg: #EEE5E5;
+    --color-surface: #ffffff;
+    --color-text: #1C2541;
+    --color-muted: #888;
+    --radius: 0.5rem;
+  }
 
-/* Global typography & base */
-body {
-  margin: 0;
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-}
+  /* Global typography & base */
+  body {
+    margin: 0;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
