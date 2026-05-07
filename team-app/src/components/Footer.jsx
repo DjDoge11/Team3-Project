@@ -4,18 +4,20 @@ import '../App.css';
 
 export default function Footer() {
   return (
-    <div className="footer">
-      <footer className="footer-content" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    
+      <footer className="bbai-footer" aria-label="Site footer">
         
-        <div className="footer-left" 
-          style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        <img src={rzLogo} alt="Company Logo" 
-          style={{ height: '3.3rem', width: '3.3rem'}} />
-        <span>&copy; Aiju Corp.</span>
+        <div className="bbai-footer__inner">
+        <img src={rzLogo} alt="Company Logo" style={{ height: '3.3rem', width: '3.3rem'}} /> 
+        <div className="bbai-footer__logo">
+          <span>&copy; Aiju Corp.</span>
         </div>
+        
 
-        <span className="footer-right-text">All rights reserved by the Nauru Parliament.</span>
+        <span className="bbai-footer__note"
+          style={{alignItems: 'right'}}>All rights reserved by the Nauru Parliament.</span>
+        </div>
       </footer>
-    </div>
+    
   );
 }
