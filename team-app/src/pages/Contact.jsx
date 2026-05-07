@@ -137,7 +137,21 @@ export default function Grades() {
         <button onClick={calculateGrade}>Calculate</button>
       </div>
 
-      {error && <p className="gpa-error">{error}</p>}
+      {error && (
+        <p style={{
+          color: '#c0392b',
+          fontWeight: 600,
+          fontSize: '0.95rem',
+          margin: '1rem 0 0 0',
+          backgroundColor: '#fdecea',
+          padding: '0.6rem 1rem',
+          borderRadius: '0.4rem',
+          border: '1px solid #e74c3c',
+          maxWidth: '760px'
+        }}>
+          {error}
+        </p>
+      )}
     </main>
   );
 }

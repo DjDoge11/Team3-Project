@@ -1,7 +1,13 @@
-body {
-    background-color: #EEE5E5;
-    color: #1C2541;
-    font-family: 'Inter', sans-serif;
+.addRow-btn {
+  background-color: #28AFB0;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
 }
 
 .add-course-btn {
@@ -72,21 +78,18 @@ body {
     background-color: var(--color-surface);
 }
 
-.grade-container h1 {
-    text-align: center;
-    color: #1C2541;
-    margin-bottom: 30px;
+.addRow-btn:hover {
+  background-color: #19647E;
 }
 
-.grade-input-group {
-    margin-bottom: 20px;
+.calculate-btn:hover {
+  background-color: #28AFB0;
 }
 
-.grade-input-group label {
-    display: block;
-    margin-bottom: 8px;
-    color: #1C2541;
-    font-weight: bold;
+.button-container {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
 }
 
 .grade-input-group input {
