@@ -59,12 +59,26 @@ body {
 .username p {
   margin: 0;
   line-height: 1;
+  /* Keeps it tight to the baseline */
 }
 
 .username {
-  color: #19647E;
+  text-decoration: none;
+  color: var(--color-surface);
   font-weight: 700;
-  padding: 0.5rem 0;
+  transition: all 0.18s ease;
+  background-color: var(--color-accent);
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius);
+  display: inline-block;
+  color: #fff;
+  font-weight: 800;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: transform 150ms ease, background-color 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+  will-change: transform;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
 }
 
 .footer {
