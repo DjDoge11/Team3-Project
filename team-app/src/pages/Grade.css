@@ -9,7 +9,7 @@ body {
     margin: 32px auto;
     padding: 24px;
     border-radius: 8px;
-    box-shadow: 0 6px 18px rgba(25,100,126,0.04);
+    box-shadow: 0 6px 18px rgba(25, 100, 126, 0.04);
     background-color: var(--color-surface);
 }
 
@@ -63,7 +63,7 @@ body {
     transition: opacity 0.18s ease;
     background-color: var(--color-accent);
     color: var(--color-text);
-    box-shadow: 0 2px 6px rgba(16,24,40,0.04);
+    box-shadow: 0 2px 6px rgba(16, 24, 40, 0.04);
 }
 
 .calculate-btn:hover,
