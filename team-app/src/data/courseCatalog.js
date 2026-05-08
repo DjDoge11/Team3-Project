@@ -208,9 +208,8 @@ export const availableCourses = {
   "American Sign Language 1": { credits: 10, category: "World Language", weighted: false },
   "American Sign Language 2": { credits: 10, category: "World Language", weighted: false },
   "American Sign Language 3": { credits: 10, category: "World Language", weighted: false },
-  "American Sign Language 4 Honors": { credits: 10, category: "World Language", weighted: true }
-
-};
+  "American Sign Language 4 Honors": { credits: 10, category: "World Language", weighted: false },
+  };
 
 
 // Required credits by category for graduation
