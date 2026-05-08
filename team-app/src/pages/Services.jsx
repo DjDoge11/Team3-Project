@@ -305,52 +305,88 @@ const isSectionLocked = (grade, semester) =>
  return filtered.filter(c => c.toLowerCase().includes(lower));
  };
 
- const calculateTotalCredits = () => {
+const calculateTotalCredits = () => {
+ const categoryTotals = calculateCategoryCredits();
+
  let total = 0;
- Object.values(courses).forEach(course => {
- if (course && availableCourses[course]) {
- total += availableCourses[course].credits;
- }
+
+ Object.entries(requiredCredits).forEach(([category, required]) => {
+  const earned = categoryTotals[category] || 0;
+
+  // Electives are capped at 70 ONLY for total credits
+  if (category === 'Elective') {
+   total += Math.min(earned, required);
+  } else {
+   total += earned;
+  }
  });
- offCampusCourses.forEach(course => {
- if (course && availableCourses[course]) {
- total += availableCourses[course].credits;
- }
- });
+
  return total;
- };
+};
 
- const calculateCategoryCredits = () => {
- const rawTotals = Object.values(courses).reduce((totals, course) => {
- if (course && availableCourses[course]) {
- const { category, credits } = availableCourses[course];
- const bucket = requiredCredits[category] ? category : 'Elective';
- totals[bucket] = (totals[bucket] || 0) + credits;
- }
- return totals;
- }, {});
+const calculateCategoryCredits = () => {
+ const rawTotals = {};
 
- // Add off-campus credits to Elective
- offCampusCourses.forEach(course => {
- if (course && availableCourses[course]) {
- rawTotals.Elective = (rawTotals.Elective || 0) + availableCourses[course].credits;
- }
+ // -----------------------------
+ // Regular scheduled courses
+ // -----------------------------
+ Object.values(courses).forEach(course => {
+  if (course && availableCourses[course]) {
+   const { category, credits } = availableCourses[course];
+
+   rawTotals[category] = (rawTotals[category] || 0) + credits;
+  }
  });
 
- let electiveOverflow = rawTotals.Elective || 0;
- const cappedTotals = Object.entries(requiredCredits).reduce((totals, [category, required]) => {
- const earned = rawTotals[category] || 0;
- const capped = Math.min(earned, required);
- electiveOverflow += Math.max(0, earned - required);
- totals[category] = capped;
- return totals;
- }, {});
+ // -----------------------------
+ // Off-campus courses
+ // These now count toward their REAL category
+ // instead of automatically becoming electives
+ // -----------------------------
+offCampusCourses.forEach(course => {
+ if (
+  typeof course === 'string' &&
+  course.trim() !== '' &&
+  availableCourses[course]
+ ) {
+  const { category, credits } = availableCourses[course];
 
- return {
- ...cappedTotals,
- Elective: electiveOverflow,
- };
- };
+  rawTotals[category] =
+   (rawTotals[category] || 0) + credits;
+ }
+});
+
+ const totals = {};
+ let electiveOverflow = 0;
+
+ // -----------------------------
+ // Cap required categories
+ // Overflow goes into electives
+ // -----------------------------
+ Object.entries(requiredCredits).forEach(([category, required]) => {
+  if (category === 'Elective') return;
+
+  const earned = rawTotals[category] || 0;
+
+  totals[category] = Math.min(earned, required);
+
+  if (earned > required) {
+   electiveOverflow += earned - required;
+  }
+ });
+
+ // -----------------------------
+ // Add direct elective courses
+ // -----------------------------
+ electiveOverflow += rawTotals.Elective || 0;
+
+ // Electives can DISPLAY over requirement
+ totals.Elective = electiveOverflow;
+
+ return totals;
+};
+
+
 
  const categoryCredits = calculateCategoryCredits();
  const gpaResult = calculateGPAResult();
@@ -458,31 +494,102 @@ const isSectionLocked = (grade, semester) =>
  };
 
  const removeOffCampusSection = () => {
- if (offCampusCourses.length > 0) {
- const newCourses = offCampusCourses.slice(0, -1);
- const newGrades = offCampusGrades.slice(0, -1);
+ if (offCampusCourses.length === 0) return;
+
+ const newCourses = [...offCampusCourses];
+ const newGrades = [...offCampusGrades];
+
+ // Remove last section
+ newCourses.pop();
+ newGrades.pop();
+
  setOffCampusCourses(newCourses);
  setOffCampusGrades(newGrades);
 
- if (user) {
- syncToFirebase({ offCampusCourses: newCourses, offCampusGrades: newGrades });
- }
- }
- };
+ // Clean search/dropdown state too
+ setOffCampusSearchText(prev => {
+  const updated = { ...prev };
+  delete updated[newCourses.length];
+  return updated;
+ });
+
+ setOffCampusDropdownOpen(prev => {
+  const updated = { ...prev };
+  delete updated[newCourses.length];
+  return updated;
+ });
+
+ setOffCampusHighlightedIndex(prev => {
+  const updated = { ...prev };
+  delete updated[newCourses.length];
+  return updated;
+ });
 
  const handleOffCampusSearchChange = (index, value) => {
- const updated = { ...offCampusSearchText, [index]: value };
- setOffCampusSearchText(updated);
-
- setOffCampusDropdownOpen(prev => ({ ...prev, [index]: value.length > 0 }));
-
- if (!value.trim()) {
- handleOffCampusCourseChange(index, '');
- }
+ const updated = {
+  ...offCampusSearchText,
+  [index]: value
  };
 
+ setOffCampusSearchText(updated);
+
+ setOffCampusDropdownOpen(prev => ({
+  ...prev,
+  [index]: value.length > 0
+ }));
+
+ // Clear selected course if input emptied
+ if (!value.trim()) {
+  handleOffCampusCourseChange(index, '');
+ }
+};
+
+ if (user) {
+  syncToFirebase({
+   offCampusCourses: newCourses,
+   offCampusGrades: newGrades
+  });
+ }
+};
+
+ 
+
  const handleOffCampusCourseSelect = (index, course) => {
- handleOffCampusCourseChange(index, course);
+ const handleOffCampusCourseChange = (index, value) => {
+ // Prevent selecting courses already in regular schedule
+ if (value && Object.values(courses).includes(value)) {
+  setSaveStatus('Course already selected in schedule');
+  setTimeout(() => setSaveStatus(''), 2000);
+  return;
+ }
+
+ // Prevent duplicates in off-campus
+ if (value && offCampusCourses.some((c, i) => c === value && i !== index)) {
+  setSaveStatus('Course already selected in off-campus');
+  setTimeout(() => setSaveStatus(''), 2000);
+  return;
+ }
+
+ const newCourses = [...offCampusCourses];
+ newCourses[index] = value;
+
+ setOffCampusCourses(newCourses);
+
+ // Clear search text when removed
+ if (!value || !value.trim()) {
+  setOffCampusSearchText(prev => {
+   const updated = { ...prev };
+   delete updated[index];
+   return updated;
+  });
+ }
+
+ if (user) {
+  syncToFirebase({
+   offCampusCourses: newCourses
+  });
+ }
+};
 
  setOffCampusSearchText(prev => ({ ...prev, [index]: course }));
  setOffCampusDropdownOpen(prev => ({ ...prev, [index]: false }));

@@ -1204,3 +1204,55 @@ hr {
     flex-wrap: wrap;
   }
 }
+
+
+.course-main {
+  padding: 1rem;
+  font-family: 'Inter', sans-serif;
+  background-color: #EEE5E5; 
+}
+
+h1 {
+color: #333;
+margin-bottom: 1.25rem;
+}
+
+.grade-section {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 0.5rem solid #EEE5E5;
+}
+
+.semester-container {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+
+.input-wrapper {
+  margin-bottom: 1rem;
+}
+
+.input-label {
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 0.35rem;
+  color: var(--color-muted);
+  font-weight: 600;
+}
+
+
+.course-input {
+  padding: 0.6rem 0.8rem;
+  width: 12rem;
+  border-radius: 0.5rem; 
+  border: 1px solid #e6f2f3;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+/* Make semester cards consistent with card utility */
+.semester-card { min-width:320px; }
+
+
