@@ -1,6 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
-
-
 @import url('https://googleapis.com');
 
 body {
@@ -10,8 +8,12 @@ body {
 }
 
 .navbar {
+  position: relative;
   background-color: var(--color-primary);
   padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: linear-gradient(90deg,
       rgba(25, 100, 126, 0.88),
       rgba(40, 175, 176, 0.86),
@@ -21,13 +23,23 @@ body {
 
 }
 
-.navbar ul {
-  list-style: none;
+.navbar ul.bbai-navLinks {
   display: flex;
   gap: 1rem;
+  list-style: none;
   margin: 0;
   padding: 0;
-  justify-content: center;
+  width: auto;
+}
+
+
+
+.navbar ul.bbai-navLinks li.nav-user-container {
+  position: absolute !important;
+  right: 1rem !important;
+  margin: 0 !important;
+  top: 50%;
+  transform: translateY(-50%);
   align-items: center;
 }
 
@@ -59,7 +71,6 @@ body {
 .username p {
   margin: 0;
   line-height: 1;
-  /* Keeps it tight to the baseline */
 }
 
 .username {
@@ -79,6 +90,16 @@ body {
   transition: transform 150ms ease, background-color 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
   will-change: transform;
   box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
+}
+
+.nav-user-container {
+  position: absolute !important;
+  /* Force out of flow */
+  right: 1.5rem;
+  /* Pin to right wall */
+  top: 50%;
+  transform: translateY(-50%);
+  /* Center vertically */
 }
 
 .footer {
