@@ -55,12 +55,9 @@ export const availableCourses = {
   "US History": { credits: 10, category: "Social Science", weighted: false },
   "AP US History": { credits: 10, category: "Social Science", weighted: true },
 
-  "American Government": { credits: 10, category: "Social Science", weighted: false },
-  "AP American Government": { credits: 10, category: "Social Science", weighted: true },
-
-  "Economics": { credits: 10, category: "Social Science", weighted: false },
-  "AP Macroeconomics": { credits: 10, category: "Social Science", weighted: true },
-
+  "American Government/Economics": { credits: 10, category: "Social Science", weighted: false },
+  "AP American Government/Macroeconomics": { credits: 10, category: "Social Science", weighted: true },
+  
   "Psychology": { credits: 10, category: "Social Science", weighted: false },
   "AP Psychology": { credits: 10, category: "Social Science", weighted: true },
 
