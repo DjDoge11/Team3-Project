@@ -1,6 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
-
-
 @import url('https://googleapis.com');
 
 body {
@@ -95,10 +93,13 @@ body {
 }
 
 .nav-user-container {
-  position: absolute !important; /* Force out of flow */
-  right: 1.5rem;                 /* Pin to right wall */
+  position: absolute !important;
+  /* Force out of flow */
+  right: 1.5rem;
+  /* Pin to right wall */
   top: 50%;
-  transform: translateY(-50%);   /* Center vertically */
+  transform: translateY(-50%);
+  /* Center vertically */
 }
 
 .footer {
