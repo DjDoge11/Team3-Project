@@ -553,21 +553,42 @@ const handleOffCampusSearchChange = (index, value) => {
 const handleOffCampusCourseSelect = (index, course) => {
  handleOffCampusCourseChange(index, course);
 
- setOffCampusSearchText(prev => ({
-  ...prev,
-  [index]: course
- }));
+ setOffCampusSearchText(prev => ({ ...prev, [index]: course }));
+ setOffCampusDropdownOpen(prev => ({ ...prev, [index]: false }));
+ setOffCampusHighlightedIndex(prev => ({ ...prev, [index]: 0 }));
+ };
 
- setOffCampusDropdownOpen(prev => ({
-  ...prev,
-  [index]: false
+ const handleOffCampusKeyDown = (e, index) => {
+ const filtered = getFilteredCourses(offCampusSearchText[index] || '');
+ const currentIndex = offCampusHighlightedIndex[index] || 0;
+
+ switch (e.key) {
+ case 'ArrowDown':
+ e.preventDefault();
+ setOffCampusDropdownOpen(prev => ({ ...prev, [index]: true }));
+ setOffCampusHighlightedIndex(prev => ({
+ ...prev,
+ [index]: (currentIndex + 1) % filtered.length
  }));
 
  setOffCampusHighlightedIndex(prev => ({
   ...prev,
-  [index]: 0
+  [index]: (currentIndex - 1 + filtered.length) % filtered.length
  }));
-};
+ break;
+
+ case 'Enter':
+ e.preventDefault();
+ if (offCampusDropdownOpen[index] && filtered.length > 0) {
+ handleOffCampusCourseSelect(index, filtered[currentIndex]);
+ }
+ break;
+
+ case 'Escape':
+ setOffCampusDropdownOpen(prev => ({ ...prev, [index]: false }));
+ break;
+ }
+ };
 
  // -----------------------------
  // 9. UI Rendering
