@@ -16,19 +16,21 @@ export default function Navbar() {
 
   return (
     <nav className="navbar">
-      <ul>
-        <li><Link to="/home">Home</Link></li>
-        <li><Link to="/gpa">GPA</Link></li>
-        <li><Link to="/courses">Courses</Link></li>
-        <li><Link to="/grades">Grades</Link></li>
-        <li><Link to="/login">Login</Link></li>
+      <ul className="bbai-navLinks">
+        <li><Link className="bbai-navLink" to="/home">Home</Link></li>
+        <li><Link className="bbai-navLink" to="/gpa">GPA</Link></li>
+        <li><Link className="bbai-navLink" to="/courses">Courses</Link></li>
+        <li><Link className="bbai-navLink" to="/grades">Grades</Link></li>
+        <li><Link className="bbai-navLink" to="/login">Login</Link></li>
       </ul>
+      <div className="nav-user-container">
       <div className="username">
         {user ? (
           <p>{user.email}</p>
         ) : (
           <p>Guest</p>
         )}
+      </div>
       </div>
     </nav>
   );

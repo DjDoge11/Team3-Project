@@ -163,21 +163,90 @@
     opacity: 0;
     transform: translate(-50%, -10px);
   }
+
   to {
     opacity: 1;
     transform: translate(-50%, 0);
   }
 }
 
-.header-actions { display:flex; align-items:center; gap:0.75rem; }
-.credits-summary { font-weight:800; color:#19647E; font-size:1.05rem; }
-.credits-card { display:flex; align-items:center; padding:0.5rem 0.9rem; border-radius:0.6rem; min-width:160px; justify-content:center; box-shadow:0 4px 12px rgba(25,100,126,0.04); }
-.login-card { display:flex; align-items:center; padding:0.35rem 0.9rem; border-radius:0.6rem; background:linear-gradient(180deg, rgba(0,0,0,0.01), rgba(0,0,0,0.01)); border:1px solid rgba(0,0,0,0.03); }
-.login-hint { font-size:0.95rem; color:var(--color-muted); margin-left:0.25rem }
-.question-mark-btn { background:#19647E; color:#fff; border:none; border-radius:6px; width:36px; height:36px; cursor:pointer; font-weight:700; }
-.popup-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; z-index:1500; }
-.popup-box { background:#fff; padding:1rem 1.25rem; border-radius:8px; width:320px; max-width:90%; box-shadow:0 8px 24px rgba(0,0,0,0.2); position:relative; }
-.popup-close-x { position:absolute; right:8px; top:6px; background:none; border:none; font-size:1.25rem; cursor:pointer; }
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.credits-summary {
+  font-weight: 800;
+  color: #19647E;
+  font-size: 1.05rem;
+}
+
+.credits-card {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0.9rem;
+  border-radius: 0.6rem;
+  min-width: 160px;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(25, 100, 126, 0.04);
+}
+
+.login-card {
+  display: flex;
+  align-items: center;
+  padding: 0.35rem 0.9rem;
+  border-radius: 0.6rem;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.01), rgba(0, 0, 0, 0.01));
+  border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.login-hint {
+  font-size: 0.95rem;
+  color: var(--color-muted);
+  margin-left: 0.25rem
+}
+
+.question-mark-btn {
+  background: #19647E;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1500;
+}
+
+.popup-box {
+  background: #fff;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  width: 320px;
+  max-width: 90%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.popup-close-x {
+  position: absolute;
+  right: 8px;
+  top: 6px;
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
 
 .grade-section {
   margin-bottom: 2rem;
@@ -197,13 +266,14 @@
 }
 
 .semester-card {
-  border: 1px solid rgba(0,0,0,0.06);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   padding: 1rem;
   border-radius: 0.75rem;
-  flex: 1 1 340px; /* allow cards to grow/shrink and fill row */
+  flex: 1 1 340px;
+  /* allow cards to grow/shrink and fill row */
   max-width: 420px;
   background: var(--color-surface);
-  box-shadow: 0 6px 18px rgba(25,100,126,0.04);
+  box-shadow: 0 6px 18px rgba(25, 100, 126, 0.04);
 }
 
 .semester-card.locked {
@@ -381,7 +451,8 @@
 
 .course-period-row {
   display: flex;
-  align-items: flex-end; /* Aligns the bottom of the grade boxes with the bottom of the input */
+  align-items: flex-end;
+  /* Aligns the bottom of the grade boxes with the bottom of the input */
   gap: 12px;
   margin-bottom: 15px;
 }
@@ -389,7 +460,7 @@
 /* Keeps the original block layout for Period label and Input */
 .course-period-row .course-input-group {
   flex: 1;
-  margin-bottom: 0; 
+  margin-bottom: 0;
 }
 
 /* Ensure the label stays on top as per your original CSS */
@@ -405,13 +476,13 @@
   gap: 8px;
   /* This margin matches the height of the label + label margin 
      to push the grades down so they line up with the input box */
-  margin-bottom: 0; 
+  margin-bottom: 0;
 }
 
 /* Force Input and Grade boxes to be identical in height */
-.course-input, 
+.course-input,
 .grade-box {
-  height: 40px; 
+  height: 40px;
   box-sizing: border-box;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -829,11 +900,13 @@ hr {
 }
 
 @keyframes servicesLoadingPulse {
+
   0%,
   100% {
     transform: scale(1);
     opacity: 0.9;
   }
+
   50% {
     transform: scale(1.07);
     opacity: 1;
@@ -844,6 +917,7 @@ hr {
   0% {
     transform: translateX(-105%);
   }
+
   100% {
     transform: translateX(270%);
   }
@@ -1114,4 +1188,55 @@ hr {
     flex-wrap: wrap;
   }
 }
+
+
+.course-main {
+  padding: 1rem;
+  font-family: 'Inter', sans-serif;
+  background-color: #EEE5E5; 
+}
+
+h1 {
+color: #333;
+margin-bottom: 1.25rem;
+}
+
+.grade-section {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 0.5rem solid #EEE5E5;
+}
+
+.semester-container {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+
+.input-wrapper {
+  margin-bottom: 1rem;
+}
+
+.input-label {
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 0.35rem;
+  color: var(--color-muted);
+  font-weight: 600;
+}
+
+
+.course-input {
+  padding: 0.6rem 0.8rem;
+  width: 12rem;
+  border-radius: 0.5rem; 
+  border: 1px solid #e6f2f3;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+/* Make semester cards consistent with card utility */
+.semester-card { min-width:320px; }
+
 

@@ -176,7 +176,7 @@ export const availableCourses = {
   "Human Computer Interaction": { credits: 10, category: "Practical Arts/CTE", weighted: false },
   "Machine Learning": { credits: 10, category: "Practical Arts/CTE", weighted: false },
 
-// AP Computer Science courses
+  // AP Computer Science courses
   "AP Computer Science A": { credits: 10, category: "Practical Arts/CTE", weighted: true },
   "AP Computer Science Principles": { credits: 10, category: "Practical Arts/CTE", weighted: true },
 
