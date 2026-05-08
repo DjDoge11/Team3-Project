@@ -63,9 +63,14 @@ body {
   box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
 }
 
-.navbar a:hover {
-  color: #fff;
-  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-2));
+.username {
+  position: absolute;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #EEE5E5;
+  font-weight: bold;
+  font-size: 0.95rem;
 }
 
 .username p {
@@ -187,14 +192,13 @@ body {
 .gpa-select {
   padding: 0.6rem;
   border-radius: 0.4rem;
-  border: 2px solid rgba(40, 175, 176, 0.9);
+  border: 2px solid #28AFB0;
   background-color: #ffffff;
-  color: var(--color-text);
+  color: #1C2541;
   font-size: 1rem;
   width: 260px;
   outline: none;
 }
-
 
 .gpa-select.course-select {
   width: 320px;
@@ -408,10 +412,9 @@ body {
 }
 
 .members li {
-  flex: 0 0 40rem;
+  flex: 0 0 40rem; 
   scroll-snap-align: start;
-  background: #ffffff;
-  border: 1px solid rgba(40, 175, 176, 0.12);
+  background: #f4f4f4;
   padding: 1rem;
   border-radius: 1rem;
   box-shadow: 0 6px 18px rgba(25, 100, 126, 0.04);

@@ -130,21 +130,6 @@
   background-color: #155a6e;
 }
 
-.clear-btn {
-  padding: 0.6rem 1.2rem;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 0.25rem;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.clear-btn:hover {
-  background-color: #c82333;
-}
-
 .save-status {
   position: fixed;
   top: 86px;
