@@ -499,14 +499,12 @@ offCampusCourses.forEach(course => {
  const newCourses = [...offCampusCourses];
  const newGrades = [...offCampusGrades];
 
- // Remove last section
  newCourses.pop();
  newGrades.pop();
 
  setOffCampusCourses(newCourses);
  setOffCampusGrades(newGrades);
 
- // Clean search/dropdown state too
  setOffCampusSearchText(prev => {
   const updated = { ...prev };
   delete updated[newCourses.length];
@@ -525,7 +523,15 @@ offCampusCourses.forEach(course => {
   return updated;
  });
 
- const handleOffCampusSearchChange = (index, value) => {
+ if (user) {
+  syncToFirebase({
+   offCampusCourses: newCourses,
+   offCampusGrades: newGrades
+  });
+ }
+};
+
+const handleOffCampusSearchChange = (index, value) => {
  const updated = {
   ...offCampusSearchText,
   [index]: value
@@ -538,98 +544,30 @@ offCampusCourses.forEach(course => {
   [index]: value.length > 0
  }));
 
- // Clear selected course if input emptied
+ // Clear selected course if emptied
  if (!value.trim()) {
   handleOffCampusCourseChange(index, '');
  }
 };
 
- if (user) {
-  syncToFirebase({
-   offCampusCourses: newCourses,
-   offCampusGrades: newGrades
-  });
- }
-};
+const handleOffCampusCourseSelect = (index, course) => {
+ handleOffCampusCourseChange(index, course);
 
- 
-
- const handleOffCampusCourseSelect = (index, course) => {
- const handleOffCampusCourseChange = (index, value) => {
- // Prevent selecting courses already in regular schedule
- if (value && Object.values(courses).includes(value)) {
-  setSaveStatus('Course already selected in schedule');
-  setTimeout(() => setSaveStatus(''), 2000);
-  return;
- }
-
- // Prevent duplicates in off-campus
- if (value && offCampusCourses.some((c, i) => c === value && i !== index)) {
-  setSaveStatus('Course already selected in off-campus');
-  setTimeout(() => setSaveStatus(''), 2000);
-  return;
- }
-
- const newCourses = [...offCampusCourses];
- newCourses[index] = value;
-
- setOffCampusCourses(newCourses);
-
- // Clear search text when removed
- if (!value || !value.trim()) {
-  setOffCampusSearchText(prev => {
-   const updated = { ...prev };
-   delete updated[index];
-   return updated;
-  });
- }
-
- if (user) {
-  syncToFirebase({
-   offCampusCourses: newCourses
-  });
- }
-};
-
- setOffCampusSearchText(prev => ({ ...prev, [index]: course }));
- setOffCampusDropdownOpen(prev => ({ ...prev, [index]: false }));
- setOffCampusHighlightedIndex(prev => ({ ...prev, [index]: 0 }));
- };
-
- const handleOffCampusKeyDown = (e, index) => {
- const filtered = getFilteredCourses(offCampusSearchText[index] || '');
- const currentIndex = offCampusHighlightedIndex[index] || 0;
-
- switch (e.key) {
- case 'ArrowDown':
- e.preventDefault();
- setOffCampusDropdownOpen(prev => ({ ...prev, [index]: true }));
- setOffCampusHighlightedIndex(prev => ({
- ...prev,
- [index]: (currentIndex + 1) % filtered.length
+ setOffCampusSearchText(prev => ({
+  ...prev,
+  [index]: course
  }));
- break;
 
- case 'ArrowUp':
- e.preventDefault();
- setOffCampusHighlightedIndex(prev => ({
- ...prev,
- [index]: (currentIndex - 1 + filtered.length) % filtered.length
+ setOffCampusDropdownOpen(prev => ({
+  ...prev,
+  [index]: false
  }));
- break;
 
- case 'Enter':
- e.preventDefault();
- if (offCampusDropdownOpen[index] && filtered.length > 0) {
- handleOffCampusCourseSelect(index, filtered[currentIndex]);
- }
- break;
-
- case 'Escape':
- setOffCampusDropdownOpen(prev => ({ ...prev, [index]: false }));
- break;
- }
- };
+ setOffCampusHighlightedIndex(prev => ({
+  ...prev,
+  [index]: 0
+ }));
+};
 
  // -----------------------------
  // 9. UI Rendering
