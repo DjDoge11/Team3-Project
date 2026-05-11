@@ -627,7 +627,6 @@ select {
 }
 
 .calculate-btn {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
   color: #ffffff;
 }
 
