@@ -772,6 +772,20 @@ offCampusCourses.forEach(course => {
  ×
  </button>
  )}
+ 
+ {courses && (
+ <button
+ type="button"
+ className="clear-course-btn"
+ onMouseDown={(e) => e.preventDefault()}
+ onClick={() => handleOffCampusCourseChange(index, '')}
+ title="Clear course"
+ >
+ ×
+ </button>
+ )}
+
+
 
  {isOpen && (
  <ul className="off-campus-dropdown-list">
