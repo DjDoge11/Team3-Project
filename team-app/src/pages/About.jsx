@@ -41,58 +41,123 @@ function loadFromCache() {
   }
 }
 
+const loadUserCoursesAndGrades = async (uid) => {
+  try {
+    const userDocRef = doc(db, 'users', uid);
+    const userDoc = await getDoc(userDocRef);
+
+    if (userDoc.exists()) {
+      const data = userDoc.data();
+
+      return {
+        courses: data.gpaCourses || [],
+        grades: data.gpaGrades || [],
+      };
+    }
+
+    return { courses: [], grades: [] };
+  } catch (err) {
+    console.error('Error loading Firestore data:', err);
+    return { courses: [], grades: [] };
+  }
+};
+
+const loadServicesData = async (uid) => {
+  try {
+    const userDocRef = doc(db, 'users', uid);
+    const userDoc = await getDoc(userDocRef);
+
+    if (userDoc.exists()) {
+      const data = userDoc.data();
+      const importedCourses = [];
+      const importedGrades = [];
+
+      // Import from regular schedule (Services.jsx courses)
+      if (data.courses && typeof data.courses === 'object') {
+        Object.entries(data.courses).forEach(([key, course]) => {
+          if (course && course.trim()) {
+            importedCourses.push(course);
+            // Find corresponding grades for this course
+            const courseGrades = data.courseGrades || {};
+            // Get grade from first quarter
+            const grade = courseGrades[`${key}-g1`] || '';
+            importedGrades.push(grade);
+          }
+        });
+      }
+
+      // Import from off-campus courses
+      if (data.offCampusCourses && Array.isArray(data.offCampusCourses)) {
+        data.offCampusCourses.forEach((course, index) => {
+          if (course && course.trim()) {
+            importedCourses.push(course);
+            const grade = data.offCampusGrades?.[index] || '';
+            importedGrades.push(grade);
+          }
+        });
+      }
+
+      return {
+        courses: importedCourses,
+        grades: importedGrades,
+      };
+    }
+
+    return { courses: [], grades: [] };
+  } catch (err) {
+    console.error('Error loading Services data:', err);
+    return { courses: [], grades: [] };
+  }
+};
+
 export default function GPA() {
   const [numSections, setNumSections] = useState(4);
   const [selectedCourses, setSelectedCourses] = useState(Array(4).fill(''));
   const [grades, setGrades] = useState(Array(4).fill(''));
   const [showPopup, setShowPopup] = useState(false);
+  const [showImportDialog, setShowImportDialog] = useState(false);
+  const [importedData, setImportedData] = useState(null);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // -----------------------------
-  // LOAD CACHE FIRST → THEN FIRESTORE
-  // -----------------------------
-  useEffect(() => {
-    // Load from local cache immediately
-    const cached = loadFromCache();
-    if (cached) {
-      setSelectedCourses(cached.courses);
-      setGrades(cached.grades);
-      setNumSections(cached.courses.length);
-    }
 
-    // Then load Firestore if logged in
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
 
-      if (currentUser) {
-        try {
-          const userDocRef = doc(db, 'users', currentUser.uid);
-          const userDoc = await getDoc(userDocRef);
+useEffect(() => {
+  let isMounted = true; // Track if component is mounted
 
-          if (userDoc.exists()) {
-            const data = userDoc.data();
+  const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    setUser(currentUser);
 
-            if (data.gpaCourses && data.gpaGrades) {
-              setSelectedCourses(data.gpaCourses);
-              setGrades(data.gpaGrades);
-              setNumSections(data.gpaCourses.length);
-
-              // Sync Firestore → cache
-              saveToCache(data.gpaCourses, data.gpaGrades);
-            }
+    if (currentUser) {
+      try {
+        const { courses, grades } = await loadUserCoursesAndGrades(currentUser.uid);
+        
+        // Only update state if the component is still active
+        if (isMounted) {
+          if (courses?.length && grades?.length) {
+            setSelectedCourses(courses);
+            setGrades(grades);
+            setNumSections(courses.length);
+            saveToCache(courses, grades);
           }
-        } catch (e) {
-          console.error('Error loading user GPA data:', e);
+          setLoading(false); 
         }
+      } catch (error) {
+        console.error("Failed to load user data:", error);
+        if (isMounted) setLoading(false);
       }
-    });
+    } else {
+      if (isMounted) setLoading(false);
+    }
+  });
 
-    return () => unsubscribe();
-  }, []);
+  return () => {
+    isMounted = false; // Cleanup
+    unsubscribe();
+  };
+}, []);
 
   // -----------------------------
   // COURSE CHANGE
@@ -223,22 +288,69 @@ export default function GPA() {
   };
 
   const clearAll = () => {
-    const empty = ['', '', '', ''];
-    setSelectedCourses(empty);
-    setGrades(empty);
-    setResult(null);
-    setError('');
+  const emptyCourses = Array(numSections).fill('');
+  const emptyGrades = Array(numSections).fill('');
 
-    // Clear cache
-    saveToCache(empty, empty);
+  setSelectedCourses(emptyCourses);
+  setGrades(emptyGrades);
+  setResult(null);
+  setError('');
 
-    // Clear Firestore
-    if (user) {
-      const userDocRef = doc(db, 'users', user.uid);
-      setDoc(userDocRef, {
-        gpaCourses: empty,
-        gpaGrades: empty
-      }, { merge: true });
+  saveToCache(emptyCourses, emptyGrades);
+
+  if (user) {
+    const userDocRef = doc(db, 'users', user.uid);
+
+    setDoc(userDocRef, {
+      gpaCourses: emptyCourses,
+      gpaGrades: emptyGrades
+    }, { merge: true });
+  }
+};
+
+  const handleImportFromServices = async () => {
+    if (!user) {
+      setError('Please log in to import courses');
+      return;
+    }
+
+    try {
+      const data = await loadServicesData(user.uid);
+      if (data.courses.length === 0) {
+        setError('No courses found in Services. Please add courses in the Services page first.');
+        return;
+      }
+
+      setImportedData(data);
+      setShowImportDialog(true);
+      setError('');
+    } catch (err) {
+      console.error('Error importing from Services:', err);
+      setError('Error loading courses from Services');
+    }
+  };
+
+  const confirmImport = () => {
+    if (importedData) {
+      const newNumSections = importedData.courses.length;
+      setNumSections(newNumSections);
+      setSelectedCourses(importedData.courses);
+      setGrades(importedData.grades);
+      setResult(null);
+      setError('');
+
+      saveToCache(importedData.courses, importedData.grades);
+
+      if (user) {
+        const userDocRef = doc(db, 'users', user.uid);
+        setDoc(userDocRef, {
+          gpaCourses: importedData.courses,
+          gpaGrades: importedData.grades
+        }, { merge: true });
+      }
+
+      setShowImportDialog(false);
+      setImportedData(null);
     }
   };
 
@@ -246,8 +358,35 @@ export default function GPA() {
     <main className="gpa-page">
       <div className="gpa-header">
         <h1>GPA Calculator</h1>
-        <button className="question-mark-btn" onClick={() => setShowPopup(true)}>?</button>
+        <div className="header-buttons">
+          <button className="import-btn" onClick={handleImportFromServices} disabled={!user} title="Import courses from Services page">
+            Import from Services
+          </button>
+          <button className="question-mark-btn" onClick={() => setShowPopup(true)}>?</button>
+        </div>
       </div>
+
+      {showImportDialog && importedData && (
+        <div className="popup-overlay" onClick={() => setShowImportDialog(false)}>
+          <div className="popup-box" onClick={(e) => e.stopPropagation()}>
+            <button className="popup-close-x" onClick={() => setShowImportDialog(false)}>×</button>
+            <h2>Import Courses from Services</h2>
+            <p>Found <strong>{importedData.courses.length}</strong> courses. Replace current courses?</p>
+            <div className="import-preview">
+              {importedData.courses.map((course, idx) => (
+                <div key={idx} className="import-item">
+                  <span className="import-course">{course}</span>
+                  <span className="import-grade">{importedData.grades[idx] || '-'}</span>
+                </div>
+              ))}
+            </div>
+            <div className="import-dialog-buttons">
+              <button className="confirm-btn" onClick={confirmImport}>Import</button>
+              <button className="cancel-btn" onClick={() => setShowImportDialog(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showPopup && (
         <div className="popup-overlay" onClick={() => setShowPopup(false)}>
