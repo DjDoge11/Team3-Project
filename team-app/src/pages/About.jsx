@@ -41,6 +41,27 @@ function loadFromCache() {
   }
 }
 
+const loadUserCoursesAndGrades = async (uid) => {
+  try {
+    const userDocRef = doc(db, 'users', uid);
+    const userDoc = await getDoc(userDocRef);
+
+    if (userDoc.exists()) {
+      const data = userDoc.data();
+
+      return {
+        courses: data.gpaCourses || [],
+        grades: data.gpaGrades || [],
+      };
+    }
+
+    return { courses: [], grades: [] };
+  } catch (err) {
+    console.error('Error loading Firestore data:', err);
+    return { courses: [], grades: [] };
+  }
+};
+
 export default function GPA() {
   const [numSections, setNumSections] = useState(4);
   const [selectedCourses, setSelectedCourses] = useState(Array(4).fill(''));
@@ -51,48 +72,42 @@ export default function GPA() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // -----------------------------
-  // LOAD CACHE FIRST → THEN FIRESTORE
-  // -----------------------------
-  useEffect(() => {
-    // Load from local cache immediately
-    const cached = loadFromCache();
-    if (cached) {
-      setSelectedCourses(cached.courses);
-      setGrades(cached.grades);
-      setNumSections(cached.courses.length);
-    }
 
-    // Then load Firestore if logged in
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
 
-      if (currentUser) {
-        try {
-          const userDocRef = doc(db, 'users', currentUser.uid);
-          const userDoc = await getDoc(userDocRef);
+useEffect(() => {
+  let isMounted = true; // Track if component is mounted
 
-          if (userDoc.exists()) {
-            const data = userDoc.data();
+  const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    setUser(currentUser);
 
-            if (data.gpaCourses && data.gpaGrades) {
-              setSelectedCourses(data.gpaCourses);
-              setGrades(data.gpaGrades);
-              setNumSections(data.gpaCourses.length);
-
-              // Sync Firestore → cache
-              saveToCache(data.gpaCourses, data.gpaGrades);
-            }
+    if (currentUser) {
+      try {
+        const { courses, grades } = await loadUserCoursesAndGrades(currentUser.uid);
+        
+        // Only update state if the component is still active
+        if (isMounted) {
+          if (courses?.length && grades?.length) {
+            setSelectedCourses(courses);
+            setGrades(grades);
+            setNumSections(courses.length);
+            saveToCache(courses, grades);
           }
-        } catch (e) {
-          console.error('Error loading user GPA data:', e);
+          setLoading(false); 
         }
+      } catch (error) {
+        console.error("Failed to load user data:", error);
+        if (isMounted) setLoading(false);
       }
-    });
+    } else {
+      if (isMounted) setLoading(false);
+    }
+  });
 
-    return () => unsubscribe();
-  }, []);
+  return () => {
+    isMounted = false; // Cleanup
+    unsubscribe();
+  };
+}, []);
 
   // -----------------------------
   // COURSE CHANGE
@@ -223,24 +238,25 @@ export default function GPA() {
   };
 
   const clearAll = () => {
-    const empty = ['', '', '', ''];
-    setSelectedCourses(empty);
-    setGrades(empty);
-    setResult(null);
-    setError('');
+  const emptyCourses = Array(numSections).fill('');
+  const emptyGrades = Array(numSections).fill('');
 
-    // Clear cache
-    saveToCache(empty, empty);
+  setSelectedCourses(emptyCourses);
+  setGrades(emptyGrades);
+  setResult(null);
+  setError('');
 
-    // Clear Firestore
-    if (user) {
-      const userDocRef = doc(db, 'users', user.uid);
-      setDoc(userDocRef, {
-        gpaCourses: empty,
-        gpaGrades: empty
-      }, { merge: true });
-    }
-  };
+  saveToCache(emptyCourses, emptyGrades);
+
+  if (user) {
+    const userDocRef = doc(db, 'users', user.uid);
+
+    setDoc(userDocRef, {
+      gpaCourses: emptyCourses,
+      gpaGrades: emptyGrades
+    }, { merge: true });
+  }
+};
 
   return (
     <main className="gpa-page">
