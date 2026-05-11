@@ -473,6 +473,12 @@ offCampusCourses.forEach(course => {
  newCourses[index] = value;
  setOffCampusCourses(newCourses);
 
+ if (!value) {
+ setOffCampusSearchText(prev => ({ ...prev, [index]: '' }));
+ setOffCampusDropdownOpen(prev => ({ ...prev, [index]: false }));
+ setOffCampusHighlightedIndex(prev => ({ ...prev, [index]: 0 }));
+ }
+
  if (user) {
  syncToFirebase({ offCampusCourses: newCourses });
  }
@@ -772,20 +778,6 @@ offCampusCourses.forEach(course => {
  ×
  </button>
  )}
- 
- {courses && (
- <button
- type="button"
- className="clear-course-btn"
- onMouseDown={(e) => e.preventDefault()}
- onClick={() => handleOffCampusCourseChange(index, '')}
- title="Clear course"
- >
- ×
- </button>
- )}
-
-
 
  {isOpen && (
  <ul className="off-campus-dropdown-list">
