@@ -102,3 +102,132 @@
   background-color: #3498db;
 }
 
+/* Header buttons styling */
+.gpa-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.gpa-header h1 {
+  flex: 1;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.import-btn {
+  background-color: var(--color-primary);
+  color: var(--color-surface);
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.import-btn:hover:not(:disabled) {
+  background-color: var(--color-accent);
+}
+
+.import-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.question-mark-btn {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.question-mark-btn:hover {
+  background-color: #5a6268;
+}
+
+/* Import dialog styles */
+.import-preview {
+  background-color: #f8f9fa;
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin: 1rem 0;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+}
+
+.import-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.import-item:last-child {
+  border-bottom: none;
+}
+
+.import-course {
+  flex: 1;
+  font-weight: 500;
+}
+
+.import-grade {
+  background-color: #e9ecef;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  min-width: 3rem;
+  text-align: center;
+}
+
+.import-dialog-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+.confirm-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.confirm-btn:hover {
+  background-color: #218838;
+}
+
+.cancel-btn {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn:hover {
+  background-color: #5a6268;
+}
+

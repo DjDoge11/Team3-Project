@@ -161,6 +161,7 @@
   box-shadow: 0 18px 38px rgba(16, 24, 40, 0.2);
   transform: translateX(-50%);
   animation: saveStatusDrop 220ms ease both;
+  background: var(--color-accent);
 }
 
 .save-status--success {
@@ -1113,7 +1114,6 @@ hr {
 .services-sidebar {
   width: auto;
   padding: 24px;
-  position: sticky;
   top: 98px;
 }
 

@@ -473,6 +473,12 @@ offCampusCourses.forEach(course => {
  newCourses[index] = value;
  setOffCampusCourses(newCourses);
 
+ if (!value) {
+ setOffCampusSearchText(prev => ({ ...prev, [index]: '' }));
+ setOffCampusDropdownOpen(prev => ({ ...prev, [index]: false }));
+ setOffCampusHighlightedIndex(prev => ({ ...prev, [index]: 0 }));
+ }
+
  if (user) {
  syncToFirebase({ offCampusCourses: newCourses });
  }
@@ -525,6 +531,14 @@ offCampusCourses.forEach(course => {
   return updated;
  });
 
+ if (user) {
+  syncToFirebase({
+   offCampusCourses: newCourses,
+   offCampusGrades: newGrades
+  });
+ }
+ };
+
  const handleOffCampusSearchChange = (index, value) => {
  const updated = {
   ...offCampusSearchText,
@@ -542,55 +556,10 @@ offCampusCourses.forEach(course => {
  if (!value.trim()) {
   handleOffCampusCourseChange(index, '');
  }
-};
-
- if (user) {
-  syncToFirebase({
-   offCampusCourses: newCourses,
-   offCampusGrades: newGrades
-  });
- }
-};
-
- 
+ };
 
  const handleOffCampusCourseSelect = (index, course) => {
- const handleOffCampusCourseChange = (index, value) => {
- // Prevent selecting courses already in regular schedule
- if (value && Object.values(courses).includes(value)) {
-  setSaveStatus('Course already selected in schedule');
-  setTimeout(() => setSaveStatus(''), 2000);
-  return;
- }
-
- // Prevent duplicates in off-campus
- if (value && offCampusCourses.some((c, i) => c === value && i !== index)) {
-  setSaveStatus('Course already selected in off-campus');
-  setTimeout(() => setSaveStatus(''), 2000);
-  return;
- }
-
- const newCourses = [...offCampusCourses];
- newCourses[index] = value;
-
- setOffCampusCourses(newCourses);
-
- // Clear search text when removed
- if (!value || !value.trim()) {
-  setOffCampusSearchText(prev => {
-   const updated = { ...prev };
-   delete updated[index];
-   return updated;
-  });
- }
-
- if (user) {
-  syncToFirebase({
-   offCampusCourses: newCourses
-  });
- }
-};
-
+ handleOffCampusCourseChange(index, course);
  setOffCampusSearchText(prev => ({ ...prev, [index]: course }));
  setOffCampusDropdownOpen(prev => ({ ...prev, [index]: false }));
  setOffCampusHighlightedIndex(prev => ({ ...prev, [index]: 0 }));
