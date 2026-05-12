@@ -22,20 +22,70 @@ const gradePoints = {
 
 const gradeOptions = ['A', 'B', 'C', 'D', 'F'];
 
-// -----------------------------
-// LOCAL CACHE HELPERS
-// -----------------------------
-const LOCAL_KEY = "gpaCache";
+const LOCAL_KEY = "gpaCalculatorCache";
+const MAX_YEARS = 4;
+const emptyGradePair = () => ['', ''];
 
-function saveToCache(courses, grades) {
-  const data = { courses, grades };
+function normalizeSavedCourses(rawCourses) {
+  if (!Array.isArray(rawCourses)) return makeInitialYearCourses();
+
+  const isFlatCourseList = rawCourses.every((item) => typeof item === 'string');
+  if (isFlatCourseList) {
+    return [rawCourses, ...Array.from({ length: MAX_YEARS - 1 }, () => [])];
+  }
+
+  return Array.from({ length: MAX_YEARS }, (_, i) => {
+    if (!Array.isArray(rawCourses[i])) return [];
+    return rawCourses[i].map((course) => course || '');
+  });
+}
+
+function normalizeSavedGrades(rawGrades) {
+  if (!Array.isArray(rawGrades)) return Array.from({ length: MAX_YEARS }, () => []);
+
+  const isFlatGradeList = rawGrades.every((item) => typeof item === 'string');
+  if (isFlatGradeList) {
+    return [rawGrades.map((grade) => [grade, grade]), ...Array.from({ length: MAX_YEARS - 1 }, () => [])];
+  }
+
+  return Array.from({ length: MAX_YEARS }, (_, i) => {
+    if (!Array.isArray(rawGrades[i])) return [];
+    return rawGrades[i].map((pair) => {
+      if (Array.isArray(pair)) {
+        return [pair[0] || '', pair[1] || ''];
+      }
+      if (typeof pair === 'string') {
+        return [pair, pair];
+      }
+      return emptyGradePair();
+    });
+  });
+}
+
+function makeInitialYearCourses() {
+  return Array.from({ length: MAX_YEARS }, () => ['']);
+}
+
+function makeInitialYearGrades() {
+  return Array.from({ length: MAX_YEARS }, () => [emptyGradePair()]);
+}
+
+function saveToCache(courses, grades, offCampusCourses = [], offCampusGrades = []) {
+  const data = { courses, grades, offCampusCourses, offCampusGrades };
   localStorage.setItem(LOCAL_KEY, JSON.stringify(data));
 }
 
 function loadFromCache() {
   try {
     const raw = localStorage.getItem(LOCAL_KEY);
-    return raw ? JSON.parse(raw) : null;
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    return {
+      courses: normalizeSavedCourses(data.courses),
+      grades: normalizeSavedGrades(data.grades),
+      offCampusCourses: Array.isArray(data.offCampusCourses) ? data.offCampusCourses : [],
+      offCampusGrades: Array.isArray(data.offCampusGrades) ? data.offCampusGrades : [],
+    };
   } catch {
     return null;
   }
@@ -50,15 +100,17 @@ const loadUserCoursesAndGrades = async (uid) => {
       const data = userDoc.data();
 
       return {
-        courses: data.gpaCourses || [],
-        grades: data.gpaGrades || [],
+        courses: normalizeSavedCourses(data.gpaCalculator?.courses ?? (data.gpaCourses || [])),
+        grades: normalizeSavedGrades(data.gpaCalculator?.grades ?? (data.gpaGrades || [])),
+        offCampusCourses: data.gpaCalculator?.offCampusCourses || [],
+        offCampusGrades: data.gpaCalculator?.offCampusGrades || [],
       };
     }
 
-    return { courses: [], grades: [] };
+    return { courses: [], grades: [], offCampusCourses: [], offCampusGrades: [] };
   } catch (err) {
     console.error('Error loading Firestore data:', err);
-    return { courses: [], grades: [] };
+    return { courses: [], grades: [], offCampusCourses: [], offCampusGrades: [] };
   }
 };
 
@@ -69,31 +121,39 @@ const loadServicesData = async (uid) => {
 
     if (userDoc.exists()) {
       const data = userDoc.data();
-      const importedCourses = [];
-      const importedGrades = [];
+      const importedCourses = Array.from({ length: MAX_YEARS }, () => []);
+      const importedGrades = Array.from({ length: MAX_YEARS }, () => []);
+      const gradeOrder = { '9th': 0, '10th': 1, '11th': 2, '12th': 3 };
+      const courseGrades = data.courseGrades || {};
 
-      // Import from regular schedule (Services.jsx courses)
+      // Import from regular schedule (Services.jsx courses) into year groups
       if (data.courses && typeof data.courses === 'object') {
-        Object.entries(data.courses).forEach(([key, course]) => {
-          if (course && course.trim()) {
-            importedCourses.push(course);
-            // Find corresponding grades for this course
-            const courseGrades = data.courseGrades || {};
-            // Get grade from first quarter
-            const grade = courseGrades[`${key}-g1`] || '';
-            importedGrades.push(grade);
-          }
-        });
+        Object.entries(data.courses)
+          .filter(([, course]) => course && course.trim())
+          .sort(([keyA], [keyB]) => {
+            const gradeA = keyA.split('-')[0];
+            const gradeB = keyB.split('-')[0];
+            return (gradeOrder[gradeA] ?? 99) - (gradeOrder[gradeB] ?? 99) || keyA.localeCompare(keyB);
+          })
+          .forEach(([key, course]) => {
+            const grade = key.split('-')[0];
+            const yearIndex = gradeOrder[grade];
+            if (yearIndex === undefined) return;
+            importedCourses[yearIndex].push(course);
+            importedGrades[yearIndex].push([
+              courseGrades[`${key}-g1`] || '',
+              courseGrades[`${key}-g2`] || '',
+            ]);
+          });
       }
 
-      // Import from off-campus courses
+      // Append off-campus courses into the first available year
       if (data.offCampusCourses && Array.isArray(data.offCampusCourses)) {
         data.offCampusCourses.forEach((course, index) => {
-          if (course && course.trim()) {
-            importedCourses.push(course);
-            const grade = data.offCampusGrades?.[index] || '';
-            importedGrades.push(grade);
-          }
+          if (!course || !course.trim()) return;
+          const grade = data.offCampusGrades?.[index] || '';
+          importedCourses[0].push(course);
+          importedGrades[0].push([grade, grade]);
         });
       }
 
@@ -111,9 +171,12 @@ const loadServicesData = async (uid) => {
 };
 
 export default function GPA() {
-  const [numSections, setNumSections] = useState(4);
-  const [selectedCourses, setSelectedCourses] = useState(Array(4).fill(''));
-  const [grades, setGrades] = useState(Array(4).fill(''));
+  const cachedData = loadFromCache();
+  const yearLabels = ['9th', '10th', '11th', '12th'];
+  const [selectedCourses, setSelectedCourses] = useState(cachedData?.courses || makeInitialYearCourses());
+  const [grades, setGrades] = useState(() => cachedData?.grades || makeInitialYearGrades());
+  const [offCampusCourses, setOffCampusCourses] = useState(cachedData?.offCampusCourses || []);
+  const [offCampusGrades, setOffCampusGrades] = useState(cachedData?.offCampusGrades || []);
   const [showPopup, setShowPopup] = useState(false);
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [importedData, setImportedData] = useState(null);
@@ -139,7 +202,6 @@ useEffect(() => {
           if (courses?.length && grades?.length) {
             setSelectedCourses(courses);
             setGrades(grades);
-            setNumSections(courses.length);
             saveToCache(courses, grades);
           }
           setLoading(false); 
@@ -162,9 +224,11 @@ useEffect(() => {
   // -----------------------------
   // COURSE CHANGE
   // -----------------------------
-  const handleCourseChange = (index, value) => {
-    const newCourses = [...selectedCourses];
-    newCourses[index] = value;
+  const handleCourseChange = (yearIndex, rowIndex, value) => {
+    const newCourses = selectedCourses.map((year, yIndex) => {
+      if (yIndex !== yearIndex) return year;
+      return year.map((course, cIndex) => (cIndex === rowIndex ? value : course));
+    });
     setSelectedCourses(newCourses);
     setError('');
 
@@ -175,8 +239,10 @@ useEffect(() => {
     if (user) {
       const userDocRef = doc(db, 'users', user.uid);
       setDoc(userDocRef, {
-        gpaCourses: newCourses,
-        gpaGrades: grades
+        gpaCalculator: {
+          courses: newCourses,
+          grades,
+        },
       }, { merge: true });
     }
   };
@@ -184,59 +250,179 @@ useEffect(() => {
   // -----------------------------
   // GRADE CHANGE
   // -----------------------------
-  const handleGradeChange = (index, value) => {
-    const newGrades = [...grades];
-    newGrades[index] = value;
+  const handleGradeChange = (yearIndex, rowIndex, gradeIndex, value) => {
+    const newGrades = grades.map((year, yIndex) => {
+      if (yIndex !== yearIndex) return year;
+      return year.map((pair, cIndex) => {
+        if (cIndex !== rowIndex) return pair;
+        const nextPair = [...pair];
+        nextPair[gradeIndex] = value;
+        return nextPair;
+      });
+    });
     setGrades(newGrades);
     setError('');
 
-    // Save to cache
     saveToCache(selectedCourses, newGrades);
 
-    // Save to Firestore
     if (user) {
       const userDocRef = doc(db, 'users', user.uid);
       setDoc(userDocRef, {
-        gpaCourses: selectedCourses,
-        gpaGrades: newGrades
+        gpaCalculator: {
+          courses: selectedCourses,
+          grades: newGrades,
+        },
       }, { merge: true });
     }
   };
 
-  const addSection = () => {
-    setNumSections(numSections + 1);
-    setSelectedCourses([...selectedCourses, '']);
-    setGrades([...grades, '']);
-  };
+  const addCourse = (yearIndex) => {
+    const newCourses = selectedCourses.map((year, yIndex) => (
+      yIndex !== yearIndex ? year : [...year, '']
+    ));
+    const newGrades = grades.map((year, yIndex) => (
+      yIndex !== yearIndex ? year : [...year, emptyGradePair()]
+    ));
 
-  const removeSection = () => {
-    if (numSections > 1) {
-      const newCourses = selectedCourses.slice(0, -1);
-      const newGrades = grades.slice(0, -1);
+    setSelectedCourses(newCourses);
+    setGrades(newGrades);
+    saveToCache(newCourses, newGrades);
 
-      setNumSections(numSections - 1);
-      setSelectedCourses(newCourses);
-      setGrades(newGrades);
-
-      saveToCache(newCourses, newGrades);
-
-      if (user) {
-        const userDocRef = doc(db, 'users', user.uid);
-        setDoc(userDocRef, {
-          gpaCourses: newCourses,
-          gpaGrades: newGrades
-        }, { merge: true });
-      }
+    if (user) {
+      const userDocRef = doc(db, 'users', user.uid);
+      setDoc(userDocRef, {
+        gpaCalculator: {
+          courses: newCourses,
+          grades: newGrades,
+        },
+      }, { merge: true });
     }
   };
 
-  const canCalculate = selectedCourses.length > 0 &&
-    selectedCourses.every((c) => c !== '') &&
-    grades.every((g) => g !== '');
+  const removeCourse = (yearIndex, rowIndex) => {
+    const newCourses = selectedCourses.map((year, yIndex) => {
+      if (yIndex !== yearIndex) return year;
+      return year.filter((_, idx) => idx !== rowIndex);
+    });
+    const newGrades = grades.map((year, yIndex) => {
+      if (yIndex !== yearIndex) return year;
+      return year.filter((_, idx) => idx !== rowIndex);
+    });
+
+    setSelectedCourses(newCourses);
+    setGrades(newGrades);
+    saveToCache(newCourses, newGrades);
+
+    if (user) {
+      const userDocRef = doc(db, 'users', user.uid);
+      setDoc(userDocRef, {
+        gpaCalculator: {
+          courses: newCourses,
+          grades: newGrades,
+        },
+      }, { merge: true });
+    }
+  };
+
+  // Off-Campus Course Handlers
+  const handleOffCampusCourseChange = (index, value) => {
+    const newCourses = offCampusCourses.map((course, idx) => (idx === index ? value : course));
+    setOffCampusCourses(newCourses);
+    saveToCache(selectedCourses, grades, newCourses, offCampusGrades);
+    if (user) {
+      const userDocRef = doc(db, 'users', user.uid);
+      setDoc(userDocRef, {
+        gpaCalculator: {
+          courses: selectedCourses,
+          grades,
+          offCampusCourses: newCourses,
+          offCampusGrades,
+        },
+      }, { merge: true });
+    }
+  };
+
+  const handleOffCampusGradeChange = (index, gradeIndex, value) => {
+    const newGrades = offCampusGrades.map((pair, idx) => {
+      if (idx !== index) return pair;
+      return [
+        gradeIndex === 0 ? value : pair[0],
+        gradeIndex === 1 ? value : pair[1],
+      ];
+    });
+    setOffCampusGrades(newGrades);
+    saveToCache(selectedCourses, grades, offCampusCourses, newGrades);
+    if (user) {
+      const userDocRef = doc(db, 'users', user.uid);
+      setDoc(userDocRef, {
+        gpaCalculator: {
+          courses: selectedCourses,
+          grades,
+          offCampusCourses,
+          offCampusGrades: newGrades,
+        },
+      }, { merge: true });
+    }
+  };
+
+  const addOffCampusCourse = () => {
+    const newCourses = [...offCampusCourses, ''];
+    const newGrades = [...offCampusGrades, emptyGradePair()];
+    setOffCampusCourses(newCourses);
+    setOffCampusGrades(newGrades);
+    saveToCache(selectedCourses, grades, newCourses, newGrades);
+    if (user) {
+      const userDocRef = doc(db, 'users', user.uid);
+      setDoc(userDocRef, {
+        gpaCalculator: {
+          courses: selectedCourses,
+          grades,
+          offCampusCourses: newCourses,
+          offCampusGrades: newGrades,
+        },
+      }, { merge: true });
+    }
+  };
+
+  const removeOffCampusCourse = (index) => {
+    const newCourses = offCampusCourses.filter((_, idx) => idx !== index);
+    const newGrades = offCampusGrades.filter((_, idx) => idx !== index);
+    setOffCampusCourses(newCourses);
+    setOffCampusGrades(newGrades);
+    saveToCache(selectedCourses, grades, newCourses, newGrades);
+    if (user) {
+      const userDocRef = doc(db, 'users', user.uid);
+      setDoc(userDocRef, {
+        gpaCalculator: {
+          courses: selectedCourses,
+          grades,
+          offCampusCourses: newCourses,
+          offCampusGrades: newGrades,
+        },
+      }, { merge: true });
+    }
+  };
+
+  const validRows = selectedCourses.flatMap((year, yearIndex) =>
+    year.map((course, rowIndex) => {
+      const [grade1, grade2] = grades[yearIndex]?.[rowIndex] || emptyGradePair();
+      return course !== '' && grade1 !== '' && grade2 !== '';
+    })
+  );
+  const hasInvalidRow = selectedCourses.some((year, yearIndex) =>
+    year.some((course, rowIndex) => {
+      const [grade1, grade2] = grades[yearIndex]?.[rowIndex] || emptyGradePair();
+      return course !== '' && (grade1 === '' || grade2 === '');
+    })
+  );
+  const hasValidRow = validRows.some(Boolean);
+  const canCalculate = hasValidRow && !hasInvalidRow;
 
   const calculateGPA = () => {
     if (!canCalculate) {
-      const msg = `Please select a course and grade for all ${selectedCourses.length} dropdowns before calculating.`;
+      const msg = hasInvalidRow
+        ? 'Please fill both grades for any selected course before calculating.'
+        : 'Please select at least one course with both grades before calculating.';
       setError(msg);
       setResult(null);
       return;
@@ -246,15 +432,19 @@ useEffect(() => {
     let totalWeighted = 0;
     let count = 0;
 
-    for (let i = 0; i < selectedCourses.length; i++) {
-      const courseValue = selectedCourses[i];
-      const grade = grades[i];
-      const course = courses.find((c) => (c.value || c.name) === courseValue);
-      const points = gradePoints[grade];
-      totalUnweighted += points;
-      totalWeighted += course && course.weighted ? points + 1.0 : points;
-      count++;
-    }
+    selectedCourses.forEach((year, yearIndex) => {
+      year.forEach((courseValue, rowIndex) => {
+        const [grade1, grade2] = grades[yearIndex]?.[rowIndex] || emptyGradePair();
+        if (!courseValue || !grade1 || !grade2) return;
+        const course = courses.find((c) => (c.value || c.name) === courseValue);
+        const points1 = gradePoints[grade1] ?? 0;
+        const points2 = gradePoints[grade2] ?? 0;
+        const averagePoints = (points1 + points2) / 2;
+        totalUnweighted += averagePoints;
+        totalWeighted += course && course.weighted ? averagePoints + 1.0 : averagePoints;
+        count++;
+      });
+    });
 
     setResult({
       unweighted: (totalUnweighted / count).toFixed(2),
@@ -287,27 +477,6 @@ useEffect(() => {
     return 'gpa-score-gray';
   };
 
-  const clearAll = () => {
-  const emptyCourses = Array(numSections).fill('');
-  const emptyGrades = Array(numSections).fill('');
-
-  setSelectedCourses(emptyCourses);
-  setGrades(emptyGrades);
-  setResult(null);
-  setError('');
-
-  saveToCache(emptyCourses, emptyGrades);
-
-  if (user) {
-    const userDocRef = doc(db, 'users', user.uid);
-
-    setDoc(userDocRef, {
-      gpaCourses: emptyCourses,
-      gpaGrades: emptyGrades
-    }, { merge: true });
-  }
-};
-
   const handleImportFromServices = async () => {
     if (!user) {
       setError('Please log in to import courses');
@@ -332,8 +501,6 @@ useEffect(() => {
 
   const confirmImport = () => {
     if (importedData) {
-      const newNumSections = importedData.courses.length;
-      setNumSections(newNumSections);
       setSelectedCourses(importedData.courses);
       setGrades(importedData.grades);
       setResult(null);
@@ -344,8 +511,10 @@ useEffect(() => {
       if (user) {
         const userDocRef = doc(db, 'users', user.uid);
         setDoc(userDocRef, {
-          gpaCourses: importedData.courses,
-          gpaGrades: importedData.grades
+          gpaCalculator: {
+            courses: importedData.courses,
+            grades: importedData.grades,
+          },
         }, { merge: true });
       }
 
@@ -354,13 +523,21 @@ useEffect(() => {
     }
   };
 
+  if (loading) {
+    return (
+      <main className="gpa-page">
+        <p>Loading...</p>
+      </main>
+    );
+  }
+
   return (
     <main className="gpa-page">
       <div className="gpa-header">
         <h1>GPA Calculator</h1>
         <div className="header-buttons">
           <button className="import-btn" onClick={handleImportFromServices} disabled={!user} title="Import courses from Services page">
-            Import from Services
+            Import from Courses
           </button>
           <button className="question-mark-btn" onClick={() => setShowPopup(true)}>?</button>
         </div>
@@ -371,13 +548,20 @@ useEffect(() => {
           <div className="popup-box" onClick={(e) => e.stopPropagation()}>
             <button className="popup-close-x" onClick={() => setShowImportDialog(false)}>×</button>
             <h2>Import Courses from Services</h2>
-            <p>Found <strong>{importedData.courses.length}</strong> courses. Replace current courses?</p>
+            <p>Found <strong>{importedData.courses.reduce((sum, year) => sum + year.length, 0)}</strong> courses. Replace current courses?</p>
             <div className="import-preview">
-              {importedData.courses.map((course, idx) => (
-                <div key={idx} className="import-item">
-                  <span className="import-course">{course}</span>
-                  <span className="import-grade">{importedData.grades[idx] || '-'}</span>
-                </div>
+              {importedData.courses.map((yearCourses, yearIndex) => (
+                yearCourses.map((course, idx) => (
+                  <div key={`${yearIndex}-${idx}`} className="import-item">
+                    <span className="import-course">{course}</span>
+                    <span className="import-grade">
+                      {(importedData.grades[yearIndex]?.[idx]?.[0] || '-')}
+                      {' / '}
+                      {(importedData.grades[yearIndex]?.[idx]?.[1] || '-')}
+                    </span>
+                    <span className="import-year">{yearLabels[yearIndex]}</span>
+                  </div>
+                ))
               ))}
             </div>
             <div className="import-dialog-buttons">
@@ -409,60 +593,77 @@ useEffect(() => {
 
       <div className="gpa-calculator-container">
         <div className="gpa-inputs">
-          <div className="gpa-columns">
-            <div className="gpa-course-column">
-              <h3>Course</h3>
-              {selectedCourses.map((course, index) => (
-                <select
-                  key={`course-${index}`}
-                  value={course}
-                  onChange={(e) => handleCourseChange(index, e.target.value)}
-                  className="gpa-select course-select"
-                  title={course || 'Select Course'}
-                >
-                  <option value="">Select Course</option>
-                  {courses.map((c) => {
-                    const courseValue = c.value || c.name;
-                    const isOther = c.name === 'Other (Unweighted)' || c.name === 'Other (Weighted)';
-                    const isSelectedElsewhere = !isOther && selectedCourses.some(
-                      (sc, si) => sc === courseValue && si !== index
-                    );
-                    return (
-                      <option
-                        key={courseValue}
-                        value={courseValue}
-                        disabled={isSelectedElsewhere}
-                      >
-                        {c.name}
-                      </option>
-                    );
-                  })}
-                </select>
-              ))}
-            </div>
+          {yearLabels.map((yearLabel, yearIndex) => (
+            <section key={yearLabel} className="gpa-year-section">
+              <h2>{yearLabel}</h2>
 
-            <div className="gpa-grade-column">
-              <h3>Grade</h3>
-              {grades.map((grade, index) => (
-                <select
-                  key={`grade-${index}`}
-                  value={grade}
-                  onChange={(e) => handleGradeChange(index, e.target.value)}
-                  className="gpa-select"
-                >
-                  <option value="">Select Grade</option>
-                  {gradeOptions.map((g) => (
-                    <option key={g} value={g}>{g}</option>
-                  ))}
-                </select>
-              ))}
-            </div>
-          </div>
+              {selectedCourses[yearIndex].map((course, rowIndex) => {
+                const gradePair = grades[yearIndex]?.[rowIndex] || emptyGradePair();
+                const selected = new Set(selectedCourses.flat().filter(Boolean));
+                selected.delete(course);
+                return (
+                  <div key={`${yearIndex}-${rowIndex}`} className="gpa-course-row">
+                    <select
+                      value={course}
+                      onChange={(e) => handleCourseChange(yearIndex, rowIndex, e.target.value)}
+                      className="gpa-select course-select"
+                      title={course || 'Select Course'}
+                    >
+                      <option value="">Select Course</option>
+                      {courses.map((c) => {
+                        const courseValue = c.value || c.name;
+                        const isOther = c.name === 'Other (Unweighted)' || c.name === 'Other (Weighted)';
+                        const isSelectedElsewhere = !isOther && selected.has(courseValue);
+                        return (
+                          <option
+                            key={courseValue}
+                            value={courseValue}
+                            disabled={isSelectedElsewhere}
+                          >
+                            {c.name}
+                          </option>
+                        );
+                      })}
+                    </select>
 
-          <div className="section-buttons">
-            <button onClick={addSection}>Add Section</button>
-            <button onClick={removeSection} disabled={numSections <= 1}>Remove Section</button>
-          </div>
+                    <select
+                      value={gradePair[0]}
+                      onChange={(e) => handleGradeChange(yearIndex, rowIndex, 0, e.target.value)}
+                      className="gpa-select"
+                    >
+                      <option value="">Q1/Q3</option>
+                      {gradeOptions.map((g) => (
+                        <option key={g} value={g}>{g}</option>
+                      ))}
+                    </select>
+
+                    <select
+                      value={gradePair[1]}
+                      onChange={(e) => handleGradeChange(yearIndex, rowIndex, 1, e.target.value)}
+                      className="gpa-select"
+                    >
+                      <option value="">Q2/Q4</option>
+                      {gradeOptions.map((g) => (
+                        <option key={g} value={g}>{g}</option>
+                      ))}
+                    </select>
+
+                    <button
+                      type="button"
+                      className="remove-course-btn"
+                      onClick={() => removeCourse(yearIndex, rowIndex)}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                );
+              })}
+
+              <button type="button" className="add-course-btn" onClick={() => addCourse(yearIndex)}>
+                Add Course
+              </button>
+            </section>
+          ))}
 
           <button className="calculate-btn" onClick={calculateGPA} disabled={!canCalculate}>Calculate</button>
           {error && <p className="gpa-error">{error}</p>}

@@ -208,6 +208,51 @@ body {
   width: 320px;
 }
 
+.gpa-course-row {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.gpa-year-row-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #19647E;
+  text-transform: capitalize;
+}
+
+.gpa-year-section {
+  border: 1px solid rgba(25, 100, 126, 0.16);
+  border-radius: 1rem;
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+  background: #ffffff;
+}
+
+.gpa-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.remove-course-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 0.4rem;
+  padding: 0.35rem 0.65rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.remove-course-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .gpa-select:focus {
   border-color: var(--color-primary);
 }

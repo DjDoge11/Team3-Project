@@ -5,10 +5,10 @@ export const availableCourses = {
   // =========================
 
   "English 9": { credits: 10, category: "English", weighted: false },
-  "Honors English 9": { credits: 10, category: "English", weighted: true },
+  "Honors English 9": { credits: 10, category: "English", weighted: false },
 
   "English 10": { credits: 10, category: "English", weighted: false },
-  "Honors English 10": { credits: 10, category: "English", weighted: true },
+  "Honors English 10": { credits: 10, category: "English", weighted: false },
 
   "English 11": { credits: 10, category: "English", weighted: false },
   "AP English Language": { credits: 10, category: "English", weighted: true },
@@ -27,10 +27,10 @@ export const availableCourses = {
   // =========================
 
   "Integrated Math 1": { credits: 10, category: "Math", weighted: false },
-  "Integrated Math 1 Honors": { credits: 10, category: "Math", weighted: true },
+  "Integrated Math 1 Honors": { credits: 10, category: "Math", weighted: false },
 
   "Integrated Math 2": { credits: 10, category: "Math", weighted: false },
-  "Integrated Math 2 Honors": { credits: 10, category: "Math", weighted: true },
+  "Integrated Math 2 Honors": { credits: 10, category: "Math", weighted: false },
 
   "Integrated Math 3": { credits: 10, category: "Math", weighted: false },
   "Integrated Math 3 Honors": { credits: 10, category: "Math", weighted: true },
@@ -78,7 +78,7 @@ export const availableCourses = {
   "AP Biology": { credits: 10, category: "Life Science", weighted: true },
 
   "Chemistry": { credits: 10, category: "Physical Science", weighted: false },
-  "Chemistry Honors": { credits: 10, category: "Physical Science", weighted: true },
+  "Chemistry Honors": { credits: 10, category: "Physical Science", weighted: false },
   "AP Chemistry": { credits: 10, category: "Physical Science", weighted: true },
 
   "Physics": { credits: 10, category: "Physical Science", weighted: false },
@@ -117,19 +117,19 @@ export const availableCourses = {
 
   "Acting 1": { credits: 10, category: "Visual/Performing Arts", weighted: false },
   "Intermediate Acting": { credits: 10, category: "Visual/Performing Arts", weighted: false },
-  "Advanced Acting": { credits: 10, category: "Visual/Performing Arts", weighted: true },
+  "Advanced Acting": { credits: 10, category: "Visual/Performing Arts", weighted: false },
 
-  "Advanced Drama Honors": { credits: 10, category: "Visual/Performing Arts", weighted: true },
+  "Advanced Drama Honors": { credits: 10, category: "Visual/Performing Arts", weighted: false },
 
   "Musical Theater Production": { credits: 10, category: "Visual/Performing Arts", weighted: false },
-  "Advanced Musical Theater Production": { credits: 10, category: "Visual/Performing Arts", weighted: true },
+  "Advanced Musical Theater Production": { credits: 10, category: "Visual/Performing Arts", weighted: false },
 
   "Orchestra": { credits: 10, category: "Visual/Performing Arts", weighted: false },
   "Symphonic Band": { credits: 10, category: "Visual/Performing Arts", weighted: false },
   "Chorus": { credits: 10, category: "Visual/Performing Arts", weighted: false },
 
   "Drawing & Design": { credits: 10, category: "Visual/Performing Arts", weighted: false },
-  "Advanced Drawing": { credits: 10, category: "Visual/Performing Arts", weighted: true },
+  "Advanced Drawing": { credits: 10, category: "Visual/Performing Arts", weighted: false },
 
   "Painting": { credits: 10, category: "Visual/Performing Arts", weighted: false },
   "Sculpture": { credits: 10, category: "Visual/Performing Arts", weighted: false },
