@@ -14,8 +14,15 @@ export default function Navbar() {
     return () => unsubscribe();
   }, []);
 
+   const stickyNavbarStyle = {
+    position: 'sticky',
+    top: 0,
+    zIndex: 1000,
+    backgroundColor: '#ffffff'
+  };
+
   return (
-    <nav className="navbar">
+    <nav className="navbar" style={stickyNavbarStyle}>
       <ul className="bbai-navLinks">
         <li><Link className="bbai-navLink" to="/home">Home</Link></li>
         <li><Link className="bbai-navLink" to="/gpa">GPA</Link></li>
