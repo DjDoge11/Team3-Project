@@ -88,15 +88,11 @@ body {
 }
 
 @media (max-width: 768px) {
-  .navbar {
-    justify-content: flex-start; 
-    gap: 1rem;
-  }
-
   .navbar ul.bbai-navLinks {
-    margin-left: 0 !important; 
-    margin-right: auto;
-    order: 1; 
+    flex-direction: column; 
+    align-items: left; 
+    justify-content: left;
+    gap: 1rem; 
   }
 
   .nav-user-container {
@@ -639,7 +635,6 @@ select {
 }
 
 .calculate-btn {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
   color: #ffffff;
 }
 
