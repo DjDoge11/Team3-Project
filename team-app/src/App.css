@@ -419,11 +419,19 @@ body {
 
 /* Modern refresh */
 .bbai-app {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
 }
 
+.bbai-app > main {
+  flex: 1;
+}
+
 .home-page,
-.gpa-page {
+.gpa-page,
+.services-main,
+.grade-page {
   max-width: var(--grid-max);
   margin: 0 auto;
   padding: 48px 24px 18px;

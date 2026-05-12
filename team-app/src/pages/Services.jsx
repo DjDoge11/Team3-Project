@@ -15,10 +15,13 @@ export default function Services() {
  const [searchText, setSearchText] = useState({});
  const [dropdownOpen, setDropdownOpen] = useState({});
  const [highlightedIndex, setHighlightedIndex] = useState({});
- const [saveStatus, setSaveStatus] = useState('');
+ const [categoryFilter, setCategoryFilter] = useState('All Categories');
+ const [toast, setToast] = useState(null);
+ const [showHelpPopup, setShowHelpPopup] = useState(false);
  const [user, setUser] = useState(null);
  const servicesRef = useRef(null);
  const saveTimeoutRef = useRef(null);
+ const toastTimeoutRef = useRef(null);
  const [offCampusCourses, setOffCampusCourses] = useState([]);
  const [offCampusGrades, setOffCampusGrades] = useState([]);
  const [offCampusSearchText, setOffCampusSearchText] = useState({});
@@ -113,6 +116,14 @@ export default function Services() {
  // -----------------------------
  // 2. Firebase Sync Helper (debounced)
  // -----------------------------
+ const showToast = (message, type = 'info') => {
+ setToast({ message, type });
+ if (toastTimeoutRef.current) {
+ clearTimeout(toastTimeoutRef.current);
+ }
+ toastTimeoutRef.current = window.setTimeout(() => setToast(null), 1800);
+ };
+
  const syncToFirebase = async (updates) => {
  if (!user) return;
 
@@ -125,11 +136,10 @@ export default function Services() {
  const userDocRef = doc(db, 'users', user.uid);
  await setDoc(userDocRef, updates, { merge: true });
 
- setSaveStatus('Changes saved to account');
- setTimeout(() => setSaveStatus(''), 1500);
+ showToast('Changes saved to account', 'success');
  } catch (e) {
  console.error('Error syncing to Firebase:', e);
- setSaveStatus('Error saving to cloud');
+ showToast('Error saving to cloud', 'error');
  }
  }, 500); // Debounce saves by 500ms
  };
@@ -156,8 +166,7 @@ export default function Services() {
  if (data.offCampusCourses) setOffCampusCourses(prev => prev !== data.offCampusCourses ? data.offCampusCourses : prev);
  if (data.offCampusGrades) setOffCampusGrades(prev => prev !== data.offCampusGrades ? data.offCampusGrades : prev);
 
- setSaveStatus('Schedule loaded');
- setTimeout(() => setSaveStatus(''), 2000);
+ showToast('Schedule loaded', 'success');
  }
  } catch (e) {
  console.error('Error loading user data:', e);
@@ -174,8 +183,9 @@ export default function Services() {
  return () => {
  if (saveTimeoutRef.current) {
  clearTimeout(saveTimeoutRef.current);
- // Optionally, trigger the save immediately
- // But since it's async, and component is unmounting, perhaps not.
+ }
+ if (toastTimeoutRef.current) {
+ clearTimeout(toastTimeoutRef.current);
  }
  };
  }, []);
@@ -198,9 +208,8 @@ const courseInput = async (grade, semester, slot, value) => {
  const key = `${grade}-${semester}-${slot}`;
 
  if (lockedSections[`${grade}-${semester}`]) {
- setSaveStatus('This section is locked. Unlock to edit.');
- setTimeout(() => setSaveStatus(''), 2000);
- return;
+    showToast('This section is locked. Unlock to edit.', 'info');
+    return;
  }
 
  const newCourses = { ...courses };
@@ -219,8 +228,7 @@ const courseInput = async (grade, semester, slot, value) => {
  if (user) {
  syncToFirebase({ courses: newCourses });
  } else {
- setSaveStatus('Please log in to save changes');
- setTimeout(() => setSaveStatus(''), 1500);
+ showToast('Please log in to save changes', 'info');
  }
 };
 
@@ -236,8 +244,7 @@ const courseInput = async (grade, semester, slot, value) => {
  if (user) {
  syncToFirebase({ courseGrades: newGrades });
  } else {
- setSaveStatus('Please log in to save changes');
- setTimeout(() => setSaveStatus(''), 1500);
+ showToast('Please log in to save changes', 'info');
  }
 };
 
@@ -254,8 +261,7 @@ const courseInput = async (grade, semester, slot, value) => {
  if (user) {
  syncToFirebase({ lockedSections: newLocked });
  } else {
- setSaveStatus('Please log in to save changes');
- setTimeout(() => setSaveStatus(''), 1500);
+ showToast('Please log in to save changes', 'info');
  }
 };
 
@@ -269,8 +275,7 @@ const unlockSection = async (grade, semester) => {
  if (user) {
  syncToFirebase({ lockedSections: newLocked });
  } else {
- setSaveStatus('Please log in to save changes');
- setTimeout(() => setSaveStatus(''), 1500);
+ showToast('Please log in to save changes', 'info');
  }
 };
 
@@ -280,7 +285,8 @@ const isSectionLocked = (grade, semester) =>
  const grades = ['9th', '10th', '11th', '12th'];
  const semesters = ['Fall Semester', 'Spring Semester'];
  const classSlots = [1, 2, 3, 4];
- const courseList = Object.keys(availableCourses);
+ const courseList = Object.keys(availableCourses).sort((a, b) => a.localeCompare(b));
+ const categoryOptions = ['All Categories', ...Array.from(new Set(courseList.map((name) => availableCourses[name]?.category))).sort()];
 
  // Get all selected courses (for excluding from dropdown)
  const getSelectedCourses = () => {
@@ -292,12 +298,15 @@ const isSectionLocked = (grade, semester) =>
  };
 
  const getFilteredCourses = (search, excludeSelected = true) => {
+ const selected = getSelectedCourses();
  let filtered = courseList;
  
- // Exclude already selected courses if requested
+ if (categoryFilter && categoryFilter !== 'All Categories') {
+   filtered = filtered.filter((c) => availableCourses[c]?.category === categoryFilter);
+ }
+ 
  if (excludeSelected) {
- const selected = getSelectedCourses();
- filtered = filtered.filter(c => !selected.has(c));
+   filtered = filtered.filter(c => !selected.has(c));
  }
  
  if (!search) return filtered;
@@ -422,6 +431,7 @@ offCampusCourses.forEach(course => {
  const handleKeyDown = (e, inputKey) => {
  const filtered = getFilteredCourses(searchText[inputKey] || '');
  const currentIndex = highlightedIndex[inputKey] || 0;
+ if (filtered.length === 0) return;
 
  switch (e.key) {
  case 'ArrowDown':
@@ -443,7 +453,7 @@ offCampusCourses.forEach(course => {
 
  case 'Enter':
  e.preventDefault();
- if (dropdownOpen[inputKey] && filtered.length > 0) {
+ if (dropdownOpen[inputKey]) {
  handleCourseSelect(inputKey, filtered[currentIndex]);
  }
  break;
@@ -454,19 +464,20 @@ offCampusCourses.forEach(course => {
  }
  };
 
+ const handleCourseBlur = (inputKey) => {
+ const currentCourse = courses[inputKey] || '';
+ setSearchText(prev => ({ ...prev, [inputKey]: currentCourse }));
+ };
+
  const handleOffCampusCourseChange = (index, value) => {
  // Prevent selecting courses already in regular schedule
  if (value && Object.values(courses).includes(value)) {
- setSaveStatus('Course already selected in schedule');
- setTimeout(() => setSaveStatus(''), 2000);
- return;
+      showToast('Course already selected in schedule', 'error');
  }
 
  // Prevent duplicates in off-campus
  if (value && offCampusCourses.some((c, i) => c === value && i !== index)) {
- setSaveStatus('Course already selected in off-campus');
- setTimeout(() => setSaveStatus(''), 2000);
- return;
+      showToast('Course already selected in off-campus', 'error');
  }
 
  const newCourses = [...offCampusCourses];
@@ -568,6 +579,7 @@ offCampusCourses.forEach(course => {
  const handleOffCampusKeyDown = (e, index) => {
  const filtered = getFilteredCourses(offCampusSearchText[index] || '');
  const currentIndex = offCampusHighlightedIndex[index] || 0;
+ if (filtered.length === 0) return;
 
  switch (e.key) {
  case 'ArrowDown':
@@ -589,7 +601,7 @@ offCampusCourses.forEach(course => {
 
  case 'Enter':
  e.preventDefault();
- if (offCampusDropdownOpen[index] && filtered.length > 0) {
+ if (offCampusDropdownOpen[index]) {
  handleOffCampusCourseSelect(index, filtered[currentIndex]);
  }
  break;
@@ -598,6 +610,11 @@ offCampusCourses.forEach(course => {
  setOffCampusDropdownOpen(prev => ({ ...prev, [index]: false }));
  break;
  }
+ };
+
+ const handleOffCampusBlur = (index) => {
+ const currentCourse = offCampusCourses[index] || '';
+ setOffCampusSearchText(prev => ({ ...prev, [index]: currentCourse }));
  };
 
  // -----------------------------
@@ -609,11 +626,31 @@ offCampusCourses.forEach(course => {
  <div className="services-content">
  <div className="services-left">
  <div className="services-header">
+ <div>
+ <span className="home-eyebrow">Courses</span>
  <h1>Course Selection and Credit Requirement</h1>
- {!user && <span className="login-hint">Log in to sync with your account</span>}
+ </div>
+ <div className="header-actions">
+   <label className="category-filter-label" htmlFor="category-filter">Filter by category</label>
+   <select
+     id="category-filter"
+     className="category-filter"
+     value={categoryFilter}
+     onChange={(e) => setCategoryFilter(e.target.value)}
+   >
+     {categoryOptions.map((category) => (
+       <option key={category} value={category}>{category}</option>
+     ))}
+   </select>
+   <button className="question-mark-btn" type="button" onClick={() => setShowHelpPopup(true)}>?</button>
+ </div>
  </div>
 
- {saveStatus && <div className="save-status">{saveStatus}</div>}
+ {toast && (
+   <div className={`save-status save-status--${toast.type}`}>
+     {toast.message}
+   </div>
+ )}
 
  {grades.map((grade) => (
  <section key={grade} className="grade-section">
@@ -677,7 +714,10 @@ offCampusCourses.forEach(course => {
  onChange={(e) => handleSearchChange(inputKey, e.target.value)}
  onKeyDown={(e) => handleKeyDown(e, inputKey)}
  onFocus={() => setDropdownOpen(prev => ({ ...prev, [inputKey]: true }))}
- onBlur={() => setTimeout(() => setDropdownOpen(prev => ({ ...prev, [inputKey]: false })), 100)}
+ onBlur={() => setTimeout(() => {
+   handleCourseBlur(inputKey);
+   setDropdownOpen(prev => ({ ...prev, [inputKey]: false }));
+ }, 100)}
  />
 
  {courses[inputKey] && !locked && (
@@ -698,10 +738,10 @@ offCampusCourses.forEach(course => {
  <li
  key={course}
  className={`dropdown-item ${idx === highlightedIndex[inputKey] ? 'highlighted' : ''}`}
- onClick={() => handleCourseSelect(inputKey, course)}
+ onMouseDown={(e) => { e.preventDefault(); handleCourseSelect(inputKey, course); }}
  >
- {course}
- <span className="course-category">({availableCourses[course].category})</span>
+ <span>{course}</span>
+ <span className="course-category">{availableCourses[course].category}</span>
  </li>
  ))}
  </ul>
@@ -764,7 +804,10 @@ offCampusCourses.forEach(course => {
  onChange={(e) => handleOffCampusSearchChange(index, e.target.value)}
  onKeyDown={(e) => handleOffCampusKeyDown(e, index)}
  onFocus={() => setOffCampusDropdownOpen(prev => ({ ...prev, [index]: true }))}
- onBlur={() => setTimeout(() => setOffCampusDropdownOpen(prev => ({ ...prev, [index]: false })), 100)}
+ onBlur={() => setTimeout(() => {
+   handleOffCampusBlur(index);
+   setOffCampusDropdownOpen(prev => ({ ...prev, [index]: false }));
+ }, 100)}
  />
 
  {course && (
@@ -785,10 +828,10 @@ offCampusCourses.forEach(course => {
  <li
  key={c}
  className={`off-campus-dropdown-item ${idx === offCampusHighlightedIndex[index] ? 'highlighted' : ''}`}
- onClick={() => handleOffCampusCourseSelect(index, c)}
+ onMouseDown={(e) => { e.preventDefault(); handleOffCampusCourseSelect(index, c); }}
  >
- {c}
- <span className="off-campus-course-category">({availableCourses[c].category})</span>
+ <span>{c}</span>
+ <span className="off-campus-course-category">{availableCourses[c].category}</span>
  </li>
  ))}
  </ul>
@@ -873,6 +916,23 @@ offCampusCourses.forEach(course => {
  </div>
  </div>
  </div>
+
+ {showHelpPopup && (
+ <div className="help-popup-overlay" onClick={() => setShowHelpPopup(false)}>
+ <div className="help-popup" onClick={(e) => e.stopPropagation()}>
+ <button className="help-popup-close" onClick={() => setShowHelpPopup(false)}>×</button>
+ <h3>How to Use Course Selection</h3>
+ <div className="help-content">
+ <p><strong>Lock semesters to save schedule progress to your account when signed in.</strong> This allows you to preserve your course selections and come back to them later.</p>
+ <p><strong>Course Selection:</strong> Click on the search boxes to browse and select courses for each period. Use the category filter to narrow down options.</p>
+ <p><strong>Grade Entry:</strong> Assign grades to courses to calculate your GPA. Locked semesters prevent accidental changes.</p>
+ <p><strong>Off-Campus Credits:</strong> Add credits earned outside of regular classes in the bottom section.</p>
+ <p><strong>Saving:</strong> Changes are automatically saved to your account if you're logged in. Otherwise, use the lock feature to preserve your work.</p>
+ </div>
+ </div>
+ </div>
+ )}
+
  </main>
  );
 }

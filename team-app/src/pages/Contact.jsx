@@ -39,12 +39,12 @@ export default function Grades() {
     setError('');
   };
 
-  const calculateGrade = () => {
-    const emptyFields = cards.some((card) => !card.category || card.percentOfGrade === '' || card.points === '' || card.max === '');
+  const canCalculate = cards.every((card) =>
+    card.category && card.percentOfGrade !== '' && card.points !== '' && card.max !== ''
+  );
 
-    if (emptyFields) {
-      setError(`Please fill in all fields for all ${cards.length} rows before calculating.`);
-      setCalculated(null);
+  const calculateGrade = () => {
+    if (!canCalculate) {
       return;
     }
 
@@ -88,6 +88,7 @@ export default function Grades() {
             <h2>How to Use</h2>
             <p>Select a category, enter its grade weight, then add points earned and max points. Calculate to see your total grade.</p>
             <p><strong>Note:</strong> Assignments/Classwork, Projects, Quizzes, and Tests can only be used once. Other can be used multiple times.</p>
+            <p><strong>Complete all fields to enable Calculate.</strong></p>
           </div>
         </div>
       )}
@@ -134,8 +135,12 @@ export default function Grades() {
 
       <div className="grade-actions">
         <button onClick={addCard}>Add Row</button>
-        <button onClick={calculateGrade}>Calculate</button>
+        <button onClick={calculateGrade} disabled={!canCalculate} className="calculate-btn">Calculate</button>
       </div>
+
+      {!canCalculate && (
+        <p className="grade-help"></p>
+      )}
 
       {error && <p className="gpa-error">{error}</p>}
     </main>

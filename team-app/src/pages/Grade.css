@@ -240,6 +240,18 @@ body {
     background: var(--color-primary);
 }
 
+.grade-actions button:disabled {
+    background: #bcc4ca;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.grade-help {
+    margin-top: 0.75rem;
+    color: #5b6d7d;
+    font-size: 0.95rem;
+}
+
 @media (max-width: 640px) {
     .grade-page {
         padding: 30px 16px 10px;
