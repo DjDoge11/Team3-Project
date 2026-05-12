@@ -89,17 +89,25 @@ body {
 
 @media (max-width: 768px) {
   .navbar ul.bbai-navLinks {
-    flex-direction: column; 
-    align-items: left; 
-    justify-content: left;
-    gap: 1rem; 
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 1rem;
+    padding-left: 0;
+    margin-left: 0;
+    width: 100%
+  }
+
+  .navbar {
+    align-items: flex-start;
   }
 
   .nav-user-container {
-    order: 2; 
-    margin-left: auto; 
+    order: 2;
+    margin-left: 0rem;
   }
 }
+
 .navbar ul.bbai-navLinks li.nav-user-container {
   position: absolute !important;
   right: 1rem !important;
