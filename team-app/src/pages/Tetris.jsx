@@ -1,5 +1,5 @@
 import "/src/App.css";
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { addDoc, collection, getDocs, limit, orderBy, query, serverTimestamp } from 'firebase/firestore';
@@ -213,6 +213,15 @@ export default function Tetris() {
     }
   };
 
+  const hardDrop = useCallback(() => {
+    if (!currentPiece || paused || gameOver) return;
+    let targetY = currentPiece.position.y;
+    while (isValidPosition(board, currentPiece.shape, { x: currentPiece.position.x, y: targetY + 1 })) {
+      targetY += 1;
+    }
+    landPieceAt({ x: currentPiece.position.x, y: targetY });
+  }, [currentPiece, paused, gameOver, board]);
+
   const stopGame = () => {
     setBoard(createEmptyBoard());
     setCurrentPiece(null);
@@ -285,7 +294,7 @@ export default function Tetris() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [playing, gameOver, board, currentPiece, paused]);
+  }, [playing, gameOver, board, currentPiece, paused, hardDrop]);
 
   useEffect(() => {
     const loadInitialState = async () => {
@@ -360,11 +369,6 @@ export default function Tetris() {
       <section className="tetris-header">
         <div className="tetris-header-content">
           <div className="tetris-title-section">
-            <span className="tetris-badge">🎮 Fun Break</span>
-            <h1 className="tetris-title">Tetris</h1>
-            <p className="tetris-subtitle">
-              Challenge yourself with classic Tetris gameplay
-            </p>
           </div>
 
           <div className="tetris-status-section">
@@ -424,10 +428,7 @@ export default function Tetris() {
                     <p>Final Score: {score}</p>
                     <div className="overlay-buttons">
                       <button className="tetris-primary-btn" onClick={resetGame}>
-                        🔄 Play Again
-                      </button>
-                      <button className="tetris-secondary-btn" onClick={stopGame}>
-                        🏠 Back to Menu
+                        Play Again
                       </button>
                     </div>
                   </div>
@@ -457,7 +458,7 @@ export default function Tetris() {
           <div className="tetris-info-panel">
             {/* Game Stats */}
             <div className="tetris-stats-section">
-              <h3 className="section-title">📊 Statistics</h3>
+              <h3 className="section-title">Statistics:</h3>
               <div className="tetris-stats-grid">
                 <div className="stat-item">
                   <span className="stat-label">Score</span>
@@ -480,7 +481,7 @@ export default function Tetris() {
 
             {/* Next Piece */}
             <div className="tetris-next-section">
-              <h3 className="section-title">🔮 Next Piece</h3>
+              <h3 className="section-title">Next Piece:</h3>
               <div className="tetris-next-preview">
                 {nextGrid.map((row, rowIndex) => (
                   <div key={rowIndex} className="tetris-mini-row">
@@ -504,7 +505,7 @@ export default function Tetris() {
               <div className="tetris-control-buttons">
                 {!started ? (
                   <button className="tetris-primary-btn full-width" onClick={resetGame}>
-                    🚀 Start Game
+                    Start Game
                   </button>
                 ) : (
                   <>
@@ -554,16 +555,6 @@ export default function Tetris() {
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Navigation */}
-      <section className="tetris-navigation">
-        <Link to="/courses" className="tetris-nav-btn">
-          📚 Back to Courses
-        </Link>
-        <Link to="/home" className="tetris-nav-btn">
-          🏠 Back to Home
-        </Link>
       </section>
     </main>
   );
