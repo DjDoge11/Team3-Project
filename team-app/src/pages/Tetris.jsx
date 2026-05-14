@@ -213,13 +213,18 @@ export default function Tetris() {
     }
   };
 
-  const hardDrop = () => {
-    if (!currentPiece || paused || gameOver) return;
-    let targetY = currentPiece.position.y;
-    while (isValidPosition(board, currentPiece.shape, { x: currentPiece.position.x, y: targetY + 1 })) {
-      targetY += 1;
-    }
-    landPieceAt({ x: currentPiece.position.x, y: targetY });
+  const stopGame = () => {
+    setBoard(createEmptyBoard());
+    setCurrentPiece(null);
+    setScore(0);
+    setRowsCleared(0);
+    setLevel(1);
+    setPlaying(false);
+    setPaused(false);
+    setGameOver(false);
+    setStarted(false);
+    setHasSavedScore(false);
+    setHighScoreMessage('');
   };
 
   const displayBoard = useMemo(() => {
@@ -351,102 +356,140 @@ export default function Tetris() {
 
   return (
     <main className="tetris-page">
-      <section className="home-hero bbai-hero">
-        <div>
-          <span className="home-eyebrow">Fun Break</span>
-          <h1 className="bbai-title">Tetris</h1>
-          <p className="bbai-subtitle">
-            Use the arrow keys to move, up to rotate, down to soft drop, space to hard drop, and P to pause.
-          </p>
-          <div className="tetris-header-actions">
-            {!started && (
-              <button className="home-cta-button" type="button" onClick={resetGame}>
-                Start Tetris
-              </button>
-            )}
-            <Link to="/home" className="home-cta-button">Back to Home</Link>
+      {/* Header Section */}
+      <section className="tetris-header">
+        <div className="tetris-header-content">
+          <div className="tetris-title-section">
+            <span className="tetris-badge">🎮 Fun Break</span>
+            <h1 className="tetris-title">Tetris</h1>
+            <p className="tetris-subtitle">
+              Challenge yourself with classic Tetris gameplay
+            </p>
           </div>
-          <p className="tetris-user-badge">
-            {user?.email ? `Signed in as ${user.email}` : 'Playing anonymously. Sign in to attach your high score to your account.'}
-          </p>
-          <p className="tetris-highscore-note">Top global score: {bestScore}</p>
-          {highScoreMessage && <p className="tetris-highscore-note">{highScoreMessage}</p>}
+
+          <div className="tetris-status-section">
+            <div className="tetris-user-info">
+              <span className="user-status">
+                {user?.email ? `👤 ${user.email}` : '👤 Guest Player'}
+              </span>
+              <span className="best-score-display">🏆 Best: {bestScore}</span>
+            </div>
+            {highScoreMessage && (
+              <div className="high-score-message">{highScoreMessage}</div>
+            )}
+          </div>
         </div>
       </section>
 
-      <section className="tetris-wrapper">
-        <div className="tetris-board" role="grid" aria-label="Tetris board">
-          {displayBoard.map((row, rowIndex) => (
-            <div key={rowIndex} className="tetris-row">
-              {row.map((cell, colIndex) => (
-                <div
-                  key={colIndex}
-                  className="tetris-cell"
-                  style={{
-                    backgroundColor: cell || 'rgba(255, 255, 255, 0.08)',
-                    boxShadow: cell
-                      ? 'inset 0 0 0 1px rgba(255,255,255,0.45), 0 0 0 1px rgba(255,255,255,0.1)'
-                      : 'none',
-                  }}
-                />
+      {/* Game Section */}
+      <section className="tetris-game-section">
+        <div className="tetris-game-container">
+          {/* Main Game Board */}
+          <div className="tetris-board-container">
+            <div className="tetris-board" role="grid" aria-label="Tetris board">
+              {displayBoard.map((row, rowIndex) => (
+                <div key={rowIndex} className="tetris-row">
+                  {row.map((cell, colIndex) => (
+                    <div
+                      key={colIndex}
+                      className="tetris-cell"
+                      style={{
+                        backgroundColor: cell || 'rgba(255, 255, 255, 0.05)',
+                        boxShadow: cell
+                          ? 'inset 0 0 0 1px rgba(255,255,255,0.3), 0 0 0 1px rgba(255,255,255,0.1)'
+                          : 'none',
+                      }}
+                    />
+                  ))}
+                </div>
               ))}
-            </div>
-          ))}
-          {!started && (
-            <div className="tetris-overlay">
-              <strong>Ready to Play?</strong>
-              <span>Click Start Tetris to begin the game.</span>
-            </div>
-          )}
-          {gameOver && started && (
-            <div className="tetris-overlay">
-              <strong>Game Over</strong>
-              <span>Press Restart to play again.</span>
-            </div>
-          )}
-          {paused && started && !gameOver && (
-            <div className="tetris-overlay">
-              <strong>Paused</strong>
-              <span>Press P to resume.</span>
-            </div>
-          )}
-        </div>
 
-        <aside className="tetris-info">
-          <div className="tetris-panel">
-            <div className="tetris-stats">
-              <div>
-                <strong>Score</strong>
-                <p>{score}</p>
-              </div>
-              <div>
-                <strong>Best</strong>
-                <p>{bestScore}</p>
-              </div>
-              <div>
-                <strong>Level</strong>
-                <p>{level}</p>
-              </div>
-              <div>
-                <strong>Lines</strong>
-                <p>{rowsCleared}</p>
+              {/* Game State Overlays */}
+              {!started && (
+                <div className="tetris-overlay welcome-overlay">
+                  <div className="overlay-content">
+                    <h2>🎯 Ready to Play?</h2>
+                    <p>Click "Start Game" to begin your Tetris adventure!</p>
+                    <button className="tetris-primary-btn" onClick={resetGame}>
+                      🚀 Start Game
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {gameOver && started && (
+                <div className="tetris-overlay game-over-overlay">
+                  <div className="overlay-content">
+                    <h2>💀 Game Over</h2>
+                    <p>Final Score: {score}</p>
+                    <div className="overlay-buttons">
+                      <button className="tetris-primary-btn" onClick={resetGame}>
+                        🔄 Play Again
+                      </button>
+                      <button className="tetris-secondary-btn" onClick={stopGame}>
+                        🏠 Back to Menu
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {paused && started && !gameOver && (
+                <div className="tetris-overlay pause-overlay">
+                  <div className="overlay-content">
+                    <h2>⏸️ Paused</h2>
+                    <p>Press P or click Resume to continue</p>
+                    <div className="overlay-buttons">
+                      <button className="tetris-primary-btn" onClick={() => setPaused(false)}>
+                        ▶️ Resume
+                      </button>
+                      <button className="tetris-secondary-btn" onClick={stopGame}>
+                        🛑 Stop Game
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Game Info Panel */}
+          <div className="tetris-info-panel">
+            {/* Game Stats */}
+            <div className="tetris-stats-section">
+              <h3 className="section-title">📊 Statistics</h3>
+              <div className="tetris-stats-grid">
+                <div className="stat-item">
+                  <span className="stat-label">Score</span>
+                  <span className="stat-value">{score}</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-label">Level</span>
+                  <span className="stat-value">{level}</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-label">Lines</span>
+                  <span className="stat-value">{rowsCleared}</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-label">Best</span>
+                  <span className="stat-value">{bestScore}</span>
+                </div>
               </div>
             </div>
 
-            <div className="tetris-next">
-              <strong>Next</strong>
-              <div className="tetris-next-grid">
+            {/* Next Piece */}
+            <div className="tetris-next-section">
+              <h3 className="section-title">🔮 Next Piece</h3>
+              <div className="tetris-next-preview">
                 {nextGrid.map((row, rowIndex) => (
-                  <div key={rowIndex} className="tetris-row small-grid">
+                  <div key={rowIndex} className="tetris-mini-row">
                     {row.map((cell, colIndex) => (
                       <div
                         key={colIndex}
-                        className="tetris-cell"
+                        className="tetris-mini-cell"
                         style={{
-                          backgroundColor: cell || 'rgba(255, 255, 255, 0.08)',
-                          boxShadow: cell
-                            ? 'inset 0 0 0 1px rgba(255,255,255,0.45), 0 0 0 1px rgba(255,255,255,0.1)'
-                            : 'none',
+                          backgroundColor: cell || 'rgba(255, 255, 255, 0.05)',
                         }}
                       />
                     ))}
@@ -455,24 +498,72 @@ export default function Tetris() {
               </div>
             </div>
 
-            <div className="tetris-controls">
-              <button className="home-cta-button" type="button" onClick={resetGame}>
-                Restart
-              </button>
-              <button className="home-cta-button" type="button" onClick={() => setPaused((value) => !value)}>
-                {paused ? 'Resume' : 'Pause'}
-              </button>
+            {/* Game Controls */}
+            <div className="tetris-controls-section">
+              <h3 className="section-title">🎮 Controls</h3>
+              <div className="tetris-control-buttons">
+                {!started ? (
+                  <button className="tetris-primary-btn full-width" onClick={resetGame}>
+                    🚀 Start Game
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      className="tetris-secondary-btn"
+                      onClick={() => setPaused(!paused)}
+                      disabled={gameOver}
+                    >
+                      {paused ? '▶️ Resume' : '⏸️ Pause'}
+                    </button>
+                    <button className="tetris-secondary-btn" onClick={resetGame}>
+                      🔄 Restart
+                    </button>
+                    <button className="tetris-danger-btn" onClick={stopGame}>
+                      🛑 Stop Game
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
-            <div className="tetris-control-hint">
-              <p>Controls:</p>
-              <p>← → move</p>
-              <p>↑ rotate</p>
-              <p>↓ soft drop</p>
-              <p>Space hard drop</p>
-              <p>P pause</p>
+
+            {/* Instructions */}
+            <div className="tetris-instructions-section">
+              <h3 className="section-title">📋 How to Play</h3>
+              <div className="instructions-list">
+                <div className="instruction-item">
+                  <span className="key">← →</span>
+                  <span>Move left/right</span>
+                </div>
+                <div className="instruction-item">
+                  <span className="key">↑</span>
+                  <span>Rotate piece</span>
+                </div>
+                <div className="instruction-item">
+                  <span className="key">↓</span>
+                  <span>Soft drop</span>
+                </div>
+                <div className="instruction-item">
+                  <span className="key">Space</span>
+                  <span>Hard drop</span>
+                </div>
+                <div className="instruction-item">
+                  <span className="key">P</span>
+                  <span>Pause/Resume</span>
+                </div>
+              </div>
             </div>
           </div>
-        </aside>
+        </div>
+      </section>
+
+      {/* Navigation */}
+      <section className="tetris-navigation">
+        <Link to="/courses" className="tetris-nav-btn">
+          📚 Back to Courses
+        </Link>
+        <Link to="/home" className="tetris-nav-btn">
+          🏠 Back to Home
+        </Link>
       </section>
     </main>
   );
