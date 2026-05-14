@@ -75,21 +75,6 @@ function saveToCache(courses, grades, offCampusCourses = [], offCampusGrades = [
   localStorage.setItem(LOCAL_KEY, JSON.stringify(data));
 }
 
-function loadFromCache() {
-  try {
-    const raw = localStorage.getItem(LOCAL_KEY);
-    if (!raw) return null;
-    const data = JSON.parse(raw);
-    return {
-      courses: normalizeSavedCourses(data.courses),
-      grades: normalizeSavedGrades(data.grades),
-      offCampusCourses: Array.isArray(data.offCampusCourses) ? data.offCampusCourses : [],
-      offCampusGrades: Array.isArray(data.offCampusGrades) ? data.offCampusGrades : [],
-    };
-  } catch {
-    return null;
-  }
-}
 
 const loadUserCoursesAndGrades = async (uid) => {
   try {
@@ -171,12 +156,7 @@ const loadServicesData = async (uid) => {
 };
 
 export default function GPA() {
-  const cachedData = loadFromCache();
   const yearLabels = ['9th', '10th', '11th', '12th'];
-  const [selectedCourses, setSelectedCourses] = useState(cachedData?.courses || makeInitialYearCourses());
-  const [grades, setGrades] = useState(() => cachedData?.grades || makeInitialYearGrades());
-  const [offCampusCourses, setOffCampusCourses] = useState(cachedData?.offCampusCourses || []);
-  const [offCampusGrades, setOffCampusGrades] = useState(cachedData?.offCampusGrades || []);
   const [showPopup, setShowPopup] = useState(false);
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [importedData, setImportedData] = useState(null);
@@ -231,9 +211,6 @@ useEffect(() => {
     });
     setSelectedCourses(newCourses);
     setError('');
-
-    // Save to cache
-    saveToCache(newCourses, grades);
 
     // Save to Firestore
     if (user) {
