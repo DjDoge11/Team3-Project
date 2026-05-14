@@ -121,7 +121,7 @@ export default function Grades() {
                   return <option key={cat} value={cat} disabled={disabled}>{cat}{disabled ? ' (used)' : ''}</option>;
                 })}
               </select>
-              <input type="number" value={card.percentOfGrade} onChange={(e) => handleInputChange(card.id, 'percentOfGrade', e.target.value)} placeholder="0" />
+              <input type="number" value={card.percentOfGrade} onChange={(e) => handleInputChange(card.id, 'percentOfGrade', e.target.value)} placeholder="0%" />
               <input type="number" value={card.points} onChange={(e) => handleInputChange(card.id, 'points', e.target.value)} placeholder="0" />
               <input type="number" value={card.max} onChange={(e) => handleInputChange(card.id, 'max', e.target.value)} placeholder="0" />
               <span className="grade-output">{card.percentage ? `${card.percentage}%` : '-'}</span>
