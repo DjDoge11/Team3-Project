@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { db, auth } from '../firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -390,6 +391,8 @@ offCampusCourses.forEach(course => {
 
  const categoryCredits = calculateCategoryCredits();
  const gpaResult = calculateGPAResult();
+ const gpaValue = parseFloat(gpaResult.unweighted);
+ const showTetrisButton = Number.isFinite(gpaValue) && gpaValue < 2.5;
 
  const handleSearchChange = (key, value) => {
  const updated = { ...searchText, [key]: value };
@@ -870,6 +873,11 @@ offCampusCourses.forEach(course => {
  </span>
  </div>
  <p className="gpa-note">Calculated from selected courses and their assigned grades.</p>
+ {showTetrisButton && (
+   <Link to="/tetris" className="home-cta-button" style={{ marginTop: '1rem' }}>
+     Take a break with Tetris
+   </Link>
+ )}
  </div>
  </div>
  </div>
