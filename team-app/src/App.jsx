@@ -7,6 +7,7 @@ import Courses from './pages/Services';
 import Grades from './pages/Contact';
 import Login from './pages/Auth';
 import Tetris from './pages/Tetris';
+import NotFound from './pages/NotFound';
 import './App.css';
 
 function App() {
@@ -20,7 +21,7 @@ function App() {
         <Route path="/courses" element={<Courses />} />
         <Route path="/grades" element={<Grades />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/tetris" element={<Tetris />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
     </div>
