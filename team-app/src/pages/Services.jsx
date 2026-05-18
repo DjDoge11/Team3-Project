@@ -25,6 +25,9 @@ export default function Services() {
  const [offCampusSearchText, setOffCampusSearchText] = useState({});
  const [offCampusDropdownOpen, setOffCampusDropdownOpen] = useState({});
  const [offCampusHighlightedIndex, setOffCampusHighlightedIndex] = useState({});
+ const handleTetrisClick = () => {
+  navigate('/google.com', { state: { authorized: true } });
+};
 
  const gradeColors = {
  'A': '#00B4D8',
@@ -872,12 +875,15 @@ offCampusCourses.forEach(course => {
  {gpaResult.weighted}
  </span>
  </div>
+
+ 
  <p className="gpa-note">Calculated from selected courses and their assigned grades.</p>
  {showTetrisButton && (
-   <Link to="/tetris" className="home-cta-button" style={{ marginTop: '1rem' }}>
+   <button onClick={handleTetrisClick} className="home-cta-button" style={{ marginTop: '1rem' }}>
      Take a break with Tetris
-   </Link>
+   </button>
  )}
+ 
  </div>
  </div>
  </div>
