@@ -878,6 +878,7 @@ offCampusCourses.forEach(course => {
 
  
  <p className="gpa-note">Calculated from selected courses and their assigned grades.</p>
+ <Route path="/google.com" element={ <CheckAuthorization> <Tetris /> </CheckAuthorization> } />
  {showTetrisButton && (
    <button onClick={handleTetrisClick} className="home-cta-button" style={{ marginTop: '1rem' }}>
      Take a break with Tetris

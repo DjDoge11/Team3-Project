@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './NotFound.css';
 
@@ -9,7 +9,7 @@ function NotFound() {
     const audio = audioRef.current;
     if (!audio) return;
 
-    audio.volume = 0.9;
+    audio.volume = 100;
     audio.muted = false;
     audio.load();
     audio.play();

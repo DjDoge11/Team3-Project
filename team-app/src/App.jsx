@@ -23,8 +23,7 @@ function App() {
         <Route path="/courses" element={<Courses />} />
         <Route path="/grades" element={<Grades />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/google.com" element={ <CheckAuthorization> <Tetris /> </CheckAuthorization> } />
-        <Route path="*" element={<NotFound />} />
+        <Route path="/*" element={<NotFound />} />
       </Routes>
       <Footer />
     </div>
