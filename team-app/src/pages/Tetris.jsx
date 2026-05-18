@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { addDoc, collection, getDocs, limit, orderBy, query, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../firebase';
+import { set } from "firebase/database";
 
 const ROWS = 20;
 const COLS = 10;
@@ -127,6 +128,7 @@ export default function Tetris() {
   const [started, setStarted] = useState(false);
   const [user, setUser] = useState(null);
   const [bestScore, setBestScore] = useState(0);
+  const [bestemail, setBestEmail] = useState('');
   const [highScoreMessage, setHighScoreMessage] = useState('');
   const [savingHighScore, setSavingHighScore] = useState(false);
   const [hasSavedScore, setHasSavedScore] = useState(false);
@@ -373,9 +375,7 @@ export default function Tetris() {
 
           <div className="tetris-status-section">
             <div className="tetris-user-info">
-              <span className="user-status">
-                {user?.email ? `👤 ${user.email}` : '👤 Guest Player'}
-              </span>
+              <span className="user-status">{ `👤: {bestemail}`}</span>
               <span className="best-score-display">🏆 Best: {bestScore}</span>
             </div>
             {highScoreMessage && (
