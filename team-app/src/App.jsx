@@ -10,6 +10,8 @@ import Tetris from './pages/Tetris';
 import NotFound from './pages/NotFound';
 import './App.css';
 
+
+
 function App() {
   return (
     <div className="bbai-app">
@@ -21,7 +23,7 @@ function App() {
         <Route path="/courses" element={<Courses />} />
         <Route path="/grades" element={<Grades />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/tetris" element={<Tetris />} />
+        <Route path="/google.com" element={ <CheckAuthorization> <Tetris /> </CheckAuthorization> } />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
