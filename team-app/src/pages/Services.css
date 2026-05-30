@@ -174,6 +174,11 @@
   border: 1px solid rgba(255, 255, 255, 0.34);
 }
 
+.save-status--info {
+  background: #19647E;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+}
+
 @keyframes saveStatusDrop {
   from {
     opacity: 0;
@@ -420,16 +425,29 @@
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
 }
 
-.dropdown-item {
+.dropdown-item,
+.off-campus-dropdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
   padding: 0.5rem 0.6rem;
   cursor: pointer;
   border-bottom: 0.05rem solid #eee;
   font-size: 0.85rem;
 }
 
-.dropdown-item.highlighted {
+.dropdown-item.highlighted,
+.off-campus-dropdown-item.highlighted {
   background-color: #e3f2fd;
   font-weight: 600;
+}
+
+.course-category,
+.off-campus-course-category {
+  color: #888;
+  font-size: 0.78rem;
+  white-space: nowrap;
 }
 
 .dropdown-item:hover {
@@ -1069,6 +1087,72 @@ hr {
   border: 1px solid rgba(25, 100, 126, 0.16);
   background-color: #ffffff;
   font-size: 0.98rem;
+}
+
+/* Help Popup Styles */
+.help-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.help-popup {
+  background-color: white;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 48px rgba(25, 100, 126, 0.14);
+}
+
+.help-popup-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.help-popup-close:hover {
+  background-color: #f5f5f5;
+}
+
+.help-popup h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  color: #19647E;
+  font-size: 1.25rem;
+}
+
+.help-content {
+  line-height: 1.6;
+}
+
+.help-content p {
+  margin-bottom: 12px;
+}
+
+.help-content strong {
+  color: #19647E;
 }
 
 .credits-box,
